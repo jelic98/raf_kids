@@ -1,9 +1,6 @@
 package rs.raf.kids.core;
 
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import rs.raf.kids.log.Log;
-import rs.raf.kids.thread.Commander;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
@@ -44,6 +41,14 @@ public class App {
         }
     }
 
+    public void startThreads() {
+
+    }
+
+    public void stopThreads() {
+
+    }
+
     public void parseCommands() {
         Commander commander = new Commander();
 
@@ -82,6 +87,7 @@ public class App {
                     commander.clearSummaryWeb();
                     break;
                 case "stop":
+                    stopThreads();
                     s.close();
                     return;
                 default:

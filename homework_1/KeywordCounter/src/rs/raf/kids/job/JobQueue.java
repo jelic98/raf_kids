@@ -1,12 +1,7 @@
 package rs.raf.kids.job;
 
-public class JobQueue {
+public interface JobQueue {
 
-    public JobQueue() {
-
-    }
-
-    public void addJob(Job job) {
-
-    }
+    void enqueue(Job job) throws InterruptedException;
+    Job dequeue() throws InterruptedException;
 }

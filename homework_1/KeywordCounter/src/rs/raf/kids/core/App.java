@@ -41,16 +41,9 @@ public class App {
         }
     }
 
-    public void startThreads() {
-
-    }
-
-    public void stopThreads() {
-
-    }
-
     public void parseCommands() {
         Commander commander = new Commander();
+        commander.startThreads();
 
         Scanner s = new Scanner(System.in);
 
@@ -68,26 +61,26 @@ public class App {
             }
 
             switch(command) {
-                case "ad":
+                case Res.CMD_ADD_DIRECTORY:
                     commander.addDirectory(param);
                     break;
-                case "aw":
+                case Res.CMD_ADD_WEB:
                     commander.addWeb(param);
                     break;
-                case "get":
+                case Res.CMD_GET_RESULT_SYNC:
                     commander.getResultSync(param);
                     break;
-                case "query":
+                case Res.CMD_GET_RESULT_ASYNC:
                     commander.getResultAsync(param);
                     break;
-                case "cfs":
+                case Res.CMD_CLEAR_FILE_SUMMARY:
                     commander.clearSummaryFile();
                     break;
-                case "cws":
+                case Res.CMD_CLEAR_WEB_SUMMARY:
                     commander.clearSummaryWeb();
                     break;
-                case "stop":
-                    stopThreads();
+                case Res.CMD_STOP:
+                    commander.stopThreads();
                     s.close();
                     return;
                 default:

@@ -1,23 +1,31 @@
 package rs.raf.kids.job;
 
 import rs.raf.kids.scan.ScanType;
-
 import java.util.Map;
 import java.util.concurrent.Future;
 
-public class Job implements ScanningJob {
+public class Job {
 
-    @Override
-    public ScanType getType() {
-        return null;
+    private final String path;
+    private final ScanType scanType;
+
+    public Job() {
+        this(null, ScanType.POISON);
     }
 
-    @Override
-    public String getQuery() {
-        return null;
+    public Job(String path, ScanType scanType) {
+        this.path = path;
+        this.scanType = scanType;
     }
 
-    @Override
+    public String getPath() {
+        return path;
+    }
+
+    public ScanType getScanType() {
+        return scanType;
+    }
+
     public Future<Map<String, Integer>> initiate() {
         return null;
     }

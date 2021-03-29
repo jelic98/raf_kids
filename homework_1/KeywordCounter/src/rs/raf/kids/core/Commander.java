@@ -1,15 +1,39 @@
 package rs.raf.kids.core;
 
+import rs.raf.kids.job.Job;
+import rs.raf.kids.job.JobDispatcher;
+import rs.raf.kids.job.JobQueue;
+import rs.raf.kids.job.ScanningJobQueue;
 import rs.raf.kids.log.Log;
 import rs.raf.kids.crawler.CrawlerDispatcher;
 import rs.raf.kids.scan.ScanType;
 
 class Commander {
 
+    private JobQueue jobQueue;
+    private JobDispatcher jobDispatcher;
     private CrawlerDispatcher crawlerDispatcher;
 
     Commander() {
-        crawlerDispatcher = new CrawlerDispatcher();
+        jobQueue = new ScanningJobQueue();
+        jobDispatcher = new JobDispatcher(jobQueue);
+        crawlerDispatcher = new CrawlerDispatcher(jobQueue);
+    }
+
+    void startThreads() {
+        Log.i(Res.INFO_START_THREADS);
+
+        jobDispatcher.start();
+    }
+
+    void stopThreads() {
+        Log.i(Res.INFO_STOP_THREADS);
+
+        try {
+            jobQueue.enqueue(new Job());
+        }catch(InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     void addDirectory(String path) {

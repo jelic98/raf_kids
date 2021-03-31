@@ -22,7 +22,8 @@ abstract class AbstractScanner implements PathScanner {
     }
 
     @Override
-    public void scanPath(String path, Job.ScanType scanType) {
+    public void scanJobPath(Job job) {
+        String path = job.getPath();
         String content = scraper.getContent(path);
 
         Map<String, Integer> pathCounts = new HashMap<>();

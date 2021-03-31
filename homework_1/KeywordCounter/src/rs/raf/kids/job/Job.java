@@ -1,8 +1,5 @@
 package rs.raf.kids.job;
 
-import java.util.Map;
-import java.util.concurrent.Future;
-
 public class Job {
 
     public enum ScanType {
@@ -29,9 +26,5 @@ public class Job {
 
     public ScanType getScanType() {
         return scanType;
-    }
-
-    public Future<Map<String, Integer>> initiate() {
-        return null;
     }
 }

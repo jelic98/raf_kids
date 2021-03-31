@@ -6,17 +6,21 @@ import rs.raf.kids.job.JobQueue;
 import rs.raf.kids.job.ScanningJobQueue;
 import rs.raf.kids.log.Log;
 import rs.raf.kids.crawler.CrawlerDispatcher;
+import rs.raf.kids.result.ResultRetriever;
+import rs.raf.kids.result.ResultRetrieverPool;
 
 class Commander {
 
     private JobQueue jobQueue;
     private JobDispatcher jobDispatcher;
     private CrawlerDispatcher crawlerDispatcher;
+    private ResultRetriever resultRetriever;
 
     Commander() {
         jobQueue = new ScanningJobQueue();
         jobDispatcher = new JobDispatcher(jobQueue);
         crawlerDispatcher = new CrawlerDispatcher(jobQueue);
+        resultRetriever = new ResultRetrieverPool();
     }
 
     void startThreads() {
@@ -49,17 +53,33 @@ class Commander {
 
     void getResultSync(String query) {
         Log.i(Res.INFO_GET_RESULT_SYNC);
+
+        if(query.endsWith(Res.CMD_SUMMARY)) {
+            resultRetriever.getSummary(Job.ScanType.FILE);
+        }else {
+            resultRetriever.getResult(query);
+        }
     }
 
     void getResultAsync(String query) {
         Log.i(Res.INFO_GET_RESULT_ASYNC);
+
+        if(query.endsWith(Res.CMD_SUMMARY)) {
+            resultRetriever.querySummary(Job.ScanType.FILE);
+        }else {
+            resultRetriever.queryResult(query);
+        }
     }
 
     void clearSummaryFile() {
         Log.i(Res.INFO_CLEAR_SUMMARY_FILE);
+
+        resultRetriever.clearSummary(Job.ScanType.FILE);
     }
 
     void clearSummaryWeb() {
         Log.i(Res.INFO_CLEAR_SUMMARY_WEB);
+
+        resultRetriever.clearSummary(Job.ScanType.WEB);
     }
 }

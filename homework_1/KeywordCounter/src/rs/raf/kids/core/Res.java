@@ -40,6 +40,7 @@ public class Res {
     public static final String CMD_CLEAR_FILE_SUMMARY = "cfs";
     public static final String CMD_CLEAR_WEB_SUMMARY = "cws";
     public static final String CMD_STOP = "stop";
+    public static final String CMD_SUMMARY = "summary";
 
     public static final int CONST_JOB_QUEUE_SIZE = 10;
 }

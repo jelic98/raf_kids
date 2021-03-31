@@ -1,5 +1,6 @@
 package rs.raf.kids.job;
 
+import rs.raf.kids.scanner.FileScannerPool;
 import rs.raf.kids.scanner.PathScanner;
 import rs.raf.kids.scanner.WebScannerPool;
 import java.util.HashMap;
@@ -36,7 +37,7 @@ public class JobDispatcher {
                     break;
                 }
 
-                scanners.get(scanType).scanPath(job.getPath(), scanType);
+                scanners.get(scanType).scanJobPath(job);
             }catch(InterruptedException e) {
                 e.printStackTrace();
             }

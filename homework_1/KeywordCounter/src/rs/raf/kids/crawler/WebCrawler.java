@@ -12,24 +12,23 @@ import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class WebCrawler implements PathCrawler {
+class WebCrawler extends AbstractCrawler {
 
-    private JobQueue jobQueue;
     private List<Stack<String>> hops;
 
-    public WebCrawler(JobQueue jobQueue) {
-        this.jobQueue = jobQueue;
+    WebCrawler(JobQueue jobQueue) {
+        super(jobQueue);
 
         hops = new LinkedList<>();
     }
 
     @Override
-    public void addPath(String path, Job.ScanType scanType) {
+    protected void crawl(String path) {
         Stack<String> base = new Stack<>();
         base.push(path);
         hops.add(base);
 
-        addJob(path);
+        addJob(path, Job.ScanType.WEB);
 
         WebScraper scraper = new WebScraper();
 
@@ -45,19 +44,11 @@ class WebCrawler implements PathCrawler {
                 while(m.find()) {
                     String url = m.group();
                     hop.push(url);
-                    addJob(url);
+                    addJob(url, Job.ScanType.WEB);
                 }
             }
 
             hops.add(hop);
-        }
-    }
-
-    private void addJob(String url) {
-        try {
-            jobQueue.enqueue(new Job(url, Job.ScanType.WEB));
-        }catch(InterruptedException e) {
-            e.printStackTrace();
         }
     }
 

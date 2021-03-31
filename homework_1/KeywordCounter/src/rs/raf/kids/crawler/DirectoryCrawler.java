@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
-class DirectoryCrawler implements PathCrawler {
+class DirectoryCrawler extends AbstractCrawler {
 
     private static class Metadata {
 
@@ -37,26 +37,16 @@ class DirectoryCrawler implements PathCrawler {
         }
     }
 
-    private JobQueue jobQueue;
     private Map<String, Metadata> metadata;
 
-    public DirectoryCrawler(JobQueue jobQueue) {
-        this.jobQueue = jobQueue;
+    DirectoryCrawler(JobQueue jobQueue) {
+        super(jobQueue);
 
         metadata = new HashMap<>();
     }
 
     @Override
-    public void addPath(String path, Job.ScanType scanType) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                scanDirectory(path);
-            }
-        }).start();
-    }
-
-    private void scanDirectory(String path) {
+    protected void crawl(String path) {
         File root = new File(path);
 
         if(!root.exists()) {
@@ -96,11 +86,7 @@ class DirectoryCrawler implements PathCrawler {
 
             this.metadata.put(path, metadata);
 
-            try {
-                jobQueue.enqueue(new Job(path, Job.ScanType.FILE));
-            }catch(InterruptedException e) {
-                e.printStackTrace();
-            }
+            addJob(path, Job.ScanType.FILE);
         }
     }
 }

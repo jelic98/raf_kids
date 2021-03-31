@@ -2,7 +2,6 @@ package rs.raf.kids.crawler;
 
 import rs.raf.kids.job.Job;
 import rs.raf.kids.job.JobQueue;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,5 +18,12 @@ public class CrawlerDispatcher implements PathCrawler {
     @Override
     public void addPath(String path, Job.ScanType scanType) {
         crawlers.get(scanType).addPath(path, scanType);
+    }
+
+    @Override
+    public void stop() {
+        for(PathCrawler crawler : crawlers.values()) {
+            crawler.stop();
+        }
     }
 }

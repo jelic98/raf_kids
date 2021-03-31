@@ -13,7 +13,6 @@ abstract class AbstractScanner implements PathScanner {
     private ResultRetriever resultRetriever;
     private Scraper scraper;
     private WordCounter counter;
-    private Map<String, Map<String, Integer>> counts;
     private String[] keywords;
 
     protected AbstractScanner(ResultRetriever resultRetriever) {
@@ -21,7 +20,6 @@ abstract class AbstractScanner implements PathScanner {
 
         scraper = getScraper();
         counter = new WordCounter();
-        counts = new HashMap<>();
         keywords = Property.KEYWORDS.get().split(",");
     }
 
@@ -30,14 +28,19 @@ abstract class AbstractScanner implements PathScanner {
         String path = job.getPath();
         String content = scraper.getContent(path);
 
-        Map<String, Integer> pathCounts = new HashMap<>();
+        Map<String, Integer> counts = new HashMap<>();
 
         for(String keyword : keywords) {
             int count = counter.count(content, keyword);
-            pathCounts.put(keyword, count);
+            counts.put(keyword, count);
         }
 
-        counts.put(path, pathCounts);
+        publishResult(job, counts);
+    }
+
+    @Override
+    public void publishResult(Job job, Map<String, Integer> result) {
+        resultRetriever.addResult(job, result);
     }
 
     protected abstract Scraper getScraper();

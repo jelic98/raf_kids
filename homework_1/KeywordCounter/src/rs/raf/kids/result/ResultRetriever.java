@@ -2,7 +2,6 @@ package rs.raf.kids.result;
 
 import rs.raf.kids.job.Job;
 import java.util.Map;
-import java.util.concurrent.Future;
 
 public interface ResultRetriever {
 
@@ -13,5 +12,5 @@ public interface ResultRetriever {
     Map<String, Map<String, Integer>> querySummary(Job.ScanType scanType);
     void clearSummary(Job.ScanType scanType);
 
-    void addResult(String path, Future<Map<String, Integer>> result);
+    void addResult(Job job, Map<String, Integer> result);
 }

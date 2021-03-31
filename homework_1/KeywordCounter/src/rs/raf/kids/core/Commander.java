@@ -32,6 +32,8 @@ class Commander {
     void stopThreads() {
         Log.i(Res.INFO_STOP_THREADS);
 
+        crawlerDispatcher.stop();
+
         try {
             jobQueue.enqueue(new Job());
         }catch(InterruptedException e) {

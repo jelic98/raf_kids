@@ -2,7 +2,6 @@ package rs.raf.kids.result;
 
 import rs.raf.kids.job.Job;
 import java.util.Map;
-import java.util.concurrent.Future;
 
 public class ResultRetrieverPool implements ResultRetriever {
 
@@ -32,7 +31,7 @@ public class ResultRetrieverPool implements ResultRetriever {
     }
 
     @Override
-    public void addResult(String path, Future<Map<String, Integer>> result) {
+    public void addResult(Job job, Map<String, Integer> result) {
 
     }
 }

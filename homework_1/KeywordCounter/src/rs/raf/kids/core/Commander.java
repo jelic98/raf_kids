@@ -18,9 +18,9 @@ class Commander {
 
     Commander() {
         jobQueue = new ScanningJobQueue();
-        jobDispatcher = new JobDispatcher(jobQueue);
-        crawlerDispatcher = new CrawlerDispatcher(jobQueue);
         resultRetriever = new ResultRetrieverPool();
+        crawlerDispatcher = new CrawlerDispatcher(jobQueue);
+        jobDispatcher = new JobDispatcher(jobQueue, resultRetriever);
     }
 
     void startThreads() {

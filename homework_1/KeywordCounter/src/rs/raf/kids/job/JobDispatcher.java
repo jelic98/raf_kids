@@ -1,5 +1,6 @@
 package rs.raf.kids.job;
 
+import rs.raf.kids.result.ResultRetriever;
 import rs.raf.kids.scanner.FileScannerPool;
 import rs.raf.kids.scanner.PathScanner;
 import rs.raf.kids.scanner.WebScannerPool;
@@ -12,12 +13,12 @@ public class JobDispatcher {
     private Map<Job.ScanType, PathScanner> scanners;
     private Thread thread;
 
-    public JobDispatcher(JobQueue jobQueue) {
+    public JobDispatcher(JobQueue jobQueue, ResultRetriever resultRetriever) {
         this.jobQueue = jobQueue;
 
         scanners = new HashMap<>();
-        scanners.put(Job.ScanType.FILE, new FileScannerPool());
-        scanners.put(Job.ScanType.WEB, new WebScannerPool());
+        scanners.put(Job.ScanType.FILE, new FileScannerPool(resultRetriever));
+        scanners.put(Job.ScanType.WEB, new WebScannerPool(resultRetriever));
 
         thread = new Thread(new Runnable() {
             @Override

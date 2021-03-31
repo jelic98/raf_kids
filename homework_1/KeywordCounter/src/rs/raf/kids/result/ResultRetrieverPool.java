@@ -17,22 +17,22 @@ public class ResultRetrieverPool implements ResultRetriever {
     }
 
     @Override
-    public Map<String, Map<String, Integer>> getSummary(Job.ScanType summaryType) {
+    public Map<String, Map<String, Integer>> getSummary(Job.ScanType scanType) {
         return null;
     }
 
     @Override
-    public Map<String, Map<String, Integer>> querySummary(Job.ScanType summaryType) {
+    public Map<String, Map<String, Integer>> querySummary(Job.ScanType scanType) {
         return null;
     }
 
     @Override
-    public void clearSummary(Job.ScanType summaryType) {
+    public void clearSummary(Job.ScanType scanType) {
 
     }
 
     @Override
-    public void addCorpusResult(String corpusName, Future<Map<String, Integer>> corpusResult) {
+    public void addResult(String path, Future<Map<String, Integer>> result) {
 
     }
 }

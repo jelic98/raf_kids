@@ -5,7 +5,7 @@ import rs.raf.kids.core.Res;
 import rs.raf.kids.job.Job;
 import rs.raf.kids.job.JobQueue;
 import rs.raf.kids.log.Log;
-import rs.raf.kids.util.WebScraper;
+import rs.raf.kids.scraper.WebScraper;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
@@ -37,7 +37,7 @@ class WebCrawler implements PathCrawler {
             Stack<String> hop = new Stack<>();
 
             for(String parentUrl : hops.get(i)) {
-                String page = scraper.getPage(parentUrl);
+                String page = scraper.getContent(parentUrl);
 
                 Pattern p = Pattern.compile(Res.FORMAT_URL);
                 Matcher m = p.matcher(page);

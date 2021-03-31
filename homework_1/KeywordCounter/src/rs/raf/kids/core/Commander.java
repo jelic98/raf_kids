@@ -6,7 +6,6 @@ import rs.raf.kids.job.JobQueue;
 import rs.raf.kids.job.ScanningJobQueue;
 import rs.raf.kids.log.Log;
 import rs.raf.kids.crawler.CrawlerDispatcher;
-import rs.raf.kids.scan.ScanType;
 
 class Commander {
 
@@ -39,13 +38,13 @@ class Commander {
     void addDirectory(String path) {
         Log.i(Res.INFO_ADD_DIRECTORY);
 
-        crawlerDispatcher.addPath(path, ScanType.FILE);
+        crawlerDispatcher.addPath(path, Job.ScanType.FILE);
     }
 
     void addWeb(String domain) {
         Log.i(Res.INFO_ADD_WEB);
 
-        crawlerDispatcher.addPath(domain, ScanType.WEB);
+        crawlerDispatcher.addPath(domain, Job.ScanType.WEB);
     }
 
     void getResultSync(String query) {

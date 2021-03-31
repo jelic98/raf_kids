@@ -1,8 +1,8 @@
 package rs.raf.kids.crawler;
 
-import rs.raf.kids.scan.ScanType;
+import rs.raf.kids.job.Job;
 
 public interface PathCrawler {
 
-    void addPath(String path, ScanType scanType);
+    void addPath(String path, Job.ScanType scanType);
 }

@@ -5,7 +5,6 @@ import rs.raf.kids.core.Res;
 import rs.raf.kids.job.Job;
 import rs.raf.kids.job.JobQueue;
 import rs.raf.kids.log.Log;
-import rs.raf.kids.scan.ScanType;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -48,7 +47,7 @@ class DirectoryCrawler implements PathCrawler {
     }
 
     @Override
-    public void addPath(String path, ScanType scanType) {
+    public void addPath(String path, Job.ScanType scanType) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -98,7 +97,7 @@ class DirectoryCrawler implements PathCrawler {
             this.metadata.put(path, metadata);
 
             try {
-                jobQueue.enqueue(new Job(path, ScanType.FILE));
+                jobQueue.enqueue(new Job(path, Job.ScanType.FILE));
             }catch(InterruptedException e) {
                 e.printStackTrace();
             }

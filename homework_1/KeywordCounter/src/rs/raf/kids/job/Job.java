@@ -1,10 +1,15 @@
 package rs.raf.kids.job;
 
-import rs.raf.kids.scan.ScanType;
 import java.util.Map;
 import java.util.concurrent.Future;
 
 public class Job {
+
+    public enum ScanType {
+        FILE,
+        WEB,
+        POISON
+    }
 
     private final String path;
     private final ScanType scanType;

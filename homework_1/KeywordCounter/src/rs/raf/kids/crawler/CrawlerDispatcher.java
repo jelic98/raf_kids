@@ -1,22 +1,23 @@
 package rs.raf.kids.crawler;
 
+import rs.raf.kids.job.Job;
 import rs.raf.kids.job.JobQueue;
-import rs.raf.kids.scan.ScanType;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class CrawlerDispatcher implements PathCrawler {
 
-    private Map<ScanType, PathCrawler> crawlers;
+    private Map<Job.ScanType, PathCrawler> crawlers;
 
     public CrawlerDispatcher(JobQueue jobQueue) {
         crawlers = new HashMap<>();
-        crawlers.put(ScanType.FILE, new DirectoryCrawler(jobQueue));
-        crawlers.put(ScanType.WEB, new WebCrawler(jobQueue));
+        crawlers.put(Job.ScanType.FILE, new DirectoryCrawler(jobQueue));
+        crawlers.put(Job.ScanType.WEB, new WebCrawler(jobQueue));
     }
 
     @Override
-    public void addPath(String path, ScanType scanType) {
+    public void addPath(String path, Job.ScanType scanType) {
         crawlers.get(scanType).addPath(path, scanType);
     }
 }

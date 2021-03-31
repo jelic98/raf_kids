@@ -8,6 +8,8 @@ public class Res {
     public static final String ERROR_LOAD_PROPERTIES = "Cannot load properties";
     public static final String ERROR_PARSE_COMMAND = "Cannot parse command";
     public static final String ERROR_ADD_DIRECTORY = "Cannot add directory";
+    public static final String ERROR_ADD_WEB = "Cannot add web page";
+    public static final String ERROR_HOP_COUNT = "Hop count property is not a number";
 
     public static final String INPUT_COMMAND = "Enter command";
 
@@ -27,6 +29,7 @@ public class Res {
     public static final String FORMAT_DATE = "MM/dd/yyyy HH:mm:ss";
     public static final String FORMAT_LOG = "[%s] %s";
     public static final String FORMAT_INPUT = ">>> ";
+    public static final String FORMAT_URL = "(?<=href=\")https?://[^\"]*(?=\")";
 
     public static final String CMD_ADD_DIRECTORY = "ad";
     public static final String CMD_ADD_WEB = "aw";

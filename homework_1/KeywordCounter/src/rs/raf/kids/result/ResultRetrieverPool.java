@@ -1,7 +1,7 @@
 package rs.raf.kids.result;
 
 import rs.raf.kids.job.Job;
-import rs.raf.kids.job.ScanType;g
+import rs.raf.kids.job.ScanType;
 import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;

@@ -7,4 +7,5 @@ public interface PathScanner {
 
     void scanJobPath(Job job);
     void publishResult(Job job, Map<String, Integer> result);
+    void stop();
 }

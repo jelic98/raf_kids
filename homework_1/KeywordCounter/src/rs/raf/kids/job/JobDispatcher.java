@@ -26,6 +26,7 @@ public class JobDispatcher {
                 dispatchJobs();
             }
         });
+        thread.setDaemon(true);
     }
 
     private void dispatchJobs() {

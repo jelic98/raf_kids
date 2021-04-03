@@ -1,5 +1,4 @@
 package rs.raf.kids.scraper;
-
 import rs.raf.kids.core.Res;
 import rs.raf.kids.log.Log;
 import java.io.IOException;

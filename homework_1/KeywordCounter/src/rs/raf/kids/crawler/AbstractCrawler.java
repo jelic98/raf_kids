@@ -18,7 +18,7 @@ abstract class AbstractCrawler implements PathCrawler {
 
     @Override
     public void addPath(String path, Job.ScanType scanType) {
-        pool.submit(new Runnable() {
+        pool.execute(new Runnable() {
             @Override
             public void run() {
                 crawl(path);

@@ -1,5 +1,6 @@
 package rs.raf.kids.scanner;
 
+import rs.raf.kids.job.Job;
 import rs.raf.kids.result.ResultRetriever;
 import rs.raf.kids.scraper.Scraper;
 import rs.raf.kids.scraper.WebScraper;
@@ -13,5 +14,10 @@ public class WebScannerPool extends AbstractScanner {
     @Override
     protected Scraper getScraper() {
         return new WebScraper();
+    }
+
+    @Override
+    public void scanJobPath(Job job) {
+        super.scanJobBuffer(job);
     }
 }

@@ -12,5 +12,5 @@ public interface ResultRetriever {
     Map<String, Map<String, Integer>> querySummary(Job.ScanType scanType);
     void clearSummary(Job.ScanType scanType);
 
-    void addResult(Job job, Map<String, Integer> result);
+    void addResult(Job job, Map<String, Integer> counts);
 }

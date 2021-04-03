@@ -36,6 +36,10 @@ public class JobDispatcher {
                 Job.ScanType scanType = job.getScanType();
 
                 if(scanType == Job.ScanType.POISON) {
+                    for(PathScanner scanner : scanners.values()) {
+                        scanner.stop();
+                    }
+
                     break;
                 }
 

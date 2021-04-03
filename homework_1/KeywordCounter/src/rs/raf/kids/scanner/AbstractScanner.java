@@ -28,8 +28,8 @@ abstract class AbstractScanner implements PathScanner {
     }
 
     @Override
-    public void publishResult(Job job, Map<String, Integer> result) {
-        resultRetriever.addResult(job, result);
+    public void publishResult(Job job, Map<String, Integer> counts) {
+        resultRetriever.addResult(job, counts);
     }
 
     @Override

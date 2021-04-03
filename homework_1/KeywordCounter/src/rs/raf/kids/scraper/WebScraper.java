@@ -24,7 +24,6 @@ public class WebScraper implements Scraper {
 
             page = response.body();
         }catch(Exception e) {
-            // TODO This gets printed 2 times
             Log.e(String.format(Res.FORMAT_ERROR, Res.ERROR_SCAN_WEB, path));
         }
 

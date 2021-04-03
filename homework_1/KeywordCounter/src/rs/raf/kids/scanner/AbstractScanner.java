@@ -3,6 +3,7 @@ package rs.raf.kids.scanner;
 import rs.raf.kids.core.Property;
 import rs.raf.kids.core.Res;
 import rs.raf.kids.job.Job;
+import rs.raf.kids.log.Log;
 import rs.raf.kids.result.ResultRetriever;
 import rs.raf.kids.scraper.Scraper;
 

@@ -45,7 +45,7 @@ public class JobDispatcher {
 
                 scanners.get(scanType).scanJobPath(job);
             }catch(InterruptedException e) {
-                e.printStackTrace();
+                Thread.currentThread().interrupt();
             }
         }
     }

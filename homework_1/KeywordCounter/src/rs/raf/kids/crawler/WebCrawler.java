@@ -24,11 +24,11 @@ class WebCrawler extends AbstractCrawler {
 
     @Override
     protected void crawl(String path) {
+        boolean invalidPath = false;
+
         Stack<String> base = new Stack<>();
         base.push(path);
         hops.add(base);
-
-        addJob(path, ScanType.WEB);
 
         WebScraper scraper = new WebScraper();
 
@@ -37,6 +37,11 @@ class WebCrawler extends AbstractCrawler {
 
             for(String parentUrl : hops.get(i)) {
                 String page = scraper.getContent(parentUrl);
+
+                if(page.isEmpty()) {
+                    invalidPath = true;
+                    break;
+                }
 
                 Pattern p = Pattern.compile(Res.FORMAT_URL);
                 Matcher m = p.matcher(page);
@@ -48,7 +53,15 @@ class WebCrawler extends AbstractCrawler {
                 }
             }
 
+            if(invalidPath) {
+                break;
+            }
+
             hops.add(hop);
+        }
+
+        if(!invalidPath) {
+            addJob(path, ScanType.WEB);
         }
     }
 

@@ -3,7 +3,6 @@ package rs.raf.kids.scanner;
 import rs.raf.kids.core.Property;
 import rs.raf.kids.core.Res;
 import rs.raf.kids.job.Job;
-import rs.raf.kids.log.Log;
 import rs.raf.kids.result.ResultRetriever;
 import rs.raf.kids.scraper.Scraper;
 
@@ -23,7 +22,7 @@ abstract class AbstractScanner implements PathScanner {
 
         scraper = getScraper();
         keywords = Property.KEYWORDS.get().split(",");
-        pool = Executors.newWorkStealingPool(Res.CONST_CPU_CORES_OTAL);
+        pool = Executors.newWorkStealingPool(Res.CONST_CPU_CORES_TOTAL);
     }
 
     @Override
@@ -33,7 +32,7 @@ abstract class AbstractScanner implements PathScanner {
 
     @Override
     public void stop() {
-        pool.shutdown();
+        pool.shutdownNow();
     }
 
     protected void scanJobBuffer(Job job) {

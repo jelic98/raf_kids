@@ -1,10 +1,7 @@
 package rs.raf.kids.result;
 
-import rs.raf.kids.core.Res;
 import rs.raf.kids.job.Job;
 import rs.raf.kids.job.ScanType;
-import rs.raf.kids.log.Log;
-
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -33,12 +30,27 @@ public class ResultRetrieverPool implements ResultRetriever {
         public Map<String, Integer> getCounts() {
             return counts;
         }
+
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof Result) {
+                Result result = (Result) obj;
+                return result.job.equals(job);
+            }
+
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return job.hashCode();
+        }
     }
 
-    private List<Result> results;
+    private Set<Result> results;
 
     public ResultRetrieverPool() {
-        results = new LinkedList<>();
+        results = new HashSet<>();
     }
 
     @Override
@@ -86,6 +98,7 @@ public class ResultRetrieverPool implements ResultRetriever {
     public void addResult(Job job, Map<String, Integer> counts) {
         Result result = new Result(job, counts);
 
+        results.remove(result);
         results.add(result);
     }
 

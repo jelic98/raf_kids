@@ -29,7 +29,7 @@ abstract class AbstractCrawler implements PathCrawler {
 
     @Override
     public void stop() {
-        pool.shutdown();
+        pool.shutdownNow();
     }
 
     protected void addJob(String path, ScanType scanType) {

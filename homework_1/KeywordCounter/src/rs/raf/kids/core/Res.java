@@ -46,5 +46,6 @@ public class Res {
     public static final String CMD_SUMMARY = "summary";
 
     public static final int CONST_JOB_QUEUE_SIZE = 10;
-    public static final int CONST_CPU_CORES_OTAL = 4;
+    public static final int CONST_CPU_CORES_TOTAL = 4;
+    public static final int CONST_HASH_PRIME = 31;
 }

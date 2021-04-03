@@ -3,10 +3,10 @@ package rs.raf.kids.core;
 public enum Property {
     KEYWORDS,
     FILE_CORPUS_PREFIX,
-    DIR_CRAWLER_SLEEP_TIME,
+    HOP_COUNT,
     FILE_SCANNING_SIZE_LIMIT,
     BUFFER_TIMEOUT,
-    HOP_COUNT,
+    DIR_CRAWLER_SLEEP_TIME,
     URL_REFRESH_TIME;
 
     private String value;

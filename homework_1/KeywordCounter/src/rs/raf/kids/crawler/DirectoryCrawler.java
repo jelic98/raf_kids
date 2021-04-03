@@ -38,25 +38,35 @@ class DirectoryCrawler extends AbstractCrawler {
     }
 
     private Map<String, Metadata> metadata;
+    private final long DIR_SLEEP_MAX;
 
     DirectoryCrawler(JobQueue jobQueue) {
         super(jobQueue);
 
         metadata = new HashMap<>();
+        DIR_SLEEP_MAX = Long.parseLong(Property.DIR_CRAWLER_SLEEP_TIME.get());
     }
 
     @Override
     protected void crawl(String path) {
-        File root = new File(path);
+        while(true) {
+            File root = new File(path);
 
-        if(!root.exists()) {
-            Log.e(String.format(Res.FORMAT_ERROR, Res.ERROR_ADD_DIRECTORY, path));
-            return;
-        }
+            if(!root.exists()) {
+                Log.e(String.format(Res.FORMAT_ERROR, Res.ERROR_ADD_DIRECTORY, path));
+                return;
+            }
 
-        for(File dir : extractCorpora(root, new Stack<>())) {
-            if(dir.getName().startsWith(Property.FILE_CORPUS_PREFIX.get())) {
-                addJobs(dir);
+            for(File dir : extractCorpora(root, new Stack<>())) {
+                if(dir.getName().startsWith(Property.FILE_CORPUS_PREFIX.get())) {
+                    addJobs(dir);
+                }
+            }
+
+            try {
+                Thread.sleep(DIR_SLEEP_MAX);
+            }catch(InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
         }
     }

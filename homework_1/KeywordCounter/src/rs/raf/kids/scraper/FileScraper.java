@@ -14,7 +14,7 @@ public class FileScraper implements Scraper {
         try {
             file = Files.readString(Paths.get(path));
         }catch(IOException e) {
-            Log.e(Res.ERROR_SCAN_FILE);
+            Log.e(String.format(Res.FORMAT_ERROR, Res.ERROR_SCAN_FILE, path));
         }
 
         return file != null ? file : "";

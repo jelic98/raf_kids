@@ -101,7 +101,11 @@ class Commander {
             Map<String, Integer> result = resultRetriever.getResult(q);
             JsonObject<String, Integer> json = new JsonObject<>(result);
 
-            Log.i(json.toString());
+            if(result.isEmpty()) {
+                Log.e(String.format(Res.FORMAT_ERROR, Res.ERROR_CORPUS_NOT_FOUND, q.getPath()));
+            }else {
+                Log.i(json.toString());
+            }
         }
     }
 
@@ -115,6 +119,8 @@ class Commander {
         }else {
             resultRetriever.queryResult(q);
         }
+
+        // TODO If corpus does not exist report error like in getResultSync method
     }
 
     void clearSummaryFile() {

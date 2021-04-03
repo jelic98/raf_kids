@@ -11,6 +11,7 @@ public class Res {
     public static final String ERROR_SCAN_FILE = "Cannot scan file";
     public static final String ERROR_SCAN_WEB = "Cannot scan web page";
     public static final String ERROR_HOP_COUNT = "Hop count property is not a number";
+    public static final String ERROR_CORPUS_NOT_FOUND = "Corpus not found";
 
     public static final String INPUT_COMMAND = "Enter command";
 
@@ -29,9 +30,10 @@ public class Res {
 
     public static final String FORMAT_DATE = "MM/dd/yyyy HH:mm:ss";
     public static final String FORMAT_LOG = "[%s] %s";
-    public static final String FORMAT_RESULT = "%s: %s";
     public static final String FORMAT_KEYWORD = " %s ";
     public static final String FORMAT_INPUT = ">>> ";
+    public static final String FORMAT_RESULT = "%s: %s";
+    public static final String FORMAT_ERROR = "%s: %s";
     public static final String FORMAT_URL = "(?<=href=\")https?://[^\"]*(?=\")";
 
     public static final String CMD_ADD_DIRECTORY = "ad";

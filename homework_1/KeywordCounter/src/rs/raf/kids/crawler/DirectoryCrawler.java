@@ -50,7 +50,7 @@ class DirectoryCrawler extends AbstractCrawler {
         File root = new File(path);
 
         if(!root.exists()) {
-            Log.e(Res.ERROR_ADD_DIRECTORY);
+            Log.e(String.format(Res.FORMAT_ERROR, Res.ERROR_ADD_DIRECTORY, path));
             return;
         }
 

@@ -1,7 +1,10 @@
 package rs.raf.kids.result;
 
+import rs.raf.kids.core.Res;
 import rs.raf.kids.job.Job;
 import rs.raf.kids.job.ScanType;
+import rs.raf.kids.log.Log;
+
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;

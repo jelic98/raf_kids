@@ -2,8 +2,8 @@ package rs.raf.kids.crawler;
 
 import rs.raf.kids.core.Property;
 import rs.raf.kids.core.Res;
-import rs.raf.kids.job.Job;
 import rs.raf.kids.job.JobQueue;
+import rs.raf.kids.job.ScanType;
 import rs.raf.kids.log.Log;
 import java.io.File;
 import java.text.DateFormat;
@@ -86,7 +86,7 @@ class DirectoryCrawler extends AbstractCrawler {
 
             this.metadata.put(path, metadata);
 
-            addJob(path, Job.ScanType.FILE);
+            addJob(path, ScanType.FILE);
         }
     }
 }

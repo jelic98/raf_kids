@@ -5,7 +5,7 @@ import rs.raf.kids.core.Res;
 import rs.raf.kids.job.Job;
 import rs.raf.kids.result.ResultRetriever;
 import rs.raf.kids.scraper.Scraper;
-import rs.raf.kids.util.WordCounter;
+
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -14,7 +14,6 @@ abstract class AbstractScanner implements PathScanner {
 
     private ResultRetriever resultRetriever;
     private Scraper scraper;
-    private WordCounter counter;
     private String[] keywords;
     private ExecutorService pool;
 
@@ -22,7 +21,6 @@ abstract class AbstractScanner implements PathScanner {
         this.resultRetriever = resultRetriever;
 
         scraper = getScraper();
-        counter = new WordCounter();
         keywords = Property.KEYWORDS.get().split(",");
         pool = Executors.newWorkStealingPool(Res.CONST_CPU_CORES_OTAL);
     }
@@ -60,12 +58,19 @@ abstract class AbstractScanner implements PathScanner {
             Map<String, Integer> counts = new HashMap<>();
 
             for(String keyword : keywords) {
-                int count = counter.count(content, keyword);
+                int count = countWords(content, keyword);
                 counts.put(keyword, count);
             }
 
             publishResult(job, counts);
         }
+    }
+
+    private int countWords(String text, String word) {
+        String sep = String.format(Res.FORMAT_KEYWORD, word);
+        String[] counts = text.split(sep);
+
+        return counts.length - 1;
     }
 
     protected abstract Scraper getScraper();

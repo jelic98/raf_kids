@@ -2,8 +2,8 @@ package rs.raf.kids.crawler;
 
 import rs.raf.kids.core.Property;
 import rs.raf.kids.core.Res;
-import rs.raf.kids.job.Job;
 import rs.raf.kids.job.JobQueue;
+import rs.raf.kids.job.ScanType;
 import rs.raf.kids.log.Log;
 import rs.raf.kids.scraper.WebScraper;
 import java.util.LinkedList;
@@ -28,7 +28,7 @@ class WebCrawler extends AbstractCrawler {
         base.push(path);
         hops.add(base);
 
-        addJob(path, Job.ScanType.WEB);
+        addJob(path, ScanType.WEB);
 
         WebScraper scraper = new WebScraper();
 
@@ -44,7 +44,7 @@ class WebCrawler extends AbstractCrawler {
                 while(m.find()) {
                     String url = m.group();
                     hop.push(url);
-                    addJob(url, Job.ScanType.WEB);
+                    addJob(url, ScanType.WEB);
                 }
             }
 

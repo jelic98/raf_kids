@@ -1,19 +1,45 @@
 package rs.raf.kids.core;
 
-import rs.raf.kids.job.Job;
-import rs.raf.kids.job.JobDispatcher;
-import rs.raf.kids.job.JobQueue;
-import rs.raf.kids.job.ScanningJobQueue;
+import rs.raf.kids.job.*;
 import rs.raf.kids.log.Log;
 import rs.raf.kids.crawler.CrawlerDispatcher;
 import rs.raf.kids.result.ResultRetriever;
 import rs.raf.kids.result.ResultRetrieverPool;
-import rs.raf.kids.util.JsonObject;
-import rs.raf.kids.util.Query;
-
+import rs.raf.kids.result.Query;
 import java.util.Map;
 
 class Commander {
+
+    private class JsonObject<K, V> {
+
+        private Map<K, V> map;
+
+        public JsonObject(Map<K, V> map) {
+            this.map = map;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append("{");
+
+            int i = 0;
+
+            for(Map.Entry<K, V> e : map.entrySet()) {
+                if(i++ > 0) {
+                    sb.append(", ");
+                }
+
+                sb.append(e.getKey());
+                sb.append("=");
+                sb.append(e.getValue());
+            }
+
+            sb.append("}");
+
+            return sb.toString();
+        }
+    }
 
     private JobQueue jobQueue;
     private JobDispatcher jobDispatcher;
@@ -48,13 +74,13 @@ class Commander {
     void addDirectory(String path) {
         Log.i(Res.INFO_ADD_DIRECTORY);
 
-        crawlerDispatcher.addPath(path, Job.ScanType.FILE);
+        crawlerDispatcher.addPath(path, ScanType.FILE);
     }
 
     void addWeb(String domain) {
         Log.i(Res.INFO_ADD_WEB);
 
-        crawlerDispatcher.addPath(domain, Job.ScanType.WEB);
+        crawlerDispatcher.addPath(domain, ScanType.WEB);
     }
 
     void getResultSync(String query) {
@@ -63,7 +89,7 @@ class Commander {
         Query q = new Query(query);
 
         if(query.endsWith(Res.CMD_SUMMARY)) {
-            Map<String, Map<String, Integer>> result = resultRetriever.getSummary(Job.ScanType.FILE);
+            Map<String, Map<String, Integer>> result = resultRetriever.getSummary(ScanType.FILE);
         }else {
             Map<String, Integer> result = resultRetriever.getResult(q);
             JsonObject<String, Integer> json = new JsonObject<>(result);
@@ -78,7 +104,7 @@ class Commander {
         Query q = new Query(query);
 
         if(query.endsWith(Res.CMD_SUMMARY)) {
-            resultRetriever.querySummary(Job.ScanType.FILE);
+            resultRetriever.querySummary(ScanType.FILE);
         }else {
             resultRetriever.queryResult(q);
         }
@@ -87,12 +113,12 @@ class Commander {
     void clearSummaryFile() {
         Log.i(Res.INFO_CLEAR_SUMMARY_FILE);
 
-        resultRetriever.clearSummary(Job.ScanType.FILE);
+        resultRetriever.clearSummary(ScanType.FILE);
     }
 
     void clearSummaryWeb() {
         Log.i(Res.INFO_CLEAR_SUMMARY_WEB);
 
-        resultRetriever.clearSummary(Job.ScanType.WEB);
+        resultRetriever.clearSummary(ScanType.WEB);
     }
 }

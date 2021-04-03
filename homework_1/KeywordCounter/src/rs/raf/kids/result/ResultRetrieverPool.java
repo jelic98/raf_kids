@@ -1,14 +1,12 @@
 package rs.raf.kids.result;
 
 import rs.raf.kids.job.Job;
-import rs.raf.kids.util.Query;
-
+import rs.raf.kids.job.ScanType;g
 import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 public class ResultRetrieverPool implements ResultRetriever {
 
@@ -26,7 +24,7 @@ public class ResultRetrieverPool implements ResultRetriever {
             return job.getPath();
         }
 
-        public Job.ScanType getScanType() {
+        public ScanType getScanType() {
             return job.getScanType();
         }
 
@@ -60,17 +58,17 @@ public class ResultRetrieverPool implements ResultRetriever {
     }
 
     @Override
-    public Map<String, Map<String, Integer>> getSummary(Job.ScanType scanType) {
+    public Map<String, Map<String, Integer>> getSummary(ScanType scanType) {
         return null;
     }
 
     @Override
-    public Map<String, Map<String, Integer>> querySummary(Job.ScanType scanType) {
+    public Map<String, Map<String, Integer>> querySummary(ScanType scanType) {
         return null;
     }
 
     @Override
-    public void clearSummary(Job.ScanType scanType) {
+    public void clearSummary(ScanType scanType) {
 
     }
 
@@ -81,8 +79,8 @@ public class ResultRetrieverPool implements ResultRetriever {
         results.add(result);
     }
 
-    private boolean shouldCombineResults(Result result, Job.ScanType scanType, String path) {
-        if(scanType == Job.ScanType.FILE) {
+    private boolean shouldCombineResults(Result result, ScanType scanType, String path) {
+        if(scanType == ScanType.FILE) {
             path = new File(path).getAbsolutePath();
         }
 

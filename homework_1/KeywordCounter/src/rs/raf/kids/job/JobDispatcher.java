@@ -10,15 +10,15 @@ import java.util.Map;
 public class JobDispatcher {
 
     private JobQueue jobQueue;
-    private Map<Job.ScanType, PathScanner> scanners;
+    private Map<ScanType, PathScanner> scanners;
     private Thread thread;
 
     public JobDispatcher(JobQueue jobQueue, ResultRetriever resultRetriever) {
         this.jobQueue = jobQueue;
 
         scanners = new HashMap<>();
-        scanners.put(Job.ScanType.FILE, new FileScannerPool(resultRetriever));
-        scanners.put(Job.ScanType.WEB, new WebScannerPool(resultRetriever));
+        scanners.put(ScanType.FILE, new FileScannerPool(resultRetriever));
+        scanners.put(ScanType.WEB, new WebScannerPool(resultRetriever));
 
         thread = new Thread(new Runnable() {
             @Override
@@ -33,9 +33,9 @@ public class JobDispatcher {
         while(true) {
             try {
                 Job job = jobQueue.dequeue();
-                Job.ScanType scanType = job.getScanType();
+                ScanType scanType = job.getScanType();
 
-                if(scanType == Job.ScanType.POISON) {
+                if(scanType == ScanType.POISON) {
                     for(PathScanner scanner : scanners.values()) {
                         scanner.stop();
                     }

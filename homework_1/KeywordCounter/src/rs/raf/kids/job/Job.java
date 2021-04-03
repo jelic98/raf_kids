@@ -2,12 +2,6 @@ package rs.raf.kids.job;
 
 public class Job {
 
-    public enum ScanType {
-        FILE,
-        WEB,
-        POISON
-    }
-
     private final String path;
     private final ScanType scanType;
 

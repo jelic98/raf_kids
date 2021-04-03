@@ -2,6 +2,7 @@ package rs.raf.kids.crawler;
 
 import rs.raf.kids.job.Job;
 import rs.raf.kids.job.JobQueue;
+import rs.raf.kids.job.ScanType;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -17,7 +18,7 @@ abstract class AbstractCrawler implements PathCrawler {
     }
 
     @Override
-    public void addPath(String path, Job.ScanType scanType) {
+    public void addPath(String path, ScanType scanType) {
         pool.execute(new Runnable() {
             @Override
             public void run() {
@@ -31,7 +32,7 @@ abstract class AbstractCrawler implements PathCrawler {
         pool.shutdown();
     }
 
-    protected void addJob(String path, Job.ScanType scanType) {
+    protected void addJob(String path, ScanType scanType) {
         try {
             jobQueue.enqueue(new Job(path, scanType));
         }catch(InterruptedException e) {

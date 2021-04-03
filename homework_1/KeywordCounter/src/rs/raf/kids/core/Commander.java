@@ -9,6 +9,7 @@ import rs.raf.kids.crawler.CrawlerDispatcher;
 import rs.raf.kids.result.ResultRetriever;
 import rs.raf.kids.result.ResultRetrieverPool;
 import rs.raf.kids.util.JsonObject;
+import rs.raf.kids.util.Query;
 
 import java.util.Map;
 
@@ -59,10 +60,12 @@ class Commander {
     void getResultSync(String query) {
         Log.i(Res.INFO_GET_RESULT_SYNC);
 
+        Query q = new Query(query);
+
         if(query.endsWith(Res.CMD_SUMMARY)) {
             Map<String, Map<String, Integer>> result = resultRetriever.getSummary(Job.ScanType.FILE);
         }else {
-            Map<String, Integer> result = resultRetriever.getResult(query);
+            Map<String, Integer> result = resultRetriever.getResult(q);
             JsonObject<String, Integer> json = new JsonObject<>(result);
 
             Log.i(json.toString());
@@ -72,10 +75,12 @@ class Commander {
     void getResultAsync(String query) {
         Log.i(Res.INFO_GET_RESULT_ASYNC);
 
+        Query q = new Query(query);
+
         if(query.endsWith(Res.CMD_SUMMARY)) {
             resultRetriever.querySummary(Job.ScanType.FILE);
         }else {
-            resultRetriever.queryResult(query);
+            resultRetriever.queryResult(q);
         }
     }
 

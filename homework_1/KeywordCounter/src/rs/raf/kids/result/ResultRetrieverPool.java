@@ -1,6 +1,8 @@
 package rs.raf.kids.result;
 
 import rs.raf.kids.job.Job;
+import rs.raf.kids.util.Query;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -40,15 +42,11 @@ public class ResultRetrieverPool implements ResultRetriever {
     }
 
     @Override
-    public Map<String, Integer> getResult(String query) {
-        String[] tokens = query.split(Pattern.quote("|"));
-        Job.ScanType scanType = Job.ScanType.valueOf(tokens[0].trim().toUpperCase());
-        String path = tokens[1].trim();
-
+    public Map<String, Integer> getResult(Query query) {
         Map<String, Integer> counts = new HashMap<>();
 
         for(Result result : results) {
-            if(shouldCombineResults(result, scanType, path)) {
+            if(shouldCombineResults(result, query.getScanType(), query.getPath())) {
                 combineResults(counts, result);
             }
         }
@@ -57,7 +55,7 @@ public class ResultRetrieverPool implements ResultRetriever {
     }
 
     @Override
-    public Map<String, Integer> queryResult(String query) {
+    public Map<String, Integer> queryResult(Query query) {
         return null;
     }
 

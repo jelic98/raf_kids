@@ -14,12 +14,15 @@ public class FileScannerPool extends AbstractScanner {
     private Queue<Job> jobBuffer;
     private long bufferSize;
     private final long BUFFER_SIZE_MAX;
+    private final long BUFFER_TIMEOUT_MAX;
+    private Thread thread;
 
     public FileScannerPool(ResultRetriever resultRetriever) {
         super(resultRetriever);
 
         jobBuffer = new LinkedList<>();
         BUFFER_SIZE_MAX = Long.parseLong(Property.FILE_SCANNING_SIZE_LIMIT.get());
+        BUFFER_TIMEOUT_MAX = Long.parseLong(Property.BUFFER_TIMEOUT.get());
     }
 
     @Override
@@ -31,8 +34,26 @@ public class FileScannerPool extends AbstractScanner {
     public void scanJobPath(Job job) {
         addJob(job);
 
+        if(thread != null && thread.isAlive()) {
+            thread.interrupt();
+        }
+
         if(bufferSize > BUFFER_SIZE_MAX) {
             clearBuffer();
+        }else {
+            thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(BUFFER_TIMEOUT_MAX);
+                        clearBuffer();
+                    }catch(InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            });
+            thread.setDaemon(true);
+            thread.start();
         }
     }
 

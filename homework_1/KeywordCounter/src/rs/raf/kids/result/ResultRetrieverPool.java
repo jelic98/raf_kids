@@ -1,9 +1,6 @@
 package rs.raf.kids.result;
 
-import rs.raf.kids.core.Res;
 import rs.raf.kids.job.Job;
-import rs.raf.kids.log.Log;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -13,7 +10,7 @@ import java.util.regex.Pattern;
 
 public class ResultRetrieverPool implements ResultRetriever {
 
-    private class Result {
+    private static class Result {
 
         private Job job;
         private Map<String, Integer> counts;
@@ -50,9 +47,9 @@ public class ResultRetrieverPool implements ResultRetriever {
 
         Map<String, Integer> counts = new HashMap<>();
 
-        for(Result r : results) {
-            if(shouldCombineResults(r, scanType, path)) {
-                combineResults(counts, r);
+        for(Result result : results) {
+            if(shouldCombineResults(result, scanType, path)) {
+                combineResults(counts, result);
             }
         }
 

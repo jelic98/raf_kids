@@ -3,10 +3,9 @@ package rs.raf.kids.result;
 import rs.raf.kids.job.Job;
 import rs.raf.kids.job.ScanType;
 import java.io.File;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.*;
 
 public class ResultRetrieverPool implements ResultRetriever {
 
@@ -59,7 +58,15 @@ public class ResultRetrieverPool implements ResultRetriever {
 
     @Override
     public Map<String, Map<String, Integer>> getSummary(ScanType scanType) {
-        return null;
+        Map<String, Map<String, Integer>> summary = new HashMap<>();
+
+        for(Result result : results) {
+            if(shouldSummarizeResults(result, scanType)) {
+                summarizeResults(summary, result);
+            }
+        }
+
+        return summary;
     }
 
     @Override
@@ -69,7 +76,7 @@ public class ResultRetrieverPool implements ResultRetriever {
 
     @Override
     public void clearSummary(ScanType scanType) {
-
+        results.removeIf(result -> result.getScanType() == scanType);
     }
 
     @Override
@@ -79,19 +86,15 @@ public class ResultRetrieverPool implements ResultRetriever {
         results.add(result);
     }
 
-    private boolean shouldCombineResults(Result result, ScanType scanType, String path) {
+    private boolean shouldCombineResults(Result result, ScanType scanType, String parent) {
         if(scanType == ScanType.FILE) {
-            path = new File(path).getAbsolutePath();
+            parent = new File(parent).getAbsolutePath();
         }
 
         boolean typeOk = result.getScanType() == scanType;
-        boolean parentOk = childInParent(result.getPath(), path);
+        boolean parentOk = childInParent(result.getPath(), parent);
 
         return typeOk && parentOk;
-    }
-
-    private boolean childInParent(String child, String parent) {
-        return child.startsWith(parent);
     }
 
     private void combineResults(Map<String, Integer> counts, Result result) {
@@ -103,6 +106,43 @@ public class ResultRetrieverPool implements ResultRetriever {
             count += counts.get(keyword);
 
             counts.put(keyword, count);
+        }
+    }
+
+    private boolean shouldSummarizeResults(Result result, ScanType scanType) {
+        return result.getScanType() == scanType;
+    }
+
+    private void summarizeResults(Map<String, Map<String, Integer>> summary, Result result) {
+        String parent = getParent(result);
+
+        if(parent != null) {
+            summary.putIfAbsent(parent, new HashMap<>());
+            combineResults(summary.get(parent), result);
+        }
+    }
+
+    private boolean childInParent(String child, String parent) {
+        return child.startsWith(parent);
+    }
+
+    private String getParent(Result result) {
+        ScanType scanType = result.getScanType();
+        String path = result.getPath();
+        String parent;
+
+        if(scanType == ScanType.FILE) {
+            return new File(path).getParentFile().getName();
+        }else if(scanType == ScanType.WEB) {
+            try {
+                parent = new URI(path).getHost();
+            }catch(URISyntaxException e) {
+                return null;
+            }
+
+            return parent.startsWith("www.") ? parent.substring(4) : parent;
+        }else {
+            return null;
         }
     }
 }

@@ -90,6 +90,13 @@ class Commander {
 
         if(query.endsWith(Res.CMD_SUMMARY)) {
             Map<String, Map<String, Integer>> result = resultRetriever.getSummary(ScanType.FILE);
+
+            for(Map.Entry<String, Map<String, Integer>> e : result.entrySet()) {
+                String parent = e.getKey();
+                JsonObject<String, Integer> json = new JsonObject<>(e.getValue());
+
+                Log.i(String.format(Res.FORMAT_RESULT, parent, json));
+            }
         }else {
             Map<String, Integer> result = resultRetriever.getResult(q);
             JsonObject<String, Integer> json = new JsonObject<>(result);

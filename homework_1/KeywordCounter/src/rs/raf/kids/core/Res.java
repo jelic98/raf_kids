@@ -29,6 +29,7 @@ public class Res {
 
     public static final String FORMAT_DATE = "MM/dd/yyyy HH:mm:ss";
     public static final String FORMAT_LOG = "[%s] %s";
+    public static final String FORMAT_RESULT = "%s: %s";
     public static final String FORMAT_KEYWORD = " %s ";
     public static final String FORMAT_INPUT = ">>> ";
     public static final String FORMAT_URL = "(?<=href=\")https?://[^\"]*(?=\")";

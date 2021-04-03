@@ -36,6 +36,7 @@ abstract class AbstractCrawler implements PathCrawler {
         try {
             jobQueue.enqueue(new Job(path, scanType));
         }catch(InterruptedException e) {
+            // TODO Handle this and all other InterruptedExceptions better
             e.printStackTrace();
         }
     }

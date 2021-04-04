@@ -22,10 +22,6 @@ class DirectoryCrawler extends AbstractCrawler {
             this.lastModified = lastModified;
         }
 
-        public String getLastModified() {
-            return lastModified;
-        }
-
         @Override
         public boolean equals(Object obj) {
             if(obj instanceof Metadata) {
@@ -49,7 +45,7 @@ class DirectoryCrawler extends AbstractCrawler {
 
     @Override
     protected void crawl(String path) {
-        while(true) {
+        while(!Thread.currentThread().isInterrupted()) {
             File root = new File(path);
 
             if(!root.exists()) {

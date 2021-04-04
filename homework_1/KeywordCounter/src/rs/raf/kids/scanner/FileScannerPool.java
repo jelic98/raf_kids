@@ -57,6 +57,15 @@ public class FileScannerPool extends AbstractScanner {
         }
     }
 
+    @Override
+    public void stop() {
+        super.stop();
+
+        if(thread != null) {
+            thread.interrupt();
+        }
+    }
+
     private void addJob(Job job) {
         String path = job.getPath();
         File file = new File(path);

@@ -6,20 +6,37 @@ import rs.raf.kids.job.JobQueue;
 import rs.raf.kids.job.ScanType;
 import rs.raf.kids.log.Log;
 import rs.raf.kids.scraper.WebScraper;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 class WebCrawler extends AbstractCrawler {
 
     private List<Stack<String>> hops;
+    private Set<String> scannedPaths;
+    private Thread thread;
+    private final long URL_REFRESH_TIMEOUT;
 
     WebCrawler(JobQueue jobQueue) {
         super(jobQueue);
 
         hops = new LinkedList<>();
+        scannedPaths = new HashSet<>();
+        URL_REFRESH_TIMEOUT = Long.parseLong(Property.URL_REFRESH_TIME.get());
+
+        thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(URL_REFRESH_TIMEOUT);
+                    scannedPaths.clear();
+                }catch(InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        });
+        thread.setDaemon(true);
+        thread.start();
     }
 
     @Override
@@ -62,6 +79,15 @@ class WebCrawler extends AbstractCrawler {
 
         if(!invalidPath) {
             addJob(path, ScanType.WEB);
+        }
+    }
+
+    @Override
+    protected void addJob(String path, ScanType scanType) {
+        if(!scannedPaths.contains(path)) {
+            scannedPaths.add(path);
+
+            super.addJob(path, scanType);
         }
     }
 

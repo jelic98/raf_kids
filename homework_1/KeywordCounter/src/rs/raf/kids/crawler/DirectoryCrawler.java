@@ -34,13 +34,13 @@ class DirectoryCrawler extends AbstractCrawler {
     }
 
     private Map<String, Metadata> metadata;
-    private final long DIR_SLEEP_MAX;
+    private final long DIR_REFRESH_TIMEOUT;
 
     DirectoryCrawler(JobQueue jobQueue) {
         super(jobQueue);
 
         metadata = new HashMap<>();
-        DIR_SLEEP_MAX = Long.parseLong(Property.DIR_CRAWLER_SLEEP_TIME.get());
+        DIR_REFRESH_TIMEOUT = Long.parseLong(Property.DIR_CRAWLER_SLEEP_TIME.get());
     }
 
     @Override
@@ -60,7 +60,7 @@ class DirectoryCrawler extends AbstractCrawler {
             }
 
             try {
-                Thread.sleep(DIR_SLEEP_MAX);
+                Thread.sleep(DIR_REFRESH_TIMEOUT);
             }catch(InterruptedException e) {
                 Thread.currentThread().interrupt();
             }

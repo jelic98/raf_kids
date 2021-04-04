@@ -12,6 +12,7 @@ public class Res {
     public static final String ERROR_SCAN_WEB = "Cannot scan web page";
     public static final String ERROR_HOP_COUNT = "Hop count property is not a number";
     public static final String ERROR_CORPUS_NOT_FOUND = "Corpus not found";
+    public static final String ERROR_CORPUS_NOT_FINISHED = "Calculating corpus not finished";
 
     public static final String INPUT_COMMAND = "Enter command";
 

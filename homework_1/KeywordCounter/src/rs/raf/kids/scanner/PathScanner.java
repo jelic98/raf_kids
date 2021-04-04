@@ -1,11 +1,11 @@
 package rs.raf.kids.scanner;
 
 import rs.raf.kids.job.Job;
-import java.util.Map;
+import rs.raf.kids.result.Result;
 
 public interface PathScanner {
 
     void scanJobPath(Job job);
-    void publishResult(Job job, Map<String, Integer> counts);
+    Result publishResult(Job job);
     void stop();
 }

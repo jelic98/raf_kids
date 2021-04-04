@@ -3,9 +3,9 @@ package rs.raf.kids.scanner;
 import rs.raf.kids.core.Property;
 import rs.raf.kids.core.Res;
 import rs.raf.kids.job.Job;
+import rs.raf.kids.result.Result;
 import rs.raf.kids.result.ResultRetriever;
 import rs.raf.kids.scraper.Scraper;
-
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -26,8 +26,11 @@ abstract class AbstractScanner implements PathScanner {
     }
 
     @Override
-    public void publishResult(Job job, Map<String, Integer> counts) {
-        resultRetriever.addResult(job, counts);
+    public Result publishResult(Job job) {
+        Result result = new Result(job);
+        resultRetriever.addResult(result);
+
+        return result;
     }
 
     @Override
@@ -52,21 +55,27 @@ abstract class AbstractScanner implements PathScanner {
     private void scan(Queue<Job> jobBuffer) {
         while(!jobBuffer.isEmpty()) {
             Job job = jobBuffer.remove();
-            String path = job.getPath();
-            String content = scraper.getContent(path);
+            Result result = publishResult(job);
 
-            Map<String, Integer> counts = new HashMap<>();
+            String content = scraper.getContent(job.getPath());
+            Map<String, Integer> counts = countWords(content, keywords);
 
-            for(String keyword : keywords) {
-                int count = countWords(content, keyword);
-                counts.put(keyword, count);
-            }
-
-            publishResult(job, counts);
+            result.combine(counts);
         }
     }
 
-    private int countWords(String text, String word) {
+    private Map<String, Integer> countWords(String text, String[] words) {
+        Map<String, Integer> counts = new HashMap<>();
+
+        for(String word : words) {
+            int count = countWord(text, word);
+            counts.put(word, count);
+        }
+
+        return counts;
+    }
+
+    private int countWord(String text, String word) {
         String sep = String.format(Res.FORMAT_KEYWORD, word);
         String[] counts = text.split(sep);
 

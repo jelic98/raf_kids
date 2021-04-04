@@ -86,41 +86,14 @@ class Commander {
     void getResultSync(String query) {
         Log.i(Res.INFO_GET_RESULT_SYNC);
 
-        Query q = new Query(query);
-
-        if(query.endsWith(Res.CMD_SUMMARY)) {
-            Map<String, Map<String, Integer>> result = resultRetriever.getSummary(ScanType.FILE);
-
-            for(Map.Entry<String, Map<String, Integer>> e : result.entrySet()) {
-                String parent = e.getKey();
-                JsonObject<String, Integer> json = new JsonObject<>(e.getValue());
-
-                Log.i(String.format(Res.FORMAT_RESULT, parent, json));
-            }
-        }else {
-            Map<String, Integer> result = resultRetriever.getResult(q);
-            JsonObject<String, Integer> json = new JsonObject<>(result);
-
-            if(result.isEmpty()) {
-                Log.e(String.format(Res.FORMAT_ERROR, Res.ERROR_CORPUS_NOT_FOUND, q.getPath()));
-            }else {
-                Log.i(json.toString());
-            }
-        }
+        handleQuery(query);
     }
 
     void getResultAsync(String query) {
         Log.i(Res.INFO_GET_RESULT_ASYNC);
 
-        Query q = new Query(query);
-
-        if(query.endsWith(Res.CMD_SUMMARY)) {
-            resultRetriever.querySummary(ScanType.FILE);
-        }else {
-            resultRetriever.queryResult(q);
-        }
-
-        // TODO If corpus does not exist report error like in getResultSync method
+        // TODO Create a new thread for this
+        handleQuery(query);
     }
 
     void clearSummaryFile() {
@@ -133,5 +106,37 @@ class Commander {
         Log.i(Res.INFO_CLEAR_SUMMARY_WEB);
 
         resultRetriever.clearSummary(ScanType.WEB);
+    }
+
+    private void handleQuery(String query) {
+        Query q = new Query(query);
+
+        if(query.endsWith(Res.CMD_SUMMARY)) {
+            Map<String, Map<String, Integer>> result = resultRetriever.getSummary(q.getScanType());
+
+            if(result == null) {
+                return;
+            }
+
+            for(Map.Entry<String, Map<String, Integer>> e : result.entrySet()) {
+                String parent = e.getKey();
+                JsonObject<String, Integer> json = new JsonObject<>(e.getValue());
+
+                Log.i(String.format(Res.FORMAT_RESULT, parent, json));
+            }
+        }else {
+            Map<String, Integer> result = resultRetriever.getResult(q);
+            JsonObject<String, Integer> json = new JsonObject<>(result);
+
+            if(result == null) {
+                return;
+            }
+
+            if(result.isEmpty()) {
+                Log.e(String.format(Res.FORMAT_ERROR, Res.ERROR_CORPUS_NOT_FOUND, q.getPath()));
+            }else {
+                Log.i(json.toString());
+            }
+        }
     }
 }

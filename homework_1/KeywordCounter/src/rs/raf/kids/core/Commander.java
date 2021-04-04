@@ -110,23 +110,33 @@ class Commander {
 
     private void handleQuery(String query) {
         Query q = new Query(query);
+        ScanType scanType = q.getScanType();
 
         if(query.endsWith(Res.CMD_SUMMARY)) {
-            Map<String, Map<String, Integer>> result = resultRetriever.getSummary(q.getScanType());
+            Map<String, Map<String, Integer>> result = null;
+
+            if(scanType == ScanType.FILE) {
+                result = resultRetriever.getSummary(scanType);
+            }else if(scanType == ScanType.WEB) {
+                result = resultRetriever.querySummary(scanType);
+            }
 
             if(result == null) {
                 return;
             }
 
             for(Map.Entry<String, Map<String, Integer>> e : result.entrySet()) {
-                String parent = e.getKey();
                 JsonObject<String, Integer> json = new JsonObject<>(e.getValue());
-
-                Log.i(String.format(Res.FORMAT_RESULT, parent, json));
+                Log.i(String.format(Res.FORMAT_RESULT, e.getKey(), json));
             }
         }else {
-            Map<String, Integer> result = resultRetriever.getResult(q);
-            JsonObject<String, Integer> json = new JsonObject<>(result);
+            Map<String, Integer> result = null;
+
+            if(scanType == ScanType.FILE) {
+                result = resultRetriever.getResult(q);
+            }else if(scanType == ScanType.WEB) {
+                result = resultRetriever.queryResult(q);
+            }
 
             if(result == null) {
                 return;
@@ -135,6 +145,7 @@ class Commander {
             if(result.isEmpty()) {
                 Log.e(String.format(Res.FORMAT_ERROR, Res.ERROR_CORPUS_NOT_FOUND, q.getPath()));
             }else {
+                JsonObject<String, Integer> json = new JsonObject<>(result);
                 Log.i(json.toString());
             }
         }

@@ -62,7 +62,7 @@ class Commander {
             public void run() {
                 while(true) {
                     try {
-                        handleQuery(queries.take());
+                        handleQuery(queries.take(), false);
                     }catch(InterruptedException e) {
                         Thread.currentThread().interrupt();
                     }
@@ -106,7 +106,7 @@ class Commander {
     void getResultSync(String query) {
         Log.i(Res.INFO_GET_RESULT_SYNC);
 
-        handleQuery(query);
+        handleQuery(query, true);
     }
 
     void getResultAsync(String query) {
@@ -131,16 +131,16 @@ class Commander {
         resultRetriever.clearSummary(ScanType.WEB);
     }
 
-    private void handleQuery(String query) {
+    private void handleQuery(String query, boolean sync) {
         Query q = new Query(query);
         ScanType scanType = q.getScanType();
 
         if(query.endsWith(Res.CMD_SUMMARY)) {
-            Map<String, Map<String, Integer>> result = null;
+            Map<String, Map<String, Integer>> result;
 
-            if(scanType == ScanType.FILE) {
+            if(sync) {
                 result = resultRetriever.getSummary(scanType);
-            }else if(scanType == ScanType.WEB) {
+            }else {
                 result = resultRetriever.querySummary(scanType);
             }
 
@@ -153,11 +153,11 @@ class Commander {
                 Log.i(String.format(Res.FORMAT_RESULT, e.getKey(), json));
             }
         }else {
-            Map<String, Integer> result = null;
+            Map<String, Integer> result;
 
-            if(scanType == ScanType.FILE) {
+            if(sync) {
                 result = resultRetriever.getResult(q);
-            }else if(scanType == ScanType.WEB) {
+            }else {
                 result = resultRetriever.queryResult(q);
             }
 

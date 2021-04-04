@@ -1,6 +1,8 @@
 package rs.raf.kids.result;
 
 import rs.raf.kids.job.ScanType;
+import rs.raf.kids.log.Log;
+
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -21,7 +23,7 @@ abstract class AbstractResultHandler {
         cacheSummary = new HashMap<>();
     }
 
-    protected Map<String, Integer> handleResult(Query query) {
+    Map<String, Integer> handleResult(Query query) {
         if(cacheResult.containsKey(query)) {
             return cacheResult.get(query);
         }
@@ -39,7 +41,7 @@ abstract class AbstractResultHandler {
         return counts;
     }
 
-    protected Map<String, Map<String, Integer>> handleSummary(ScanType scanType) {
+    Map<String, Map<String, Integer>> handleSummary(ScanType scanType) {
         if(cacheSummary.containsKey(scanType)) {
             return cacheSummary.get(scanType);
         }
@@ -58,12 +60,8 @@ abstract class AbstractResultHandler {
     }
 
     protected boolean shouldCombineResults(Result result, ScanType scanType, String parent) {
-        if(scanType == ScanType.FILE) {
-            parent = new File(parent).getAbsolutePath();
-        }
-
         boolean typeOk = result.getScanType() == scanType;
-        boolean parentOk = childInParent(result.getPath(), parent);
+        boolean parentOk = parent.equals(getParent(result));
 
         return typeOk && parentOk;
     }
@@ -91,10 +89,6 @@ abstract class AbstractResultHandler {
             summary.putIfAbsent(parent, new HashMap<>());
             combineResults(summary.get(parent), result);
         }
-    }
-
-    private boolean childInParent(String child, String parent) {
-        return child.startsWith(parent);
     }
 
     private String getParent(Result result) {

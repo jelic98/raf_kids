@@ -7,6 +7,8 @@ import rs.raf.kids.result.ResultRetriever;
 import rs.raf.kids.result.ResultRetrieverPool;
 import rs.raf.kids.result.Query;
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 class Commander {
 
@@ -45,12 +47,30 @@ class Commander {
     private JobDispatcher jobDispatcher;
     private CrawlerDispatcher crawlerDispatcher;
     private ResultRetriever resultRetriever;
+    private BlockingQueue<String> queries;
+    private Thread thread;
 
     Commander() {
         jobQueue = new ScanningJobQueue();
         resultRetriever = new ResultRetrieverPool();
         crawlerDispatcher = new CrawlerDispatcher(jobQueue);
         jobDispatcher = new JobDispatcher(jobQueue, resultRetriever);
+        queries = new ArrayBlockingQueue<>(Res.CONST_QUERY_QUEUE_SIZE);
+
+        thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true) {
+                    try {
+                        handleQuery(queries.take());
+                    }catch(InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
+        });
+        thread.setDaemon(true);
+        thread.start();
     }
 
     void startThreads() {
@@ -92,8 +112,11 @@ class Commander {
     void getResultAsync(String query) {
         Log.i(Res.INFO_GET_RESULT_ASYNC);
 
-        // TODO Create a new thread for this
-        handleQuery(query);
+        try {
+            queries.put(query);
+        }catch(InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     void clearSummaryFile() {

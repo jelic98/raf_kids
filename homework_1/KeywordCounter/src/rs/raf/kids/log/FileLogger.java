@@ -1,13 +1,12 @@
 package rs.raf.kids.log;
 
 import rs.raf.kids.core.Res;
-
 import java.io.*;
 
 class FileLogger implements Logger {
 
     @Override
-    public void log(String message, boolean breakLine) {
+    public void log(String message, boolean breakLine, boolean error) {
         PrintWriter writer = null;
 
         try {

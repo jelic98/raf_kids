@@ -1,8 +1,6 @@
 package rs.raf.kids.result;
 
 import rs.raf.kids.job.ScanType;
-import rs.raf.kids.log.Log;
-
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -49,6 +47,7 @@ abstract class AbstractResultHandler {
         Map<String, Map<String, Integer>> summary = new HashMap<>();
 
         for(Result result : results) {
+            // TODO Wait for every corpus to be caluclated
             if(handleSummary(result, scanType, summary)) {
                 return null;
             }
@@ -57,6 +56,10 @@ abstract class AbstractResultHandler {
         cacheSummary.put(scanType, summary);
 
         return summary;
+    }
+
+    void clearSummary(ScanType scanType) {
+        cacheSummary.remove(scanType);
     }
 
     protected boolean shouldCombineResults(Result result, ScanType scanType, String parent) {

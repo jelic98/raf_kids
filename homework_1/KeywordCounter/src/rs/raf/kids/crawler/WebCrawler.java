@@ -64,7 +64,7 @@ class WebCrawler extends AbstractCrawler {
                 Matcher m = p.matcher(page);
 
                 while(m.find()) {
-                    String url = m.group();
+                    String url = m.group().replace(" ", "%20");
                     hop.push(url);
                     addJob(url, ScanType.WEB);
                 }

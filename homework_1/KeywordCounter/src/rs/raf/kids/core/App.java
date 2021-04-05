@@ -7,6 +7,8 @@ import java.util.Scanner;
 
 public class App {
 
+    // TODO Every collection needs to be synchronized
+
     public void loadProperties() {
         Scanner s = null;
 
@@ -60,24 +62,26 @@ public class App {
                 param = tokens[1];
             }
 
+            int totalParams = tokens.length - 1;
+
             switch(command) {
                 case Res.CMD_ADD_DIRECTORY:
-                    commander.addDirectory(param);
+                    commander.addDirectory(param, totalParams);
                     break;
                 case Res.CMD_ADD_WEB:
-                    commander.addWeb(param);
+                    commander.addWeb(param, totalParams);
                     break;
                 case Res.CMD_GET_RESULT_SYNC:
-                    commander.getResultSync(param);
+                    commander.getResultSync(param, totalParams);
                     break;
                 case Res.CMD_GET_RESULT_ASYNC:
-                    commander.getResultAsync(param);
+                    commander.getResultAsync(param, totalParams);
                     break;
                 case Res.CMD_CLEAR_FILE_SUMMARY:
-                    commander.clearSummaryFile();
+                    commander.clearSummaryFile(totalParams);
                     break;
                 case Res.CMD_CLEAR_WEB_SUMMARY:
-                    commander.clearSummaryWeb();
+                    commander.clearSummaryWeb(totalParams);
                     break;
                 case Res.CMD_STOP:
                     commander.stopThreads();

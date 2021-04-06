@@ -8,8 +8,8 @@ import java.util.concurrent.Executors;
 
 abstract class AbstractCrawler implements PathCrawler {
 
-    private JobQueue jobQueue;
-    private ExecutorService pool;
+    private final JobQueue jobQueue;
+    private final ExecutorService pool;
 
     protected AbstractCrawler(JobQueue jobQueue) {
         this.jobQueue = jobQueue;

@@ -11,10 +11,10 @@ import java.util.Queue;
 
 public class FileScannerPool extends AbstractScanner {
 
-    private Queue<Job> jobBuffer;
-    private long bufferSize;
+    private final Queue<Job> jobBuffer;
     private final long BUFFER_SIZE_MAX;
     private final long BUFFER_TIMEOUT_MAX;
+    private long bufferSize;
     private Thread thread;
 
     public FileScannerPool(ResultRetriever resultRetriever) {

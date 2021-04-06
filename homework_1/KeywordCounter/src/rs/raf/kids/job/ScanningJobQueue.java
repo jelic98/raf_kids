@@ -6,7 +6,7 @@ import java.util.concurrent.BlockingQueue;
 
 public class ScanningJobQueue implements JobQueue {
 
-    private BlockingQueue<Job> jobs;
+    private final BlockingQueue<Job> jobs;
 
     public ScanningJobQueue() {
         jobs = new ArrayBlockingQueue<>(Res.CONST_JOB_QUEUE_SIZE);

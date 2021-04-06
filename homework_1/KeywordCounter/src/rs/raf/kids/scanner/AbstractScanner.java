@@ -12,10 +12,10 @@ import java.util.concurrent.Executors;
 
 abstract class AbstractScanner implements PathScanner {
 
-    private ResultRetriever resultRetriever;
-    private Scraper scraper;
-    private String[] keywords;
-    private ExecutorService pool;
+    private final ResultRetriever resultRetriever;
+    private final Scraper scraper;
+    private final String[] keywords;
+    private final ExecutorService pool;
 
     protected AbstractScanner(ResultRetriever resultRetriever) {
         this.resultRetriever = resultRetriever;

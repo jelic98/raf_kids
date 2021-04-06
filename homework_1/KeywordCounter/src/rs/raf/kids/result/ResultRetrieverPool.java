@@ -8,12 +8,12 @@ import java.util.concurrent.*;
 
 public class ResultRetrieverPool implements ResultRetriever {
 
-    private Set<Result> results;
-    private AbstractResultHandler getResultHandler, queryResultHandler;
-    private ExecutorService pool;
+    private final Set<Result> results;
+    private final AbstractResultHandler getResultHandler, queryResultHandler;
+    private final ExecutorService pool;
 
     public ResultRetrieverPool() {
-        results = new HashSet<>();
+        results = Collections.newSetFromMap(new ConcurrentHashMap<>());
         getResultHandler = new GetResultHandler(results);
         queryResultHandler = new QueryResultHandler(results);
         pool = Executors.newWorkStealingPool(Res.CONST_CPU_CORES_TOTAL);

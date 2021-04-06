@@ -1,24 +1,30 @@
 package rs.raf.kids.result;
 
 import rs.raf.kids.job.ScanType;
+import rs.raf.kids.log.Log;
+
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 abstract class AbstractResultHandler {
 
-    private Set<Result> results;
-    private Map<Query, Map<String, Integer>> cacheResult;
-    private Map<ScanType, Map<String, Map<String, Integer>>> cacheSummary;
+    private static final Map<Query, Map<String, Integer>> cacheResult;
+    private static final Map<ScanType, Map<String, Map<String, Integer>>> cacheSummary;
+
+    static {
+        cacheResult = new ConcurrentHashMap<>();
+        cacheSummary = new ConcurrentHashMap<>();
+    }
+
+    private final Set<Result> results;
 
     AbstractResultHandler(Set<Result> results) {
         this.results = results;
-
-        cacheResult = new HashMap<>();
-        cacheSummary = new HashMap<>();
     }
 
     Map<String, Integer> handleResult(Query query) {
@@ -34,7 +40,11 @@ abstract class AbstractResultHandler {
             }
         }
 
-        cacheResult.put(query, counts);
+        if(counts.isEmpty()) {
+            return null;
+        }
+
+        cacheResult.putIfAbsent(query, counts);
 
         return counts;
     }
@@ -47,13 +57,14 @@ abstract class AbstractResultHandler {
         Map<String, Map<String, Integer>> summary = new HashMap<>();
 
         for(Result result : results) {
-            // TODO Wait for every corpus to be caluclated
-            if(handleSummary(result, scanType, summary)) {
-                return null;
-            }
+            while(handleSummary(result, scanType, summary));
         }
 
-        cacheSummary.put(scanType, summary);
+        if(summary.isEmpty()) {
+           return null;
+        }
+
+        cacheSummary.putIfAbsent(scanType, summary);
 
         return summary;
     }
@@ -114,6 +125,17 @@ abstract class AbstractResultHandler {
         }
     }
 
+    private boolean handleSummary(Result result, ScanType scanType, Map<String, Map<String, Integer>> summary) {
+        if(shouldSummarizeResults(result, scanType)) {
+            if(result.isDone()) {
+                summarizeResults(summary, result);
+            }else {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     protected abstract boolean handleResult(Result result, Query query, Map<String, Integer> counts);
-    protected abstract boolean handleSummary(Result result, ScanType scanType, Map<String, Map<String, Integer>> summary);
 }

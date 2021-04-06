@@ -4,7 +4,7 @@ import java.util.Map;
 
 public class JsonObject<K, V> {
 
-    private Map<K, V> map;
+    private final Map<K, V> map;
 
     public JsonObject(Map<K, V> map) {
         this.map = map;

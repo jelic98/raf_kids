@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
+import java.util.concurrent.ConcurrentHashMap;
 
 class DirectoryCrawler extends AbstractCrawler {
 
@@ -33,13 +34,13 @@ class DirectoryCrawler extends AbstractCrawler {
         }
     }
 
-    private Map<String, Metadata> metadata;
+    private final Map<String, Metadata> metadata;
     private final long DIR_REFRESH_TIMEOUT;
 
     DirectoryCrawler(JobQueue jobQueue) {
         super(jobQueue);
 
-        metadata = new HashMap<>();
+        metadata = new ConcurrentHashMap<>();
         DIR_REFRESH_TIMEOUT = Long.parseLong(Property.DIR_CRAWLER_SLEEP_TIME.get());
     }
 
@@ -90,7 +91,7 @@ class DirectoryCrawler extends AbstractCrawler {
                 continue;
             }
 
-            this.metadata.put(path, metadata);
+            this.metadata.putIfAbsent(path, metadata);
 
             addJob(path, ScanType.FILE);
         }

@@ -7,8 +7,8 @@ import java.util.Map;
 
 public class Result {
 
-    private Job job;
-    private Map<String, Integer> counts;
+    private final Job job;
+    private final Map<String, Integer> counts;
 
     public Result(Job job) {
         this.job = job;

@@ -6,8 +6,8 @@ import java.util.regex.Pattern;
 
 public class Query {
 
-    private ScanType scanType;
-    private String path;
+    private final ScanType scanType;
+    private final String path;
 
     public Query(String query) {
         String[] tokens = query.split(Pattern.quote("|"));

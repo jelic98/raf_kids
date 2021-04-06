@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class CrawlerDispatcher implements PathCrawler {
 
-    private Map<ScanType, PathCrawler> crawlers;
+    private final Map<ScanType, PathCrawler> crawlers;
 
     public CrawlerDispatcher(JobQueue jobQueue) {
         crawlers = new HashMap<>();

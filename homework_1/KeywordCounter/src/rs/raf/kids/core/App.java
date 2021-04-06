@@ -7,8 +7,6 @@ import java.util.Scanner;
 
 public class App {
 
-    // TODO Every collection needs to be synchronized
-
     public void loadProperties() {
         Scanner s = null;
 

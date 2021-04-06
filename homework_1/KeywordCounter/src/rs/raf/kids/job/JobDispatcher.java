@@ -9,9 +9,9 @@ import java.util.Map;
 
 public class JobDispatcher {
 
-    private JobQueue jobQueue;
-    private Map<ScanType, PathScanner> scanners;
-    private Thread thread;
+    private final JobQueue jobQueue;
+    private final Map<ScanType, PathScanner> scanners;
+    private final Thread thread;
 
     public JobDispatcher(JobQueue jobQueue, ResultRetriever resultRetriever) {
         this.jobQueue = jobQueue;

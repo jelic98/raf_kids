@@ -52,24 +52,8 @@ public class SimpleServentListener implements Runnable, Cancellable {
                  * because that way is much simpler and less error prone.
                  */
                 switch (clientMessage.getMessageType()) {
-                    case PING:
-                        messageHandler = new PingHandler(clientMessage);
-                        break;
-                    case PONG:
-                        messageHandler = new PongHandler(clientMessage);
-                        break;
-                    case BROADCAST:
-                        //Broadcast handler will rebroadcast the msg if we are not a clique.
-                        messageHandler = new BroadcastHandler(clientMessage, !AppConfig.IS_CLIQUE);
-                        break;
                     case CAUSAL_BROADCAST:
                         messageHandler = new CausalBroadcastHandler(clientMessage);
-                        break;
-                    case SUM_HELP_MESSAGE:
-                        messageHandler = new SumHelpHandler(clientMessage);
-                        break;
-                    case SUM_RESULT_MESSAGE:
-                        messageHandler = new SumResultHandler(clientMessage);
                         break;
                 }
 

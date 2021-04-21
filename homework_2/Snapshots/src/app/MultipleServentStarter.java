@@ -24,6 +24,8 @@ import java.util.Scanner;
  */
 public class MultipleServentStarter {
 
+    private static final String OUT_DIR = "out/production/Snapshots";
+
     /**
      * The parameter for this function should be the name of a directory that
      * contains a servent_list.properties file which will describe our distributed system.
@@ -40,7 +42,7 @@ public class MultipleServentStarter {
 
         for (int i = 0; i < serventCount; i++) {
             try {
-                ProcessBuilder builder = new ProcessBuilder("java", "-cp", "bin/", "app.ServentMain",
+                ProcessBuilder builder = new ProcessBuilder("java", "-cp", OUT_DIR, "app.ServentMain",
                         testName + "/servent_list.properties", String.valueOf(i));
 
                 //We use files to read and write.
@@ -74,16 +76,7 @@ public class MultipleServentStarter {
     }
 
     public static void main(String[] args) {
-//		startServentTest("ping");
-
-        /*
-         * It is recommended to go over to MessageUtil, and disable printing,
-         * cause reading broadcast output is gonna be a headache otherwise.
-         */
-//		startServentTest("broadcast");
-
-        startServentTest("causal_broadcast_clique");
-
+        startServentTest("res");
     }
 
     /**
@@ -92,7 +85,7 @@ public class MultipleServentStarter {
      */
     private static class ServentCLI implements Runnable {
 
-        private List<Process> serventProcesses;
+        private final List<Process> serventProcesses;
 
         public ServentCLI(List<Process> serventProcesses) {
             this.serventProcesses = serventProcesses;

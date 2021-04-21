@@ -25,10 +25,10 @@ import java.util.function.BiFunction;
  */
 public class CausalBroadcastShared {
 
-    private static Map<Integer, Integer> vectorClock = new ConcurrentHashMap<>();
-    private static List<Message> commitedCausalMessageList = new CopyOnWriteArrayList<>();
-    private static Queue<Message> pendingMessages = new ConcurrentLinkedQueue<>();
-    private static Object pendingMessagesLock = new Object();
+    private static final Map<Integer, Integer> vectorClock = new ConcurrentHashMap<>();
+    private static final List<Message> commitedCausalMessageList = new CopyOnWriteArrayList<>();
+    private static final Queue<Message> pendingMessages = new ConcurrentLinkedQueue<>();
+    private static final Object pendingMessagesLock = new Object();
 
     public static void initializeVectorClock(int serventCount) {
         for (int i = 0; i < serventCount; i++) {
@@ -51,9 +51,7 @@ public class CausalBroadcastShared {
     }
 
     public static List<Message> getCommitedCausalMessages() {
-        List<Message> toReturn = new CopyOnWriteArrayList<>(commitedCausalMessageList);
-
-        return toReturn;
+        return new CopyOnWriteArrayList<>(commitedCausalMessageList);
     }
 
     public static void addPendingMessage(Message msg) {

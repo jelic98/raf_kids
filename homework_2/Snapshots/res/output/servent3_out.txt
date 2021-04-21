@@ -1,16 +1,16 @@
-11:51:55 - Starting servent [3|localhost|1400]
-11:51:56 - My info: [3|localhost|1400]
-11:51:56 - Neighbors:
-11:51:56 - 0 1 2 4 
-11:51:56 - Pausing for 10000 ms
-11:52:00 - Got message [0|2|a|CAUSAL_BROADCAST|3]
-11:52:00 - Committing [0|2|a|CAUSAL_BROADCAST|3]
-11:52:00 - Got message [1|2|b|CAUSAL_BROADCAST|3]
-11:52:00 - Committing [1|2|b|CAUSAL_BROADCAST|3]
-11:52:02 - Got message [2|2|c|CAUSAL_BROADCAST|3]
-11:52:02 - Committing [2|2|c|CAUSAL_BROADCAST|3]
-11:52:06 - Current causal messages:
-11:52:06 - Message 0: a from 0
-11:52:06 - Message 1: b from 1
-11:52:06 - Message 2: c from 2
-11:52:06 - Stopping...
+00:15:53 - Starting servent [3|localhost|1400]
+00:15:53 - My info: [3|localhost|1400]
+00:15:53 - Neighbors:
+00:15:53 - 0 1 2 4 
+00:15:53 - Pausing for 10000 ms
+00:15:57 - Got message [0|2|a|CAUSAL_BROADCAST|3]
+00:15:57 - Committing [0|2|a|CAUSAL_BROADCAST|3]
+00:15:58 - Got message [2|2|c|CAUSAL_BROADCAST|3]
+00:15:59 - Got message [1|2|b|CAUSAL_BROADCAST|3]
+00:15:59 - Committing [1|2|b|CAUSAL_BROADCAST|3]
+00:15:59 - Committing [2|2|c|CAUSAL_BROADCAST|3]
+00:16:03 - Current causal messages:
+00:16:03 - Message 0: a from 0
+00:16:03 - Message 1: b from 1
+00:16:03 - Message 2: c from 2
+00:16:03 - Stopping...

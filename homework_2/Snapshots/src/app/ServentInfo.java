@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class ServentInfo implements Serializable {
 
-    private static final long serialVersionUID = 5304170042791281555L;
+    private static final long serialVersionUID = 1L;
     private final int id;
     private final String ipAddress;
     private final int listenerPort;

@@ -15,8 +15,8 @@ import java.util.Map;
  */
 public class CausalBroadcastMessage extends BasicMessage {
 
-    private static final long serialVersionUID = 7952273798396080816L;
-    private Map<Integer, Integer> senderVectorClock;
+    private static final long serialVersionUID = 1L;
+    private final Map<Integer, Integer> senderVectorClock;
 
     public CausalBroadcastMessage(ServentInfo senderInfo, ServentInfo receiverInfo, String messageText,
                                   Map<Integer, Integer> senderVectorClock) {

@@ -26,7 +26,7 @@ public class AppConfig {
      * neighbors.
      */
     public static boolean IS_CLIQUE;
-    private static List<ServentInfo> serventInfoList = new ArrayList<>();
+    private static final List<ServentInfo> serventInfoList = new ArrayList<>();
 
     /**
      * Print a message to stdout with a timestamp

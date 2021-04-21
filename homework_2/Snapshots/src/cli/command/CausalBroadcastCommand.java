@@ -18,10 +18,6 @@ public class CausalBroadcastCommand implements CLICommand {
 
     @Override
     public void execute(String args) {
-        String msgToSend = "";
-
-        msgToSend = args;
-
         if (args == null) {
             AppConfig.timestampedErrorPrint("No message to causally broadcast");
             return;
@@ -38,17 +34,11 @@ public class CausalBroadcastCommand implements CLICommand {
              * we don't care about rebroadcast issues the way we do
              * in our regular Broadcast implementation.
              */
-            Message broadcastMessage = new CausalBroadcastMessage(
-                    myInfo, neighborInfo, msgToSend, myClock);
-
+            Message broadcastMessage = new CausalBroadcastMessage(myInfo, neighborInfo, args, myClock);
             MessageUtil.sendMessage(broadcastMessage);
         }
 
-        /*
-         * After broadcasting to others, we can safely commit locally.
-         */
-        Message commitMessage = new CausalBroadcastMessage(
-                myInfo, myInfo, msgToSend, myClock);
+        Message commitMessage = new CausalBroadcastMessage(myInfo, myInfo, args, myClock);
         CausalBroadcastShared.commitCausalMessage(commitMessage);
     }
 

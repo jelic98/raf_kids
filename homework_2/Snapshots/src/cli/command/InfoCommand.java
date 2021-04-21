@@ -13,12 +13,14 @@ public class InfoCommand implements CLICommand {
     public void execute(String args) {
         AppConfig.timestampedStandardPrint("My info: " + AppConfig.myServentInfo);
         AppConfig.timestampedStandardPrint("Neighbors:");
-        String neighbors = "";
-        for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
-            neighbors += neighbor + " ";
+
+        StringBuilder sb = new StringBuilder();
+
+        for(Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
+            sb.append(neighbor);
+            sb.append(" ");
         }
 
-        AppConfig.timestampedStandardPrint(neighbors);
+        AppConfig.timestampedStandardPrint(sb.toString());
     }
-
 }

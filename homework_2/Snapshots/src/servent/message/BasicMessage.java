@@ -17,25 +17,15 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class BasicMessage implements Message {
 
-    private static final long serialVersionUID = -9075856313609777945L;
+    private static final long serialVersionUID = 1L;
     //This gives us a unique id - incremented in every natural constructor.
-    private static AtomicInteger messageCounter = new AtomicInteger(0);
+    private static final AtomicInteger messageCounter = new AtomicInteger(0);
     private final MessageType type;
     private final ServentInfo originalSenderInfo;
     private final ServentInfo receiverInfo;
     private final List<ServentInfo> routeList;
     private final String messageText;
     private final int messageId;
-
-    public BasicMessage(MessageType type, ServentInfo originalSenderInfo, ServentInfo receiverInfo) {
-        this.type = type;
-        this.originalSenderInfo = originalSenderInfo;
-        this.receiverInfo = receiverInfo;
-        this.routeList = new ArrayList<>();
-        this.messageText = "";
-
-        this.messageId = messageCounter.getAndIncrement();
-    }
 
     public BasicMessage(MessageType type, ServentInfo originalSenderInfo, ServentInfo receiverInfo,
                         String messageText) {
@@ -100,10 +90,8 @@ public class BasicMessage implements Message {
 
         List<ServentInfo> newRouteList = new ArrayList<>(routeList);
         newRouteList.add(newRouteItem);
-        Message toReturn = new BasicMessage(getMessageType(), getOriginalSenderInfo(),
+        return new BasicMessage(getMessageType(), getOriginalSenderInfo(),
                 getReceiverInfo(), newRouteList, getMessageText(), getMessageId());
-
-        return toReturn;
     }
 
     /**
@@ -115,10 +103,8 @@ public class BasicMessage implements Message {
         if (AppConfig.myServentInfo.getNeighbors().contains(newReceiverId)) {
             ServentInfo newReceiverInfo = AppConfig.getInfoById(newReceiverId);
 
-            Message toReturn = new BasicMessage(getMessageType(), getOriginalSenderInfo(),
+            return new BasicMessage(getMessageType(), getOriginalSenderInfo(),
                     newReceiverInfo, getRoute(), getMessageText(), getMessageId());
-
-            return toReturn;
         } else {
             AppConfig.timestampedErrorPrint("Trying to make a message for " + newReceiverId + " who is not a neighbor.");
 

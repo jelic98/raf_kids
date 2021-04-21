@@ -13,7 +13,7 @@ import servent.message.MessageType;
  */
 public class CausalBroadcastHandler implements MessageHandler {
 
-    private Message clientMessage;
+    private final Message clientMessage;
 
     public CausalBroadcastHandler(Message clientMessage) {
         this.clientMessage = clientMessage;

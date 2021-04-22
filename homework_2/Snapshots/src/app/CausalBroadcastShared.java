@@ -47,23 +47,19 @@ public class CausalBroadcastShared {
     }
 
     public static Map<Integer, Integer> getVectorClock() {
-        return vectorClock;
+        return new ConcurrentHashMap<>(vectorClock);
     }
 
-    public static List<Message> getCommitedCausalMessages() {
+    public static List<Message> getCommittedCausalMessages() {
         return new CopyOnWriteArrayList<>(commitedCausalMessageList);
+    }
+
+    public static List<Message> getPendingCausalMessages() {
+        return new CopyOnWriteArrayList<>(pendingMessages);
     }
 
     public static void addPendingMessage(Message msg) {
         pendingMessages.add(msg);
-    }
-
-    public static void commitCausalMessage(Message newMessage) {
-        AppConfig.timestampedStandardPrint("Committing " + newMessage);
-        commitedCausalMessageList.add(newMessage);
-        incrementClock(newMessage.getOriginalSenderInfo().getId());
-
-        checkPendingMessages();
     }
 
     private static boolean otherClockGreater(Map<Integer, Integer> clock1, Map<Integer, Integer> clock2) {
@@ -88,18 +84,19 @@ public class CausalBroadcastShared {
 
             synchronized (pendingMessagesLock) {
                 Iterator<Message> iterator = pendingMessages.iterator();
-
                 Map<Integer, Integer> myVectorClock = getVectorClock();
+
                 while (iterator.hasNext()) {
                     Message pendingMessage = iterator.next();
-                    CausalBroadcastMessage causalPendingMessage = (CausalBroadcastMessage) pendingMessage;
+                    CausalBroadcastMessage cbm = (CausalBroadcastMessage) pendingMessage;
 
-                    if (!otherClockGreater(myVectorClock, causalPendingMessage.getSenderVectorClock())) {
+                    if (!otherClockGreater(myVectorClock, cbm.getSenderVectorClock())) {
                         gotWork = true;
 
-                        AppConfig.timestampedStandardPrint("Committing " + pendingMessage);
-                        commitedCausalMessageList.add(pendingMessage);
-                        incrementClock(pendingMessage.getOriginalSenderInfo().getId());
+                        AppConfig.timestampedStandardPrint("Committing " + cbm.getMessageText() +
+                                " with clock " + cbm.getSenderVectorClock().toString());
+                        commitedCausalMessageList.add(cbm);
+                        incrementClock(cbm.getOriginalSenderInfo().getId());
 
                         iterator.remove();
 
@@ -108,6 +105,5 @@ public class CausalBroadcastShared {
                 }
             }
         }
-
     }
 }

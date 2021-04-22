@@ -1,15 +1,12 @@
 package servent.message;
 
 import app.ServentInfo;
-
+import java.util.List;
 import java.util.Map;
 
 /**
  * Has all the fancy stuff from {@link BasicMessage}, with an
  * added vector clock.
- * <p>
- * Think about the repercussions of invoking <code>changeReceiver</code> or
- * <code>makeMeASender</code> on this without overriding it.
  *
  * @author bmilojkovic
  */
@@ -25,7 +22,19 @@ public class CausalBroadcastMessage extends BasicMessage {
         this.senderVectorClock = senderVectorClock;
     }
 
+    public CausalBroadcastMessage(ServentInfo originalSenderInfo, ServentInfo receiverInfo,
+                List<ServentInfo> routeList, String messageText, int messageId, Map<Integer, Integer> senderVectorClock) {
+            super(MessageType.CAUSAL_BROADCAST, originalSenderInfo, receiverInfo, routeList, messageText, messageId);
+
+        this.senderVectorClock = senderVectorClock;
+    }
+
     public Map<Integer, Integer> getSenderVectorClock() {
         return senderVectorClock;
+    }
+
+    @Override
+    protected Message createInstance(MessageType type, ServentInfo originalSenderInfo, ServentInfo receiverInfo, List<ServentInfo> routeList, String messageText, int messageId) {
+        return new CausalBroadcastMessage(originalSenderInfo, receiverInfo, routeList, messageText, messageId, senderVectorClock);
     }
 }

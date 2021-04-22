@@ -1,4 +1,7 @@
 info
-pause 10000
+pause 13000
+causal_broadcast e1
+causal_broadcast e2
+pause 3000
 print_causal
 stop

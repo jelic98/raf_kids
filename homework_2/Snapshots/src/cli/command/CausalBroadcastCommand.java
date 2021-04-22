@@ -26,20 +26,10 @@ public class CausalBroadcastCommand implements CLICommand {
         ServentInfo myInfo = AppConfig.myServentInfo;
         Map<Integer, Integer> myClock = CausalBroadcastShared.getVectorClock();
 
+        Message broadcastMessage = new CausalBroadcastMessage(myInfo, null, args, myClock);
+
         for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
-            ServentInfo neighborInfo = AppConfig.getInfoById(neighbor);
-
-            /*
-             * Causal Broadcast is implemented for clique only, so
-             * we don't care about rebroadcast issues the way we do
-             * in our regular Broadcast implementation.
-             */
-            Message broadcastMessage = new CausalBroadcastMessage(myInfo, neighborInfo, args, myClock);
-            MessageUtil.sendMessage(broadcastMessage);
+            MessageUtil.sendMessage(broadcastMessage.changeReceiver(neighbor));
         }
-
-        Message commitMessage = new CausalBroadcastMessage(myInfo, myInfo, args, myClock);
-        CausalBroadcastShared.commitCausalMessage(commitMessage);
     }
-
 }

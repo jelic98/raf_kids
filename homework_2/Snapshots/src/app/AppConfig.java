@@ -26,6 +26,9 @@ public class AppConfig {
      * neighbors.
      */
     public static boolean IS_CLIQUE;
+
+    public static SnapshotType SNAPSHOT;
+
     private static final List<ServentInfo> serventInfoList = new ArrayList<>();
 
     /**
@@ -95,6 +98,8 @@ public class AppConfig {
         }
 
         IS_CLIQUE = Boolean.parseBoolean(properties.getProperty("clique"));
+
+        SNAPSHOT = SnapshotType.valueOf(properties.getProperty("snapshot").toUpperCase());
 
         for (int i = 0; i < serventCount; i++) {
             String portProperty = "servent" + i + ".port";

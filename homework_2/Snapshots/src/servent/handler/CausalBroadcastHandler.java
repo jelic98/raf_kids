@@ -1,8 +1,14 @@
 package servent.handler;
 
+import app.AppConfig;
 import app.CausalBroadcastShared;
+import app.ServentInfo;
 import servent.message.Message;
 import servent.message.MessageType;
+import servent.message.MessageUtil;
+import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Handles the CAUSAL_BROADCAST message. Fairly simple, as we assume that we are
@@ -14,6 +20,7 @@ import servent.message.MessageType;
 public class CausalBroadcastHandler implements MessageHandler {
 
     private final Message clientMessage;
+	private static Set<Message> receivedBroadcasts = Collections.newSetFromMap(new ConcurrentHashMap<Message, Boolean>());
 
     public CausalBroadcastHandler(Message clientMessage) {
         this.clientMessage = clientMessage;
@@ -21,32 +28,40 @@ public class CausalBroadcastHandler implements MessageHandler {
 
     @Override
     public void run() {
-        //Sanity check.
         if (clientMessage.getMessageType() == MessageType.CAUSAL_BROADCAST) {
-            /*
-             * Same print as the one in BROADCAST handler.
-             * Kind of useless here, as we assume a clique.
-             */
-			
-			/*
 			ServentInfo senderInfo = clientMessage.getOriginalSenderInfo();
 			ServentInfo lastSenderInfo = clientMessage.getRoute().size() == 0 ?
 					clientMessage.getOriginalSenderInfo() :
 					clientMessage.getRoute().get(clientMessage.getRoute().size()-1);
-			
-			String text = String.format("Got %s from %s causally broadcast by %s\n",
+
+			String text = String.format("Got %s from %s broadcast by %s",
 					clientMessage.getMessageText(), lastSenderInfo, senderInfo);
+
 			AppConfig.timestampedStandardPrint(text);
-			*/
 
-            /*
-             * Uncomment the next line and comment out the two afterwards
-             * to see what happens when causality is broken.
-             */
-//			CausalBroadcastShared.commitCausalMessage(clientMessage);
+			if (AppConfig.IS_CLIQUE) {
+				CausalBroadcastShared.addPendingMessage(clientMessage);
+				CausalBroadcastShared.checkPendingMessages();
+			} else {
+				//Try to put in the set. Thread safe add ftw.
+				boolean didPut = receivedBroadcasts.add(clientMessage);
 
-            CausalBroadcastShared.addPendingMessage(clientMessage);
-            CausalBroadcastShared.checkPendingMessages();
+				if (didPut) {
+					//New message for us. Rebroadcast it.
+					CausalBroadcastShared.addPendingMessage(clientMessage);
+					CausalBroadcastShared.checkPendingMessages();
+
+					AppConfig.timestampedStandardPrint("Rebroadcasting... " + receivedBroadcasts.size());
+
+					for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
+						//Same message, different receiver, and add us to the route table.
+						MessageUtil.sendMessage(clientMessage.changeReceiver(neighbor).makeMeASender());
+					}
+				} else {
+					//We already got this from somewhere else. /ignore
+					AppConfig.timestampedStandardPrint("Already had this. No rebroadcast.");
+				}
+			}
         }
     }
 

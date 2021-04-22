@@ -1,4 +1,7 @@
 info
 pause 10000
+causal_broadcast d1
+causal_broadcast d2
+pause 6000
 print_causal
 stop

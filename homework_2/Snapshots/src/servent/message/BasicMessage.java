@@ -38,7 +38,7 @@ public class BasicMessage implements Message {
         this.messageId = messageCounter.getAndIncrement();
     }
 
-    private BasicMessage(MessageType type, ServentInfo originalSenderInfo, ServentInfo receiverInfo,
+    protected BasicMessage(MessageType type, ServentInfo originalSenderInfo, ServentInfo receiverInfo,
                          List<ServentInfo> routeList, String messageText, int messageId) {
         this.type = type;
         this.originalSenderInfo = originalSenderInfo;
@@ -90,8 +90,14 @@ public class BasicMessage implements Message {
 
         List<ServentInfo> newRouteList = new ArrayList<>(routeList);
         newRouteList.add(newRouteItem);
-        return new BasicMessage(getMessageType(), getOriginalSenderInfo(),
+        return createInstance(getMessageType(), getOriginalSenderInfo(),
                 getReceiverInfo(), newRouteList, getMessageText(), getMessageId());
+    }
+
+    protected Message createInstance(MessageType type, ServentInfo originalSenderInfo, ServentInfo receiverInfo,
+                                          List<ServentInfo> routeList, String messageText, int messageId) {
+        return new BasicMessage(getMessageType(), getOriginalSenderInfo(),
+                getReceiverInfo(), routeList, getMessageText(), getMessageId());
     }
 
     /**
@@ -100,10 +106,11 @@ public class BasicMessage implements Message {
      */
     @Override
     public Message changeReceiver(Integer newReceiverId) {
-        if (AppConfig.myServentInfo.getNeighbors().contains(newReceiverId)) {
+        if (AppConfig.myServentInfo.getNeighbors().contains(newReceiverId)
+                || AppConfig.myServentInfo.getId() == newReceiverId) {
             ServentInfo newReceiverInfo = AppConfig.getInfoById(newReceiverId);
 
-            return new BasicMessage(getMessageType(), getOriginalSenderInfo(),
+            return createInstance(getMessageType(), getOriginalSenderInfo(),
                     newReceiverInfo, getRoute(), getMessageText(), getMessageId());
         } else {
             AppConfig.timestampedErrorPrint("Trying to make a message for " + newReceiverId + " who is not a neighbor.");

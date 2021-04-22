@@ -20,7 +20,7 @@ public class MessageUtil {
      * Normally this should be true, because it helps with debugging.
      * Flip this to false to disable printing every message send / receive.
      */
-    private static final boolean MESSAGE_UTIL_PRINTING = true;
+    private static final boolean MESSAGE_UTIL_PRINTING = false;
 
     public static Message readMessage(Socket socket) {
 

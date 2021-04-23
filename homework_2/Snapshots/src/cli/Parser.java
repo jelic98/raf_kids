@@ -2,7 +2,7 @@ package cli;
 
 import app.AppConfig;
 import cli.command.*;
-import servent.SimpleServentListener;
+import servent.ServentListener;
 import servent.snapshot.SnapshotCollector;
 
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public class Parser implements Runnable {
     private final List<Command> commandList;
     private volatile boolean working = true;
 
-    public Parser(SimpleServentListener listener, SnapshotCollector collector) {
+    public Parser(ServentListener listener, SnapshotCollector collector) {
         commandList = new ArrayList<>();
         commandList.add(new BitcakeInfoCommand(collector));
         commandList.add(new CausalBroadcastCommand());

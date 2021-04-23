@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Random;
 
 /**
  * For now, just the read and send implementation, based on Java serializing.
@@ -21,6 +22,7 @@ public class MessageUtil {
      * Flip this to false to disable printing every message send / receive.
      */
     private static final boolean MESSAGE_UTIL_PRINTING = false;
+    private static final Random random = new Random();
 
     public static Message readMessage(Socket socket) {
         Message clientMessage = null;
@@ -45,7 +47,7 @@ public class MessageUtil {
 
     public static void sendMessage(Message message) {
         try {
-            Thread.sleep((long) (Math.random() * 1000) + 500);
+            Thread.sleep(random.nextInt(501) + 500);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -64,10 +66,10 @@ public class MessageUtil {
             oos.flush();
 
             sendSocket.close();
-        } catch (IOException e) {
-            AppConfig.timestampedErrorPrint("Couldn't send message: " + message.toString());
-        }
 
-        message.sendEffect();
+            message.sendEffect();
+        } catch (IOException e) {
+            AppConfig.timestampedErrorPrint(String.format("Cannot send message %s (%s)", message, e.getMessage()));
+        }
     }
 }

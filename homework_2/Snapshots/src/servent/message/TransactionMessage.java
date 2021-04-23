@@ -20,11 +20,6 @@ public class TransactionMessage extends BasicMessage {
         this.bitcakeManager = bitcakeManager;
     }
 
-    /**
-     * We want to take away our amount exactly as we are sending, so our snapshots don't mess up.
-     * This method is invoked by the sender just before sending, and with a lock that guarantees
-     * that we are white when we are doing this in Chandy-Lamport.
-     */
     @Override
     public void sendEffect() {
         bitcakeManager.takeBitcakes(Integer.parseInt(getMessageText()));

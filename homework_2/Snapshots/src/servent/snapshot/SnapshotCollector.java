@@ -41,16 +41,8 @@ public class SnapshotCollector implements Runnable {
     @Override
     public void run() {
         while(working) {
-            while (!collecting.get()) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-
-                if (!working) {
-                    return;
-                }
+            if(!collecting.get()) {
+                continue;
             }
 
             AppConfig.timestampedStandardPrint("Sending ASK messages");
@@ -72,13 +64,7 @@ public class SnapshotCollector implements Runnable {
 
             AppConfig.timestampedStandardPrint("Waiting for TELL messages");
 
-            boolean waiting = true;
-
-            while (waiting) {
-                if (results.size() == AppConfig.SERVENT_COUNT) {
-                    waiting = false;
-                }
-
+            while (results.size() < AppConfig.SERVENT_COUNT) {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -115,6 +101,7 @@ public class SnapshotCollector implements Runnable {
 
     public void addSnapshot(int id, int amount) {
         results.put(id, amount);
+        AppConfig.timestampedStandardPrint(String.format("Adding snapshot for servent %d (%d bitcakes)", id, amount));
     }
 
     public void startCollecting() {

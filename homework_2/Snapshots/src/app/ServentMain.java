@@ -1,7 +1,7 @@
 package app;
 
 import cli.Parser;
-import servent.SimpleServentListener;
+import servent.ServentListener;
 import servent.snapshot.SnapshotCollector;
 
 /**
@@ -21,44 +21,18 @@ public class ServentMain {
             AppConfig.timestampedErrorPrint("Please provide servent list file and id of this servent.");
         }
 
-        int serventId = -1;
-        int portNumber;
-
         String serventListFile = args[0];
+        int serventId = Integer.parseInt(args[1]);
 
         AppConfig.readConfig(serventListFile);
-
-        try {
-            serventId = Integer.parseInt(args[1]);
-        } catch (NumberFormatException e) {
-            AppConfig.timestampedErrorPrint("Second argument should be an int. Exiting...");
-            System.exit(0);
-        }
-
-        if (serventId >= AppConfig.SERVENT_COUNT) {
-            AppConfig.timestampedErrorPrint("Invalid servent id provided");
-            System.exit(0);
-        }
-
         AppConfig.myServentInfo = AppConfig.getInfoById(serventId);
-
-        try {
-            portNumber = AppConfig.myServentInfo.getListenerPort();
-
-            if (portNumber < 1000 || portNumber > 2000) {
-                throw new NumberFormatException();
-            }
-        } catch (NumberFormatException e) {
-            AppConfig.timestampedErrorPrint("Port number should be in range 1000-2000. Exiting...");
-            System.exit(0);
-        }
 
         AppConfig.timestampedStandardPrint("Starting servent " + AppConfig.myServentInfo);
 
         SnapshotCollector collector = new SnapshotCollector();
         new Thread(collector).start();
 
-        SimpleServentListener listener = new SimpleServentListener(collector);
+        ServentListener listener = new ServentListener(collector);
         new Thread(listener).start();
 
         Parser parser = new Parser(listener, collector);

@@ -81,9 +81,8 @@ public class AppConfig {
         Properties properties = new Properties();
         try {
             properties.load(new FileInputStream(new File(configName)));
-
         } catch (IOException e) {
-            timestampedErrorPrint("Couldn't open properties file. Exiting...");
+            timestampedErrorPrint("Cannot open properties file.");
             System.exit(0);
         }
 
@@ -93,15 +92,7 @@ public class AppConfig {
 
         for (int i = 0; i < SERVENT_COUNT; i++) {
             String portProperty = "servent" + i + ".port";
-
-            int serventPort = -1;
-
-            try {
-                serventPort = Integer.parseInt(properties.getProperty(portProperty));
-            } catch (NumberFormatException e) {
-                timestampedErrorPrint("Problem reading " + portProperty + ". Exiting...");
-                System.exit(0);
-            }
+            int serventPort = Integer.parseInt(properties.getProperty(portProperty));
 
             List<Integer> neighborList = new ArrayList<>();
             if (IS_CLIQUE) {

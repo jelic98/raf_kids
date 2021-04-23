@@ -15,13 +15,13 @@ import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class SimpleServentListener implements Runnable {
+public class ServentListener implements Runnable {
 
     private final ExecutorService threadPool = Executors.newWorkStealingPool();
     private SnapshotCollector snapshotCollector;
     private volatile boolean working = true;
 
-    public SimpleServentListener(SnapshotCollector snapshotCollector) {
+    public ServentListener(SnapshotCollector snapshotCollector) {
         this.snapshotCollector = snapshotCollector;
     }
 
@@ -32,7 +32,7 @@ public class SimpleServentListener implements Runnable {
             listenerSocket = new ServerSocket(AppConfig.myServentInfo.getListenerPort());
             listenerSocket.setSoTimeout(1000);
         } catch (IOException e) {
-            AppConfig.timestampedErrorPrint("Couldn't open listener socket on: " + AppConfig.myServentInfo.getListenerPort());
+            AppConfig.timestampedErrorPrint("Cannot open listener socket on: " + AppConfig.myServentInfo.getListenerPort());
             System.exit(0);
         }
 

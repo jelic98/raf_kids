@@ -16,7 +16,7 @@ public class InfoCommand implements CLICommand {
 
         StringBuilder sb = new StringBuilder();
 
-        for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
+        for(Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
             sb.append(neighbor);
             sb.append(" ");
         }

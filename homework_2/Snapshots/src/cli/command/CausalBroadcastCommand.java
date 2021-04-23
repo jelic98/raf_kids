@@ -5,7 +5,7 @@ import app.CausalBroadcastShared;
 import app.ServentInfo;
 import servent.message.CausalBroadcastMessage;
 import servent.message.Message;
-import servent.message.util.MessageUtil;
+import servent.message.MessageUtil;
 
 import java.util.Map;
 

@@ -5,8 +5,7 @@ import app.CausalBroadcastShared;
 import app.ServentInfo;
 import servent.message.Message;
 import servent.message.MessageType;
-import servent.message.util.MessageUtil;
-
+import servent.message.MessageUtil;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,8 +19,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class CausalBroadcastHandler implements MessageHandler {
 
-    private static Set<Message> receivedBroadcasts = Collections.newSetFromMap(new ConcurrentHashMap<Message, Boolean>());
     private final Message clientMessage;
+	private static Set<Message> receivedBroadcasts = Collections.newSetFromMap(new ConcurrentHashMap<Message, Boolean>());
 
     public CausalBroadcastHandler(Message clientMessage) {
         this.clientMessage = clientMessage;
@@ -30,39 +29,39 @@ public class CausalBroadcastHandler implements MessageHandler {
     @Override
     public void run() {
         if (clientMessage.getMessageType() == MessageType.CAUSAL_BROADCAST) {
-            ServentInfo senderInfo = clientMessage.getOriginalSenderInfo();
-            ServentInfo lastSenderInfo = clientMessage.getRoute().size() == 0 ?
-                    clientMessage.getOriginalSenderInfo() :
-                    clientMessage.getRoute().get(clientMessage.getRoute().size() - 1);
+			ServentInfo senderInfo = clientMessage.getOriginalSenderInfo();
+			ServentInfo lastSenderInfo = clientMessage.getRoute().size() == 0 ?
+					clientMessage.getOriginalSenderInfo() :
+					clientMessage.getRoute().get(clientMessage.getRoute().size()-1);
 
-            String text = String.format("Got %s from %s broadcast by %s",
-                    clientMessage.getMessageText(), lastSenderInfo, senderInfo);
+			String text = String.format("Got %s from %s broadcast by %s",
+					clientMessage.getMessageText(), lastSenderInfo, senderInfo);
 
-            AppConfig.timestampedStandardPrint(text);
+			AppConfig.timestampedStandardPrint(text);
 
-            if (AppConfig.IS_CLIQUE) {
-                CausalBroadcastShared.addPendingMessage(clientMessage);
-                CausalBroadcastShared.checkPendingMessages();
-            } else {
-                //Try to put in the set. Thread safe add ftw.
-                boolean didPut = receivedBroadcasts.add(clientMessage);
+			if (AppConfig.IS_CLIQUE) {
+				CausalBroadcastShared.addPendingMessage(clientMessage);
+				CausalBroadcastShared.checkPendingMessages();
+			} else {
+				//Try to put in the set. Thread safe add ftw.
+				boolean didPut = receivedBroadcasts.add(clientMessage);
 
-                if (didPut) {
-                    //New message for us. Rebroadcast it.
-                    CausalBroadcastShared.addPendingMessage(clientMessage);
-                    CausalBroadcastShared.checkPendingMessages();
+				if (didPut) {
+					//New message for us. Rebroadcast it.
+					CausalBroadcastShared.addPendingMessage(clientMessage);
+					CausalBroadcastShared.checkPendingMessages();
 
-                    AppConfig.timestampedStandardPrint("Rebroadcasting... " + receivedBroadcasts.size());
+					AppConfig.timestampedStandardPrint("Rebroadcasting... " + receivedBroadcasts.size());
 
-                    for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
-                        //Same message, different receiver, and add us to the route table.
-                        MessageUtil.sendMessage(clientMessage.changeReceiver(neighbor).makeMeASender());
-                    }
-                } else {
-                    //We already got this from somewhere else. /ignore
-                    AppConfig.timestampedStandardPrint("Already had this. No rebroadcast.");
-                }
-            }
+					for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
+						//Same message, different receiver, and add us to the route table.
+						MessageUtil.sendMessage(clientMessage.changeReceiver(neighbor).makeMeASender());
+					}
+				} else {
+					//We already got this from somewhere else. /ignore
+					AppConfig.timestampedStandardPrint("Already had this. No rebroadcast.");
+				}
+			}
         }
     }
 

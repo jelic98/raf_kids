@@ -1,7 +1,5 @@
 package app;
 
-import app.snapshot_bitcake.SnapshotCollector;
-import app.snapshot_bitcake.SnapshotCollectorWorker;
 import cli.CLIParser;
 import servent.SimpleServentListener;
 
@@ -56,16 +54,14 @@ public class ServentMain {
 
         AppConfig.timestampedStandardPrint("Starting servent " + AppConfig.myServentInfo);
 
-        SnapshotCollector snapshotCollector = new SnapshotCollectorWorker(AppConfig.SNAPSHOT_TYPE);
-        Thread snapshotCollectorThread = new Thread(snapshotCollector);
-        snapshotCollectorThread.start();
-
-        SimpleServentListener simpleListener = new SimpleServentListener(snapshotCollector);
+        SimpleServentListener simpleListener = new SimpleServentListener();
         Thread listenerThread = new Thread(simpleListener);
         listenerThread.start();
 
-        CLIParser cliParser = new CLIParser(simpleListener, snapshotCollector);
+        CLIParser cliParser = new CLIParser(simpleListener);
         Thread cliThread = new Thread(cliParser);
         cliThread.start();
+
+
     }
 }

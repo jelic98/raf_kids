@@ -17,34 +17,21 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class BasicMessage implements Message {
 
-    private static final long serialVersionUID = -9075856313609777945L;
+    private static final long serialVersionUID = 1L;
     //This gives us a unique id - incremented in every natural constructor.
-    private static AtomicInteger messageCounter = new AtomicInteger(0);
+    private static final AtomicInteger messageCounter = new AtomicInteger(0);
     private final MessageType type;
     private final ServentInfo originalSenderInfo;
     private final ServentInfo receiverInfo;
     private final List<ServentInfo> routeList;
     private final String messageText;
-    private final boolean white;
     private final int messageId;
-
-    public BasicMessage(MessageType type, ServentInfo originalSenderInfo, ServentInfo receiverInfo) {
-        this.type = type;
-        this.originalSenderInfo = originalSenderInfo;
-        this.receiverInfo = receiverInfo;
-        this.white = AppConfig.isWhite.get();
-        this.routeList = new ArrayList<>();
-        this.messageText = "";
-
-        this.messageId = messageCounter.getAndIncrement();
-    }
 
     public BasicMessage(MessageType type, ServentInfo originalSenderInfo, ServentInfo receiverInfo,
                         String messageText) {
         this.type = type;
         this.originalSenderInfo = originalSenderInfo;
         this.receiverInfo = receiverInfo;
-        this.white = AppConfig.isWhite.get();
         this.routeList = new ArrayList<>();
         this.messageText = messageText;
 
@@ -52,11 +39,10 @@ public class BasicMessage implements Message {
     }
 
     protected BasicMessage(MessageType type, ServentInfo originalSenderInfo, ServentInfo receiverInfo,
-                           boolean white, List<ServentInfo> routeList, String messageText, int messageId) {
+                         List<ServentInfo> routeList, String messageText, int messageId) {
         this.type = type;
         this.originalSenderInfo = originalSenderInfo;
         this.receiverInfo = receiverInfo;
-        this.white = white;
         this.routeList = routeList;
         this.messageText = messageText;
 
@@ -76,11 +62,6 @@ public class BasicMessage implements Message {
     @Override
     public ServentInfo getReceiverInfo() {
         return receiverInfo;
-    }
-
-    @Override
-    public boolean isWhite() {
-        return white;
     }
 
     @Override
@@ -110,7 +91,13 @@ public class BasicMessage implements Message {
         List<ServentInfo> newRouteList = new ArrayList<>(routeList);
         newRouteList.add(newRouteItem);
         return createInstance(getMessageType(), getOriginalSenderInfo(),
-                getReceiverInfo(), isWhite(), newRouteList, getMessageText(), getMessageId());
+                getReceiverInfo(), newRouteList, getMessageText(), getMessageId());
+    }
+
+    protected Message createInstance(MessageType type, ServentInfo originalSenderInfo, ServentInfo receiverInfo,
+                                          List<ServentInfo> routeList, String messageText, int messageId) {
+        return new BasicMessage(getMessageType(), getOriginalSenderInfo(),
+                getReceiverInfo(), routeList, getMessageText(), getMessageId());
     }
 
     /**
@@ -119,29 +106,18 @@ public class BasicMessage implements Message {
      */
     @Override
     public Message changeReceiver(Integer newReceiverId) {
-        if (AppConfig.myServentInfo.getNeighbors().contains(newReceiverId)) {
+        if (AppConfig.myServentInfo.getNeighbors().contains(newReceiverId)
+                || AppConfig.myServentInfo.getId() == newReceiverId) {
             ServentInfo newReceiverInfo = AppConfig.getInfoById(newReceiverId);
 
             return createInstance(getMessageType(), getOriginalSenderInfo(),
-                    newReceiverInfo, isWhite(), getRoute(), getMessageText(), getMessageId());
+                    newReceiverInfo, getRoute(), getMessageText(), getMessageId());
         } else {
             AppConfig.timestampedErrorPrint("Trying to make a message for " + newReceiverId + " who is not a neighbor.");
 
             return null;
         }
 
-    }
-
-    @Override
-    public Message setRedColor() {
-        return createInstance(getMessageType(), getOriginalSenderInfo(),
-                getReceiverInfo(), false, getRoute(), getMessageText(), getMessageId());
-    }
-
-    @Override
-    public Message setWhiteColor() {
-        return createInstance(getMessageType(), getOriginalSenderInfo(),
-                getReceiverInfo(), true, getRoute(), getMessageText(), getMessageId());
     }
 
     /**
@@ -176,19 +152,5 @@ public class BasicMessage implements Message {
         return "[" + getOriginalSenderInfo().getId() + "|" + getMessageId() + "|" +
                 getMessageText() + "|" + getMessageType() + "|" +
                 getReceiverInfo().getId() + "]";
-    }
-
-    /**
-     * Empty implementation, which will be suitable for most messages.
-     */
-    @Override
-    public void sendEffect() {
-
-    }
-
-    protected Message createInstance(MessageType type, ServentInfo originalSenderInfo, ServentInfo receiverInfo,
-                                     boolean isWhite, List<ServentInfo> routeList, String messageText, int messageId) {
-        return new BasicMessage(getMessageType(), getOriginalSenderInfo(),
-                getReceiverInfo(), isWhite, routeList, getMessageText(), getMessageId());
     }
 }

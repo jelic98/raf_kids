@@ -1,7 +1,5 @@
 package app;
 
-import app.snapshot_bitcake.SnapshotType;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -11,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * This class contains all the global application configuration stuff.
@@ -20,7 +17,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class AppConfig {
 
-    private static final List<ServentInfo> serventInfoList = new ArrayList<>();
     /**
      * Convenience access for this servent's information
      */
@@ -30,9 +26,10 @@ public class AppConfig {
      * neighbors.
      */
     public static boolean IS_CLIQUE;
-    public static SnapshotType SNAPSHOT_TYPE;
-    public static AtomicBoolean isWhite = new AtomicBoolean(true);
-    public static Object colorLock = new Object();
+
+    public static SnapshotType SNAPSHOT;
+
+    private static final List<ServentInfo> serventInfoList = new ArrayList<>();
 
     /**
      * Print a message to stdout with a timestamp
@@ -102,7 +99,7 @@ public class AppConfig {
 
         IS_CLIQUE = Boolean.parseBoolean(properties.getProperty("clique"));
 
-        SNAPSHOT_TYPE = SnapshotType.valueOf(properties.getProperty("snapshot").toUpperCase());
+        SNAPSHOT = SnapshotType.valueOf(properties.getProperty("snapshot").toUpperCase());
 
         for (int i = 0; i < serventCount; i++) {
             String portProperty = "servent" + i + ".port";

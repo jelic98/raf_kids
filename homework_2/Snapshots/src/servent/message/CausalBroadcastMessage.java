@@ -1,7 +1,6 @@
 package servent.message;
 
 import app.ServentInfo;
-
 import java.util.List;
 import java.util.Map;
 
@@ -23,9 +22,9 @@ public class CausalBroadcastMessage extends BasicMessage {
         this.senderVectorClock = senderVectorClock;
     }
 
-    public CausalBroadcastMessage(ServentInfo originalSenderInfo, ServentInfo receiverInfo, boolean isWhite,
-                                  List<ServentInfo> routeList, String messageText, int messageId, Map<Integer, Integer> senderVectorClock) {
-        super(MessageType.CAUSAL_BROADCAST, originalSenderInfo, receiverInfo, isWhite, routeList, messageText, messageId);
+    public CausalBroadcastMessage(ServentInfo originalSenderInfo, ServentInfo receiverInfo,
+                List<ServentInfo> routeList, String messageText, int messageId, Map<Integer, Integer> senderVectorClock) {
+            super(MessageType.CAUSAL_BROADCAST, originalSenderInfo, receiverInfo, routeList, messageText, messageId);
 
         this.senderVectorClock = senderVectorClock;
     }
@@ -35,7 +34,7 @@ public class CausalBroadcastMessage extends BasicMessage {
     }
 
     @Override
-    protected Message createInstance(MessageType type, ServentInfo originalSenderInfo, ServentInfo receiverInfo, boolean isWhite, List<ServentInfo> routeList, String messageText, int messageId) {
-        return new CausalBroadcastMessage(originalSenderInfo, receiverInfo, isWhite, routeList, messageText, messageId, senderVectorClock);
+    protected Message createInstance(MessageType type, ServentInfo originalSenderInfo, ServentInfo receiverInfo, List<ServentInfo> routeList, String messageText, int messageId) {
+        return new CausalBroadcastMessage(originalSenderInfo, receiverInfo, routeList, messageText, messageId, senderVectorClock);
     }
 }

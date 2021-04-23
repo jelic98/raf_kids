@@ -2,7 +2,6 @@ package app;
 
 import servent.snapshot.CausalBroadcastShared;
 import servent.snapshot.SnapshotType;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -25,10 +24,8 @@ public class AppConfig {
      * Convenience access for this servent's information
      */
     public static ServentInfo myServentInfo;
-    /**
-     * If this is true, the system is a clique - all nodes are each other's
-     * neighbors.
-     */
+
+    public static int SERVENT_COUNT;
     public static boolean IS_CLIQUE;
     public static SnapshotType SNAPSHOT_TYPE;
 
@@ -90,19 +87,11 @@ public class AppConfig {
             System.exit(0);
         }
 
-        int serventCount = -1;
-        try {
-            serventCount = Integer.parseInt(properties.getProperty("servent_count"));
-        } catch (NumberFormatException e) {
-            timestampedErrorPrint("Problem reading servent_count. Exiting...");
-            System.exit(0);
-        }
-
+        SERVENT_COUNT = Integer.parseInt(properties.getProperty("servent_count"));
         IS_CLIQUE = Boolean.parseBoolean(properties.getProperty("clique"));
-
         SNAPSHOT_TYPE = SnapshotType.valueOf(properties.getProperty("snapshot").toUpperCase());
 
-        for (int i = 0; i < serventCount; i++) {
+        for (int i = 0; i < SERVENT_COUNT; i++) {
             String portProperty = "servent" + i + ".port";
 
             int serventPort = -1;
@@ -116,7 +105,7 @@ public class AppConfig {
 
             List<Integer> neighborList = new ArrayList<>();
             if (IS_CLIQUE) {
-                for (int j = 0; j < serventCount; j++) {
+                for (int j = 0; j < SERVENT_COUNT; j++) {
                     if (j == i) {
                         continue;
                     }
@@ -145,7 +134,7 @@ public class AppConfig {
             serventInfoList.add(newInfo);
         }
 
-        CausalBroadcastShared.initializeVectorClock(serventCount);
+        CausalBroadcastShared.initializeVectorClock();
     }
 
     /**
@@ -155,17 +144,10 @@ public class AppConfig {
      * @return {@link ServentInfo} object for this id
      */
     public static ServentInfo getInfoById(int id) {
-        if (id >= getServentCount()) {
+        if (id >= SERVENT_COUNT) {
             throw new IllegalArgumentException(
-                    "Trying to get info for servent " + id + " when there are " + getServentCount() + " servents.");
+                    "Trying to get info for servent " + id + " when there are " + SERVENT_COUNT + " servents.");
         }
         return serventInfoList.get(id);
-    }
-
-    /**
-     * Get number of servents in this system.
-     */
-    public static int getServentCount() {
-        return serventInfoList.size();
     }
 }

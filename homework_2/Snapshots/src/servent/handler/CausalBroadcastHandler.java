@@ -1,12 +1,13 @@
 package servent.handler;
 
 import app.AppConfig;
-import servent.snapshot.CausalBroadcastShared;
 import app.ServentInfo;
 import servent.message.CausalBroadcastMessage;
 import servent.message.Message;
 import servent.message.MessageType;
 import servent.message.MessageUtil;
+import servent.snapshot.CausalBroadcastShared;
+
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;

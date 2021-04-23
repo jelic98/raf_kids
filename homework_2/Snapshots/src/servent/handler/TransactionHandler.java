@@ -1,8 +1,8 @@
 package servent.handler;
 
-import servent.snapshot.BitcakeManager;
 import servent.message.Message;
 import servent.message.MessageType;
+import servent.snapshot.BitcakeManager;
 
 public class TransactionHandler implements Runnable {
 

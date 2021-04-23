@@ -31,8 +31,8 @@ public class CausalBroadcastShared {
     private static final Queue<Message> pendingMessages = new ConcurrentLinkedQueue<>();
     private static final Object pendingMessagesLock = new Object();
 
-    public static void initializeVectorClock(int serventCount) {
-        for (int i = 0; i < serventCount; i++) {
+    public static void initializeVectorClock() {
+        for (int i = 0; i < AppConfig.SERVENT_COUNT; i++) {
             vectorClock.put(i, 0);
         }
     }

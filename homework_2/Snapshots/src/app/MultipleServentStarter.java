@@ -39,9 +39,7 @@ public class MultipleServentStarter {
         AppConfig.timestampedStandardPrint("Starting multiple servent runner. "
                 + "If servents do not finish on their own, type \"stop\" to finish them");
 
-        int serventCount = AppConfig.getServentCount();
-
-        for (int i = 0; i < serventCount; i++) {
+        for (int i = 0; i < AppConfig.SERVENT_COUNT; i++) {
             try {
                 ProcessBuilder builder = new ProcessBuilder("java", "-cp", OUT_DIR, "app.ServentMain",
                         testName + "/servent_list.properties", String.valueOf(i));

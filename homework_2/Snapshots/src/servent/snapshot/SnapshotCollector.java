@@ -45,6 +45,12 @@ public class SnapshotCollector implements Runnable {
     public void run() {
         while(working) {
             while (!collecting.get()) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+
                 if (!working) {
                     return;
                 }
@@ -68,7 +74,7 @@ public class SnapshotCollector implements Runnable {
             boolean waiting = true;
 
             while (waiting) {
-                if (results.size() == AppConfig.getServentCount()) {
+                if (results.size() == AppConfig.SERVENT_COUNT) {
                     waiting = false;
                 }
 
@@ -83,20 +89,25 @@ public class SnapshotCollector implements Runnable {
                 }
             }
 
-            int sum = 0;
+            switch (snapshotType) {
+                case AB:
+                    int sum = 0;
 
-            for (Entry<Integer, Integer> itemAmount : results.entrySet()) {
-                sum += itemAmount.getValue();
-                AppConfig.timestampedStandardPrint(
-                        "Info for " + itemAmount.getKey() + " = " + itemAmount.getValue() + " bitcake");
+                    for (Entry<Integer, Integer> e : results.entrySet()) {
+                        sum += e.getValue();
+                        AppConfig.timestampedStandardPrint(String.format("Servent %d has %d bitcakes", e.getKey(), e.getValue()));
+                    }
+
+                    AppConfig.timestampedStandardPrint("Total bitcakes: " + sum);
+
+                    results.clear();
+                    collecting.set(false);
+
+                    break;
+                case AV:
+                    break;
             }
-
-            AppConfig.timestampedStandardPrint("System bitcake count: " + sum);
-
-            results.clear();
-            collecting.set(false);
         }
-
     }
 
     public void addSnapshot(int id, int amount) {

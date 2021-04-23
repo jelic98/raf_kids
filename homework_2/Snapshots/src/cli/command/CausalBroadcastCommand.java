@@ -1,11 +1,12 @@
 package cli.command;
 
 import app.AppConfig;
-import servent.snapshot.CausalBroadcastShared;
 import app.ServentInfo;
 import servent.message.CausalBroadcastMessage;
 import servent.message.Message;
 import servent.message.MessageUtil;
+import servent.snapshot.CausalBroadcastShared;
+
 import java.util.Map;
 
 public class CausalBroadcastCommand implements Command {

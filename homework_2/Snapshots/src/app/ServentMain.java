@@ -35,7 +35,7 @@ public class ServentMain {
             System.exit(0);
         }
 
-        if (serventId >= AppConfig.getServentCount()) {
+        if (serventId >= AppConfig.SERVENT_COUNT) {
             AppConfig.timestampedErrorPrint("Invalid servent id provided");
             System.exit(0);
         }

@@ -10,9 +10,9 @@ import java.util.List;
 
 public class LYTellMessage extends BasicMessage {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 3116394054726162318L;
 
-    private final LYSnapshotResult lySnapshotResult;
+    private LYSnapshotResult lySnapshotResult;
 
     public LYTellMessage(ServentInfo sender, ServentInfo receiver, LYSnapshotResult lySnapshotResult) {
         super(MessageType.LY_TELL, sender, receiver);
@@ -33,7 +33,8 @@ public class LYTellMessage extends BasicMessage {
 
     @Override
     public Message setRedColor() {
-        return new LYTellMessage(getMessageType(), getOriginalSenderInfo(), getReceiverInfo(),
+        Message toReturn = new LYTellMessage(getMessageType(), getOriginalSenderInfo(), getReceiverInfo(),
                 false, getRoute(), getMessageText(), getMessageId(), getLYSnapshotResult());
+        return toReturn;
     }
 }

@@ -4,7 +4,6 @@ import app.snapshot_bitcake.SnapshotCollector;
 import app.snapshot_bitcake.SnapshotCollectorWorker;
 import cli.CLIParser;
 import servent.SimpleServentListener;
-import servent.message.util.MessageUtil;
 
 /**
  * Describes the procedure for starting a single Servent
@@ -24,7 +23,7 @@ public class ServentMain {
         }
 
         int serventId = -1;
-        int portNumber = -1;
+        int portNumber;
 
         String serventListFile = args[0];
 
@@ -55,8 +54,6 @@ public class ServentMain {
             System.exit(0);
         }
 
-        MessageUtil.initializePendingMessages();
-
         AppConfig.timestampedStandardPrint("Starting servent " + AppConfig.myServentInfo);
 
         SnapshotCollector snapshotCollector = new SnapshotCollectorWorker(AppConfig.SNAPSHOT_TYPE);
@@ -70,6 +67,5 @@ public class ServentMain {
         CLIParser cliParser = new CLIParser(simpleListener, snapshotCollector);
         Thread cliThread = new Thread(cliParser);
         cliThread.start();
-
     }
 }

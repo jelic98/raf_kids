@@ -10,6 +10,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.BiFunction;
 
 /**
  * This class contains shared data for the Causal Broadcast implementation:
@@ -36,7 +37,13 @@ public class CausalBroadcastShared {
     }
 
     public static void incrementClock(int serventId) {
-        vectorClock.computeIfPresent(serventId, (key, oldValue) -> oldValue + 1);
+        vectorClock.computeIfPresent(serventId, new BiFunction<Integer, Integer, Integer>() {
+
+            @Override
+            public Integer apply(Integer key, Integer oldValue) {
+                return oldValue + 1;
+            }
+        });
     }
 
     public static Map<Integer, Integer> getVectorClock() {

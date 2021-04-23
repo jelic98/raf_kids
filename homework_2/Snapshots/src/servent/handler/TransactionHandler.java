@@ -8,8 +8,8 @@ import servent.message.MessageType;
 
 public class TransactionHandler implements MessageHandler {
 
-    private final Message clientMessage;
-    private final BitcakeManager bitcakeManager;
+    private Message clientMessage;
+    private BitcakeManager bitcakeManager;
 
     public TransactionHandler(Message clientMessage, BitcakeManager bitcakeManager) {
         this.clientMessage = clientMessage;
@@ -21,7 +21,7 @@ public class TransactionHandler implements MessageHandler {
         if (clientMessage.getMessageType() == MessageType.TRANSACTION) {
             String amountString = clientMessage.getMessageText();
 
-            int amountNumber;
+            int amountNumber = 0;
             try {
                 amountNumber = Integer.parseInt(amountString);
             } catch (NumberFormatException e) {

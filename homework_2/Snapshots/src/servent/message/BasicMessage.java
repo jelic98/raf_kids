@@ -17,9 +17,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class BasicMessage implements Message {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -9075856313609777945L;
     //This gives us a unique id - incremented in every natural constructor.
-    private static final AtomicInteger messageCounter = new AtomicInteger(0);
+    private static AtomicInteger messageCounter = new AtomicInteger(0);
     private final MessageType type;
     private final ServentInfo originalSenderInfo;
     private final ServentInfo receiverInfo;
@@ -93,6 +93,7 @@ public class BasicMessage implements Message {
         return messageText;
     }
 
+    @Override
     public int getMessageId() {
         return messageId;
     }
@@ -135,6 +136,12 @@ public class BasicMessage implements Message {
     public Message setRedColor() {
         return createInstance(getMessageType(), getOriginalSenderInfo(),
                 getReceiverInfo(), false, getRoute(), getMessageText(), getMessageId());
+    }
+
+    @Override
+    public Message setWhiteColor() {
+        return createInstance(getMessageType(), getOriginalSenderInfo(),
+                getReceiverInfo(), true, getRoute(), getMessageText(), getMessageId());
     }
 
     /**

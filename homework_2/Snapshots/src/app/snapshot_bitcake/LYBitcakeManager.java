@@ -19,8 +19,8 @@ public class LYBitcakeManager implements BitcakeManager {
      * Access it only if you have the blessing.
      */
     public int recordedAmount = 0;
-    private final Map<Integer, Integer> giveHistory = new ConcurrentHashMap<>();
-    private final Map<Integer, Integer> getHistory = new ConcurrentHashMap<>();
+    private Map<Integer, Integer> giveHistory = new ConcurrentHashMap<>();
+    private Map<Integer, Integer> getHistory = new ConcurrentHashMap<>();
 
     public LYBitcakeManager() {
         for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
@@ -37,12 +37,17 @@ public class LYBitcakeManager implements BitcakeManager {
         currentAmount.getAndAdd(amount);
     }
 
+    public int getCurrentBitcakeAmount() {
+        return currentAmount.get();
+    }
+
     public void markerEvent(int collectorId, SnapshotCollector snapshotCollector) {
         synchronized (AppConfig.colorLock) {
             AppConfig.isWhite.set(false);
-            recordedAmount = currentAmount.get();
+            recordedAmount = getCurrentBitcakeAmount();
 
-            LYSnapshotResult snapshotResult = new LYSnapshotResult(recordedAmount, giveHistory, getHistory);
+            LYSnapshotResult snapshotResult = new LYSnapshotResult(
+                    AppConfig.myServentInfo.getId(), recordedAmount, giveHistory, getHistory);
 
             if (collectorId == AppConfig.myServentInfo.getId()) {
                 snapshotCollector.addLYSnapshotInfo(
@@ -60,7 +65,9 @@ public class LYBitcakeManager implements BitcakeManager {
                 Message clMarker = new LYMarkerMessage(AppConfig.myServentInfo, AppConfig.getInfoById(neighbor), collectorId);
                 MessageUtil.sendMessage(clMarker);
                 try {
-                    //Artificially produce some white node -> red node messages
+                    /**
+                     * This sleep is here to artificially produce some white node -> red node messages
+                     */
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
@@ -77,9 +84,9 @@ public class LYBitcakeManager implements BitcakeManager {
         getHistory.compute(neighbor, new MapValueUpdater(amount));
     }
 
-    private static class MapValueUpdater implements BiFunction<Integer, Integer, Integer> {
+    private class MapValueUpdater implements BiFunction<Integer, Integer, Integer> {
 
-        private final int valueToAdd;
+        private int valueToAdd;
 
         public MapValueUpdater(int valueToAdd) {
             this.valueToAdd = valueToAdd;

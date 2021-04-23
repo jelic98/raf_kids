@@ -5,7 +5,6 @@ import app.Cancellable;
 import app.snapshot_bitcake.LYBitcakeManager;
 import app.snapshot_bitcake.SnapshotCollector;
 import app.snapshot_bitcake.SnapshotType;
-import servent.handler.CausalBroadcastHandler;
 import servent.handler.MessageHandler;
 import servent.handler.TransactionHandler;
 import servent.handler.snapshot.LYMarkerHandler;
@@ -30,8 +29,8 @@ public class SimpleServentListener implements Runnable, Cancellable {
      */
     private final ExecutorService threadPool = Executors.newWorkStealingPool();
     private volatile boolean working = true;
-    private final SnapshotCollector snapshotCollector;
-    private final List<Message> redMessages = new ArrayList<>();
+    private SnapshotCollector snapshotCollector;
+    private List<Message> redMessages = new ArrayList<>();
 
     public SimpleServentListener(SnapshotCollector snapshotCollector) {
         this.snapshotCollector = snapshotCollector;
@@ -61,7 +60,7 @@ public class SimpleServentListener implements Runnable, Cancellable {
                  * The marker contains the collector id, so we need to process that as our first
                  * red message.
                  */
-                if (!AppConfig.isWhite.get() && redMessages.size() > 0) {
+                if (AppConfig.isWhite.get() == false && redMessages.size() > 0) {
                     clientMessage = redMessages.remove(0);
                 } else {
                     /*
@@ -74,7 +73,7 @@ public class SimpleServentListener implements Runnable, Cancellable {
                 }
                 synchronized (AppConfig.colorLock) {
                     if (AppConfig.SNAPSHOT_TYPE == SnapshotType.LY) {
-                        if (!clientMessage.isWhite() && AppConfig.isWhite.get()) {
+                        if (clientMessage.isWhite() == false && AppConfig.isWhite.get()) {
                             /*
                              * If the message is red, we are white, and the message isn't a marker,
                              * then store it. We will get the marker soon, and then we will process
@@ -102,9 +101,6 @@ public class SimpleServentListener implements Runnable, Cancellable {
                  * because that way is much simpler and less error prone.
                  */
                 switch (clientMessage.getMessageType()) {
-                    case CAUSAL_BROADCAST:
-                        messageHandler = new CausalBroadcastHandler(clientMessage);
-                        break;
                     case TRANSACTION:
                         messageHandler = new TransactionHandler(clientMessage, snapshotCollector.getBitcakeManager());
                         break;

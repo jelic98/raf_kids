@@ -9,8 +9,8 @@ import servent.message.snapshot.LYTellMessage;
 
 public class LYTellHandler implements MessageHandler {
 
-    private final Message clientMessage;
-    private final SnapshotCollector snapshotCollector;
+    private Message clientMessage;
+    private SnapshotCollector snapshotCollector;
 
     public LYTellHandler(Message clientMessage, SnapshotCollector snapshotCollector) {
         this.clientMessage = clientMessage;

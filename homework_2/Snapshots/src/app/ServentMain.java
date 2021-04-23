@@ -1,6 +1,6 @@
 package app;
 
-import cli.CLIParser;
+import cli.Parser;
 import servent.SimpleServentListener;
 
 /**
@@ -58,10 +58,8 @@ public class ServentMain {
         Thread listenerThread = new Thread(simpleListener);
         listenerThread.start();
 
-        CLIParser cliParser = new CLIParser(simpleListener);
-        Thread cliThread = new Thread(cliParser);
+        Parser parser = new Parser(simpleListener);
+        Thread cliThread = new Thread(parser);
         cliThread.start();
-
-
     }
 }

@@ -2,10 +2,10 @@ package cli.command;
 
 import app.AppConfig;
 
-public class InfoCommand implements CLICommand {
+public class InfoCommand implements Command {
 
     @Override
-    public String commandName() {
+    public String getName() {
         return "info";
     }
 
@@ -16,7 +16,7 @@ public class InfoCommand implements CLICommand {
 
         StringBuilder sb = new StringBuilder();
 
-        for(Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
+        for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
             sb.append(neighbor);
             sb.append(" ");
         }

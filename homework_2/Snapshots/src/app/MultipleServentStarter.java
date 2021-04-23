@@ -45,30 +45,23 @@ public class MultipleServentStarter {
                 ProcessBuilder builder = new ProcessBuilder("java", "-cp", OUT_DIR, "app.ServentMain",
                         testName + "/servent_list.properties", String.valueOf(i));
 
-                //We use files to read and write.
-                //System.out, System.err and System.in will point to these files.
                 builder.redirectOutput(new File(testName + "/output/servent" + i + "_out.txt"));
                 builder.redirectError(new File(testName + "/error/servent" + i + "_err.txt"));
                 builder.redirectInput(new File(testName + "/input/servent" + i + "_in.txt"));
 
-                //Starts the servent as a completely separate process.
-                Process p = builder.start();
-                serventProcesses.add(p);
-
+                serventProcesses.add(builder.start());
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
-        Thread t = new Thread(new ServentCLI(serventProcesses));
-
-        t.start(); //CLI thread waiting for user to type "stop".
+        new Thread(new ServentCLI(serventProcesses)).start();
 
         for (Process process : serventProcesses) {
             try {
-                process.waitFor(); //Wait for graceful process finish.
+                process.waitFor();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                Thread.currentThread().interrupt();
             }
         }
 
@@ -109,5 +102,4 @@ public class MultipleServentStarter {
             sc.close();
         }
     }
-
 }

@@ -1,7 +1,6 @@
 package servent.message;
 
 import app.ServentInfo;
-
 import java.io.Serializable;
 import java.util.List;
 

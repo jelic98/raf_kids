@@ -62,6 +62,16 @@ public class CausalBroadcastShared {
         pendingMessages.add(msg);
     }
 
+    public static void commitCausalMessage(Message newMessage, boolean checkPending) {
+        AppConfig.timestampedStandardPrint("Committing " + newMessage.getMessageText());
+        commitedCausalMessageList.add(newMessage);
+        incrementClock(newMessage.getOriginalSenderInfo().getId());
+
+        if(checkPending) {
+            checkPendingMessages();
+        }
+    }
+
     private static boolean otherClockGreater(Map<Integer, Integer> clock1, Map<Integer, Integer> clock2) {
         if (clock1.size() != clock2.size()) {
             throw new IllegalArgumentException("Clocks are not same size how why");
@@ -93,10 +103,7 @@ public class CausalBroadcastShared {
                     if (!otherClockGreater(myVectorClock, cbm.getSenderVectorClock())) {
                         gotWork = true;
 
-                        AppConfig.timestampedStandardPrint("Committing " + cbm.getMessageText() +
-                                " with clock " + cbm.getSenderVectorClock().toString());
-                        commitedCausalMessageList.add(cbm);
-                        incrementClock(cbm.getOriginalSenderInfo().getId());
+                        commitCausalMessage(cbm, false);
 
                         iterator.remove();
 

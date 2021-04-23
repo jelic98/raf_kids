@@ -6,12 +6,12 @@ package cli.command;
  *
  * @author bmilojkovic
  */
-public interface CLICommand {
+public interface Command {
 
     /**
      * Command name, as given by the user on the CLI.
      */
-    String commandName();
+    String getName();
 
     /**
      * All command logic goes here. <code>args</code> is the user's input, with command name taken out.

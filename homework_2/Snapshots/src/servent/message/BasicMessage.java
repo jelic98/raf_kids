@@ -18,7 +18,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class BasicMessage implements Message {
 
     private static final long serialVersionUID = 1L;
-    //This gives us a unique id - incremented in every natural constructor.
     private static final AtomicInteger messageCounter = new AtomicInteger(0);
     private final MessageType type;
     private final ServentInfo originalSenderInfo;
@@ -39,7 +38,7 @@ public class BasicMessage implements Message {
     }
 
     protected BasicMessage(MessageType type, ServentInfo originalSenderInfo, ServentInfo receiverInfo,
-                         List<ServentInfo> routeList, String messageText, int messageId) {
+                           List<ServentInfo> routeList, String messageText, int messageId) {
         this.type = type;
         this.originalSenderInfo = originalSenderInfo;
         this.receiverInfo = receiverInfo;
@@ -95,9 +94,9 @@ public class BasicMessage implements Message {
     }
 
     protected Message createInstance(MessageType type, ServentInfo originalSenderInfo, ServentInfo receiverInfo,
-                                          List<ServentInfo> routeList, String messageText, int messageId) {
-        return new BasicMessage(getMessageType(), getOriginalSenderInfo(),
-                getReceiverInfo(), routeList, getMessageText(), getMessageId());
+                                     List<ServentInfo> routeList, String messageText, int messageId) {
+        return new BasicMessage(type, originalSenderInfo,
+                receiverInfo, routeList, messageText, messageId);
     }
 
     /**

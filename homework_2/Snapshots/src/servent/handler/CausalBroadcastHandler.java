@@ -3,6 +3,7 @@ package servent.handler;
 import app.AppConfig;
 import app.CausalBroadcastShared;
 import app.ServentInfo;
+import servent.message.CausalBroadcastMessage;
 import servent.message.Message;
 import servent.message.MessageType;
 import servent.message.MessageUtil;
@@ -17,10 +18,10 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author bmilojkovic
  */
-public class CausalBroadcastHandler implements MessageHandler {
+public class CausalBroadcastHandler implements Runnable {
 
+    private static final Set<Message> receivedBroadcasts = Collections.newSetFromMap(new ConcurrentHashMap<Message, Boolean>());
     private final Message clientMessage;
-	private static Set<Message> receivedBroadcasts = Collections.newSetFromMap(new ConcurrentHashMap<Message, Boolean>());
 
     public CausalBroadcastHandler(Message clientMessage) {
         this.clientMessage = clientMessage;
@@ -29,40 +30,36 @@ public class CausalBroadcastHandler implements MessageHandler {
     @Override
     public void run() {
         if (clientMessage.getMessageType() == MessageType.CAUSAL_BROADCAST) {
-			ServentInfo senderInfo = clientMessage.getOriginalSenderInfo();
-			ServentInfo lastSenderInfo = clientMessage.getRoute().size() == 0 ?
-					clientMessage.getOriginalSenderInfo() :
-					clientMessage.getRoute().get(clientMessage.getRoute().size()-1);
+            ServentInfo senderInfo = clientMessage.getOriginalSenderInfo();
+            ServentInfo lastSenderInfo = clientMessage.getRoute().size() == 0 ?
+                    clientMessage.getOriginalSenderInfo() :
+                    clientMessage.getRoute().get(clientMessage.getRoute().size() - 1);
 
-			String text = String.format("Got %s from %s broadcast by %s",
-					clientMessage.getMessageText(), lastSenderInfo, senderInfo);
+            String text = String.format("Got %s from %s broadcast by %s with clock %s",
+                    clientMessage.getMessageText(), lastSenderInfo, senderInfo,
+                    ((CausalBroadcastMessage) clientMessage).getSenderVectorClock());
 
-			AppConfig.timestampedStandardPrint(text);
+            AppConfig.timestampedStandardPrint(text);
 
-			if (AppConfig.IS_CLIQUE) {
-				CausalBroadcastShared.addPendingMessage(clientMessage);
-				CausalBroadcastShared.checkPendingMessages();
-			} else {
-				//Try to put in the set. Thread safe add ftw.
-				boolean didPut = receivedBroadcasts.add(clientMessage);
+            if (AppConfig.IS_CLIQUE) {
+                CausalBroadcastShared.addPendingMessage(clientMessage);
+                CausalBroadcastShared.checkPendingMessages();
+            } else {
+                boolean didPut = receivedBroadcasts.add(clientMessage);
 
-				if (didPut) {
-					//New message for us. Rebroadcast it.
-					CausalBroadcastShared.addPendingMessage(clientMessage);
-					CausalBroadcastShared.checkPendingMessages();
+                if (didPut && clientMessage.getOriginalSenderInfo().getId() != AppConfig.myServentInfo.getId()) {
+                    CausalBroadcastShared.addPendingMessage(clientMessage);
+                    CausalBroadcastShared.checkPendingMessages();
 
-					AppConfig.timestampedStandardPrint("Rebroadcasting... " + receivedBroadcasts.size());
+                    AppConfig.timestampedStandardPrint("Rebroadcasting... " + receivedBroadcasts.size());
 
-					for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
-						//Same message, different receiver, and add us to the route table.
-						MessageUtil.sendMessage(clientMessage.changeReceiver(neighbor).makeMeASender());
-					}
-				} else {
-					//We already got this from somewhere else. /ignore
-					AppConfig.timestampedStandardPrint("Already had this. No rebroadcast.");
-				}
-			}
+                    for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
+                        MessageUtil.sendMessage(clientMessage.changeReceiver(neighbor).makeMeASender());
+                    }
+                } else {
+                    AppConfig.timestampedStandardPrint("Already had this. No rebroadcast.");
+                }
+            }
         }
     }
-
 }

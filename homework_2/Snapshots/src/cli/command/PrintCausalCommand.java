@@ -4,10 +4,10 @@ import app.AppConfig;
 import app.CausalBroadcastShared;
 import servent.message.Message;
 
-public class PrintCausalCommand implements CLICommand {
+public class PrintCausalCommand implements Command {
 
     @Override
-    public String commandName() {
+    public String getName() {
         return "print_causal";
     }
 
@@ -28,5 +28,4 @@ public class PrintCausalCommand implements CLICommand {
             i++;
         }
     }
-
 }

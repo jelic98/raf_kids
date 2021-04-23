@@ -1,7 +1,6 @@
 package cli;
 
 import app.AppConfig;
-import app.Cancellable;
 import cli.command.*;
 import servent.SimpleServentListener;
 
@@ -26,12 +25,12 @@ import java.util.Scanner;
  *
  * @author bmilojkovic
  */
-public class CLIParser implements Runnable, Cancellable {
+public class Parser implements Runnable {
 
-    private final List<CLICommand> commandList;
+    private final List<Command> commandList;
     private volatile boolean working = true;
 
-    public CLIParser(SimpleServentListener listener) {
+    public Parser(SimpleServentListener listener) {
         this.commandList = new ArrayList<>();
 
         commandList.add(new InfoCommand());
@@ -61,9 +60,9 @@ public class CLIParser implements Runnable, Cancellable {
 
             boolean found = false;
 
-            for (CLICommand cliCommand : commandList) {
-                if (cliCommand.commandName().equals(commandName)) {
-                    cliCommand.execute(commandArgs);
+            for (Command command : commandList) {
+                if (command.getName().equals(commandName)) {
+                    command.execute(commandArgs);
                     found = true;
                     break;
                 }
@@ -77,9 +76,7 @@ public class CLIParser implements Runnable, Cancellable {
         sc.close();
     }
 
-    @Override
     public void stop() {
         this.working = false;
-
     }
 }

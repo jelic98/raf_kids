@@ -1,21 +1,21 @@
 package cli.command;
 
 import app.AppConfig;
-import cli.CLIParser;
+import cli.Parser;
 import servent.SimpleServentListener;
 
-public class StopCommand implements CLICommand {
+public class StopCommand implements Command {
 
-    private final CLIParser parser;
+    private final Parser parser;
     private final SimpleServentListener listener;
 
-    public StopCommand(CLIParser parser, SimpleServentListener listener) {
+    public StopCommand(Parser parser, SimpleServentListener listener) {
         this.parser = parser;
         this.listener = listener;
     }
 
     @Override
-    public String commandName() {
+    public String getName() {
         return "stop";
     }
 
@@ -25,5 +25,4 @@ public class StopCommand implements CLICommand {
         parser.stop();
         listener.stop();
     }
-
 }

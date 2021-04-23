@@ -1,6 +1,7 @@
 package servent.message;
 
 import app.ServentInfo;
+
 import java.util.List;
 import java.util.Map;
 
@@ -23,8 +24,8 @@ public class CausalBroadcastMessage extends BasicMessage {
     }
 
     public CausalBroadcastMessage(ServentInfo originalSenderInfo, ServentInfo receiverInfo,
-                List<ServentInfo> routeList, String messageText, int messageId, Map<Integer, Integer> senderVectorClock) {
-            super(MessageType.CAUSAL_BROADCAST, originalSenderInfo, receiverInfo, routeList, messageText, messageId);
+                                  List<ServentInfo> routeList, String messageText, int messageId, Map<Integer, Integer> senderVectorClock) {
+        super(MessageType.CAUSAL_BROADCAST, originalSenderInfo, receiverInfo, routeList, messageText, messageId);
 
         this.senderVectorClock = senderVectorClock;
     }

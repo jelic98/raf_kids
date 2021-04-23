@@ -2,10 +2,10 @@ package cli.command;
 
 import app.AppConfig;
 
-public class PauseCommand implements CLICommand {
+public class PauseCommand implements Command {
 
     @Override
-    public String commandName() {
+    public String getName() {
         return "pause";
     }
 
@@ -24,12 +24,11 @@ public class PauseCommand implements CLICommand {
             try {
                 Thread.sleep(timeToSleep);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                Thread.currentThread().interrupt();
             }
 
         } catch (NumberFormatException e) {
             AppConfig.timestampedErrorPrint("Pause command should have one int argument, which is time in ms.");
         }
     }
-
 }

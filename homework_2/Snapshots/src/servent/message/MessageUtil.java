@@ -32,11 +32,9 @@ public class MessageUtil {
             clientMessage = (Message) ois.readObject();
 
             socket.close();
-        } catch (IOException e) {
+        } catch (Exception e) {
             AppConfig.timestampedErrorPrint("Error in reading socket on " +
                     socket.getInetAddress() + ":" + socket.getPort());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         }
 
         if (MESSAGE_UTIL_PRINTING) {
@@ -49,15 +47,10 @@ public class MessageUtil {
     }
 
     public static void sendMessage(Message message) {
-
-        /*
-         * A random sleep before sending.
-         * It is important to take regular naps for health reasons.
-         */
         try {
             Thread.sleep((long) (Math.random() * 1000) + 500);
-        } catch (InterruptedException e1) {
-            e1.printStackTrace();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
 
         ServentInfo receiverInfo = message.getReceiverInfo();

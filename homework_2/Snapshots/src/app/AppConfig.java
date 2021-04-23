@@ -17,6 +17,7 @@ import java.util.Properties;
  */
 public class AppConfig {
 
+    private static final List<ServentInfo> serventInfoList = new ArrayList<>();
     /**
      * Convenience access for this servent's information
      */
@@ -26,10 +27,7 @@ public class AppConfig {
      * neighbors.
      */
     public static boolean IS_CLIQUE;
-
-    public static SnapshotType SNAPSHOT;
-
-    private static final List<ServentInfo> serventInfoList = new ArrayList<>();
+    public static SnapshotType SNAPSHOT_TYPE;
 
     /**
      * Print a message to stdout with a timestamp
@@ -99,7 +97,7 @@ public class AppConfig {
 
         IS_CLIQUE = Boolean.parseBoolean(properties.getProperty("clique"));
 
-        SNAPSHOT = SnapshotType.valueOf(properties.getProperty("snapshot").toUpperCase());
+        SNAPSHOT_TYPE = SnapshotType.valueOf(properties.getProperty("snapshot").toUpperCase());
 
         for (int i = 0; i < serventCount; i++) {
             String portProperty = "servent" + i + ".port";
@@ -167,5 +165,4 @@ public class AppConfig {
     public static int getServentCount() {
         return serventInfoList.size();
     }
-
 }

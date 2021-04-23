@@ -6,13 +6,12 @@ import app.ServentInfo;
 import servent.message.CausalBroadcastMessage;
 import servent.message.Message;
 import servent.message.MessageUtil;
-
 import java.util.Map;
 
-public class CausalBroadcastCommand implements CLICommand {
+public class CausalBroadcastCommand implements Command {
 
     @Override
-    public String commandName() {
+    public String getName() {
         return "causal_broadcast";
     }
 
@@ -31,5 +30,7 @@ public class CausalBroadcastCommand implements CLICommand {
         for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
             MessageUtil.sendMessage(broadcastMessage.changeReceiver(neighbor));
         }
+
+        CausalBroadcastShared.commitCausalMessage(broadcastMessage.changeReceiver(myInfo.getId()), true);
     }
 }

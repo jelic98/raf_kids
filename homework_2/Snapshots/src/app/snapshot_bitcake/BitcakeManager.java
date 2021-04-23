@@ -9,9 +9,5 @@ package app.snapshot_bitcake;
 public interface BitcakeManager {
 
     void takeSomeBitcakes(int amount);
-
     void addSomeBitcakes(int amount);
-
-    int getCurrentBitcakeAmount();
-
 }

@@ -11,9 +11,9 @@ import app.snapshot_bitcake.LYBitcakeManager;
  */
 public class TransactionMessage extends BasicMessage {
 
-    private static final long serialVersionUID = -333251402058492901L;
+    private static final long serialVersionUID = 1L;
 
-    private transient BitcakeManager bitcakeManager;
+    private final transient BitcakeManager bitcakeManager;
 
     public TransactionMessage(ServentInfo sender, ServentInfo receiver, int amount, BitcakeManager bitcakeManager) {
         super(MessageType.TRANSACTION, sender, receiver, String.valueOf(amount));

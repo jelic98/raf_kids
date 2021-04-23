@@ -66,12 +66,6 @@ public interface Message extends Serializable {
     String getMessageText();
 
     /**
-     * An id that is unique per servent. Combined with servent id, it will be unique
-     * in the system.
-     */
-    int getMessageId();
-
-    /**
      * Alters the message and returns a new copy with everything intact, except
      * the current node being added to the route list.
      */
@@ -88,12 +82,6 @@ public interface Message extends Serializable {
      * the color being changed to red.
      */
     Message setRedColor();
-
-    /**
-     * Alters the message and returns a new copy with everything intact, except
-     * the color being changed to white.
-     */
-    Message setWhiteColor();
 
     /**
      * This method is invoked by the frameworks sender code. It is invoked

@@ -31,8 +31,8 @@ public class AppConfig {
      */
     public static boolean IS_CLIQUE;
     public static SnapshotType SNAPSHOT_TYPE;
-    public static AtomicBoolean isWhite = new AtomicBoolean(true);
-    public static Object colorLock = new Object();
+    public static final AtomicBoolean isWhite = new AtomicBoolean(true);
+    public static final Object colorLock = new Object();
 
     /**
      * Print a message to stdout with a timestamp

@@ -6,7 +6,6 @@ import app.ServentInfo;
 import servent.message.Message;
 import servent.message.MessageType;
 import servent.message.util.MessageUtil;
-
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class CausalBroadcastHandler implements MessageHandler {
 
-    private static Set<Message> receivedBroadcasts = Collections.newSetFromMap(new ConcurrentHashMap<Message, Boolean>());
+    private static final Set<Message> receivedBroadcasts = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private final Message clientMessage;
 
     public CausalBroadcastHandler(Message clientMessage) {

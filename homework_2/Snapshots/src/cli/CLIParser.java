@@ -37,6 +37,8 @@ public class CLIParser implements Runnable, Cancellable {
 
         commandList.add(new InfoCommand());
         commandList.add(new PauseCommand());
+        commandList.add(new CausalBroadcastCommand());
+        commandList.add(new PrintCausalCommand());
         commandList.add(new TransactionBurstCommand(snapshotCollector.getBitcakeManager()));
         commandList.add(new BitcakeInfoCommand(snapshotCollector));
         commandList.add(new StopCommand(this, listener, snapshotCollector));
@@ -51,7 +53,7 @@ public class CLIParser implements Runnable, Cancellable {
 
             int spacePos = commandLine.indexOf(" ");
 
-            String commandName = null;
+            String commandName;
             String commandArgs = null;
             if (spacePos != -1) {
                 commandName = commandLine.substring(0, spacePos);

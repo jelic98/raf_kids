@@ -16,11 +16,11 @@ public class SnapshotCollectorWorker implements SnapshotCollector {
 
     private volatile boolean working = true;
 
-    private AtomicBoolean collecting = new AtomicBoolean(false);
+    private final AtomicBoolean collecting = new AtomicBoolean(false);
 
-    private Map<Integer, LYSnapshotResult> collectedLYValues = new ConcurrentHashMap<>();
+    private final Map<Integer, LYSnapshotResult> collectedLYValues = new ConcurrentHashMap<>();
 
-    private SnapshotType snapshotType;
+    private final SnapshotType snapshotType;
 
     private BitcakeManager bitcakeManager;
 

@@ -25,8 +25,8 @@ public class MessageUtil {
      */
     public static final boolean MESSAGE_UTIL_PRINTING = true;
 
-    public static Map<Integer, BlockingQueue<Message>> pendingMessages = new ConcurrentHashMap<>();
-    public static Map<Integer, BlockingQueue<Message>> pendingMarkers = new ConcurrentHashMap<>();
+    public static final Map<Integer, BlockingQueue<Message>> pendingMessages = new ConcurrentHashMap<>();
+    public static final Map<Integer, BlockingQueue<Message>> pendingMarkers = new ConcurrentHashMap<>();
 
     public static void initializePendingMessages() {
         for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {

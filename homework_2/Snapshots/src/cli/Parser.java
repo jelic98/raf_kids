@@ -31,8 +31,7 @@ public class Parser implements Runnable {
     private volatile boolean working = true;
 
     public Parser(SimpleServentListener listener, SnapshotCollector collector) {
-        this.commandList = new ArrayList<>();
-
+        commandList = new ArrayList<>();
         commandList.add(new BitcakeInfoCommand(collector));
         commandList.add(new CausalBroadcastCommand());
         commandList.add(new InfoCommand());
@@ -79,6 +78,6 @@ public class Parser implements Runnable {
     }
 
     public void stop() {
-        this.working = false;
+        working = false;
     }
 }

@@ -11,7 +11,7 @@ import servent.snapshot.BitcakeManager;
  */
 public class TransactionMessage extends BasicMessage {
 
-    private static final long serialVersionUID = -333251402058492901L;
+    private static final long serialVersionUID = 1L;
 
     private transient BitcakeManager bitcakeManager;
 

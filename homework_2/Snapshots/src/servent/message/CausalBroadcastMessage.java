@@ -16,15 +16,16 @@ public class CausalBroadcastMessage extends BasicMessage {
     private static final long serialVersionUID = 1L;
     private final Map<Integer, Integer> senderVectorClock;
 
-    public CausalBroadcastMessage(ServentInfo senderInfo, ServentInfo receiverInfo, String messageText,
-                                  Map<Integer, Integer> senderVectorClock) {
-        super(MessageType.CAUSAL_BROADCAST, senderInfo, receiverInfo, messageText);
+    public CausalBroadcastMessage(ServentInfo originalSenderInfo, ServentInfo receiverInfo,
+                                  String messageText, Map<Integer, Integer> senderVectorClock) {
+        super(MessageType.CAUSAL_BROADCAST, originalSenderInfo, receiverInfo, messageText);
 
         this.senderVectorClock = senderVectorClock;
     }
 
-    public CausalBroadcastMessage(ServentInfo originalSenderInfo, ServentInfo receiverInfo,
-                                  List<ServentInfo> routeList, String messageText, int messageId, Map<Integer, Integer> senderVectorClock) {
+    protected CausalBroadcastMessage(ServentInfo originalSenderInfo, ServentInfo receiverInfo,
+                                     List<ServentInfo> routeList, String messageText, int messageId,
+                                     Map<Integer, Integer> senderVectorClock) {
         super(MessageType.CAUSAL_BROADCAST, originalSenderInfo, receiverInfo, routeList, messageText, messageId);
 
         this.senderVectorClock = senderVectorClock;

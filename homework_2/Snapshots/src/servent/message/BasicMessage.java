@@ -33,7 +33,6 @@ public class BasicMessage implements Message {
         this.receiverInfo = receiverInfo;
         this.routeList = new ArrayList<>();
         this.messageText = messageText;
-
         this.messageId = messageCounter.getAndIncrement();
     }
 
@@ -44,7 +43,6 @@ public class BasicMessage implements Message {
         this.receiverInfo = receiverInfo;
         this.routeList = routeList;
         this.messageText = messageText;
-
         this.messageId = messageId;
     }
 

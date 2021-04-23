@@ -1,6 +1,9 @@
 package servent.snapshot;
 
 import app.AppConfig;
+import servent.message.AskMessage;
+import servent.message.Message;
+import servent.message.MessageUtil;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -41,26 +44,22 @@ public class SnapshotCollector implements Runnable {
     @Override
     public void run() {
         while(working) {
-
             while (!collecting.get()) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-
                 if (!working) {
                     return;
                 }
             }
 
             switch (snapshotType) {
-//                Message askMessage = new AskMessage(AppConfig.myServentInfo, null);
-//                for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
-//                    MessageUtil.sendMessage(askMessage.changeReceiver(neighbor));
-//                }
-//                addSnapshot(AppConfig.myServentInfo.getId(), bitcakeManager.getCurrentBitcakeAmount());
                 case AB:
+                    Message message = new AskMessage(AppConfig.myServentInfo, null);
+
+                    for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
+                        MessageUtil.sendMessage(message.changeReceiver(neighbor));
+                    }
+
+                    addSnapshot(AppConfig.myServentInfo.getId(), bitcakeManager.getCurrentBitcakeAmount());
+
                     break;
                 case AV:
                     break;
@@ -105,7 +104,7 @@ public class SnapshotCollector implements Runnable {
     }
 
     public void startCollecting() {
-        boolean oldValue = this.collecting.getAndSet(true);
+        boolean oldValue = collecting.getAndSet(true);
 
         if (oldValue) {
             AppConfig.timestampedErrorPrint("Tried to start collecting before finished with previous.");

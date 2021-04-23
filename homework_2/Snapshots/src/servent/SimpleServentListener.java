@@ -1,7 +1,9 @@
 package servent;
 
 import app.AppConfig;
+import servent.handler.AskHandler;
 import servent.handler.CausalBroadcastHandler;
+import servent.handler.TellHandler;
 import servent.handler.TransactionHandler;
 import servent.message.Message;
 import servent.message.MessageUtil;
@@ -47,6 +49,12 @@ public class SimpleServentListener implements Runnable {
                     case TRANSACTION:
                         threadPool.submit(new TransactionHandler(clientMessage, snapshotCollector.getBitcakeManager()));
                         break;
+                    case ASK:
+                        threadPool.submit(new AskHandler(clientMessage, snapshotCollector.getBitcakeManager()));
+                        break;
+                    case TELL:
+                        threadPool.submit(new TellHandler(clientMessage, snapshotCollector));
+                        break;
                 }
             } catch (SocketTimeoutException timeoutEx) {
                 // Ignore
@@ -57,6 +65,6 @@ public class SimpleServentListener implements Runnable {
     }
 
     public void stop() {
-        this.working = false;
+        working = false;
     }
 }

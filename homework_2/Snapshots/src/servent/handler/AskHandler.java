@@ -1,5 +1,6 @@
 package servent.handler;
 
+import app.AppConfig;
 import servent.message.Message;
 import servent.message.MessageType;
 import servent.message.MessageUtil;
@@ -19,9 +20,10 @@ public class AskHandler implements Runnable {
     @Override
     public void run() {
         if (clientMessage.getMessageType() == MessageType.ASK) {
+            int amount = bitcakeManager.getCurrentBitcakeAmount();
+            AppConfig.timestampedStandardPrint(String.format("Sending TELL message (%d bitcakes)", amount));
             MessageUtil.sendMessage(new TellMessage(clientMessage.getReceiverInfo(),
-                    clientMessage.getOriginalSenderInfo(),
-                    bitcakeManager.getCurrentBitcakeAmount()));
+                    clientMessage.getOriginalSenderInfo(), amount));
         }
     }
 }

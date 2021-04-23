@@ -27,6 +27,6 @@ public class TransactionMessage extends BasicMessage {
      */
     @Override
     public void sendEffect() {
-        bitcakeManager.takeSomeBitcakes(Integer.parseInt(getMessageText()));
+        bitcakeManager.takeBitcakes(Integer.parseInt(getMessageText()));
     }
 }

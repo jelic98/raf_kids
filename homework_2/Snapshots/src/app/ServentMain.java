@@ -55,7 +55,7 @@ public class ServentMain {
 
         AppConfig.timestampedStandardPrint("Starting servent " + AppConfig.myServentInfo);
 
-        SnapshotCollector collector = new SnapshotCollector(AppConfig.SNAPSHOT_TYPE);
+        SnapshotCollector collector = new SnapshotCollector();
         new Thread(collector).start();
 
         SimpleServentListener listener = new SimpleServentListener(collector);

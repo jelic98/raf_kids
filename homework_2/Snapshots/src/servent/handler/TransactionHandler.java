@@ -17,7 +17,7 @@ public class TransactionHandler implements Runnable {
     @Override
     public void run() {
         if (clientMessage.getMessageType() == MessageType.TRANSACTION) {
-            bitcakeManager.addSomeBitcakes(Integer.parseInt(clientMessage.getMessageText()));
+            bitcakeManager.addBitcakes(Integer.parseInt(clientMessage.getMessageText()));
         }
     }
 }

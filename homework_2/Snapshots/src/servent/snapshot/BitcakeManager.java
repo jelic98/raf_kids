@@ -9,7 +9,7 @@ package servent.snapshot;
  */
 public interface BitcakeManager {
 
-    public void takeSomeBitcakes(int amount);
-    public void addSomeBitcakes(int amount);
-    public int getCurrentBitcakeAmount();
+    void takeBitcakes(int amount);
+    void addBitcakes(int amount);
+    int getCurrentBitcakeAmount();
 }

@@ -63,14 +63,14 @@ public class MessageUtil {
             Socket sendSocket = new Socket(receiverInfo.getIpAddress(), receiverInfo.getListenerPort());
 
             ObjectOutputStream oos = new ObjectOutputStream(sendSocket.getOutputStream());
-
             oos.writeObject(message);
-
             oos.flush();
 
             sendSocket.close();
         } catch (IOException e) {
             AppConfig.timestampedErrorPrint("Couldn't send message: " + message.toString());
         }
+
+        message.sendEffect();
     }
 }

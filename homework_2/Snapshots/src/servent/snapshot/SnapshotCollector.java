@@ -21,13 +21,10 @@ public class SnapshotCollector implements Runnable {
     private volatile boolean working = true;
     private AtomicBoolean collecting = new AtomicBoolean(false);
     private Map<Integer, Integer> results = new ConcurrentHashMap<>();
-    private SnapshotType snapshotType;
     private BitcakeManager bitcakeManager;
 
-    public SnapshotCollector(SnapshotType snapshotType) {
-        this.snapshotType = snapshotType;
-
-        switch(snapshotType) {
+    public SnapshotCollector() {
+        switch(AppConfig.SNAPSHOT_TYPE) {
             case AB:
                 bitcakeManager = new ABBitcakeManager();
                 break;
@@ -56,7 +53,9 @@ public class SnapshotCollector implements Runnable {
                 }
             }
 
-            switch (snapshotType) {
+            AppConfig.timestampedStandardPrint("Sending ASK messages");
+
+            switch (AppConfig.SNAPSHOT_TYPE) {
                 case AB:
                     Message message = new AskMessage(AppConfig.myServentInfo, null);
 
@@ -70,6 +69,8 @@ public class SnapshotCollector implements Runnable {
                 case AV:
                     break;
             }
+
+            AppConfig.timestampedStandardPrint("Waiting for TELL messages");
 
             boolean waiting = true;
 
@@ -89,7 +90,9 @@ public class SnapshotCollector implements Runnable {
                 }
             }
 
-            switch (snapshotType) {
+            AppConfig.timestampedStandardPrint("Gathering results");
+
+            switch (AppConfig.SNAPSHOT_TYPE) {
                 case AB:
                     int sum = 0;
 

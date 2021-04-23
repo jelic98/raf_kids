@@ -49,6 +49,10 @@ public class Parser implements Runnable {
         while (working) {
             String commandLine = sc.nextLine();
 
+            if(commandLine.startsWith("#")) {
+                continue;
+            }
+
             int spacePos = commandLine.indexOf(" ");
 
             String commandName;

@@ -1,7 +1,7 @@
 package servent.handler;
 
 import app.AppConfig;
-import app.CausalBroadcastShared;
+import servent.snapshot.CausalBroadcastShared;
 import app.ServentInfo;
 import servent.message.CausalBroadcastMessage;
 import servent.message.Message;

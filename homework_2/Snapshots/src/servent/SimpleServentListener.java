@@ -2,8 +2,10 @@ package servent;
 
 import app.AppConfig;
 import servent.handler.CausalBroadcastHandler;
+import servent.handler.TransactionHandler;
 import servent.message.Message;
 import servent.message.MessageUtil;
+import servent.snapshot.SnapshotCollector;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -14,7 +16,12 @@ import java.util.concurrent.Executors;
 public class SimpleServentListener implements Runnable {
 
     private final ExecutorService threadPool = Executors.newWorkStealingPool();
+    private SnapshotCollector snapshotCollector;
     private volatile boolean working = true;
+
+    public SimpleServentListener(SnapshotCollector snapshotCollector) {
+        this.snapshotCollector = snapshotCollector;
+    }
 
     @Override
     public void run() {
@@ -36,6 +43,9 @@ public class SimpleServentListener implements Runnable {
                 switch (clientMessage.getMessageType()) {
                     case CAUSAL_BROADCAST:
                         threadPool.submit(new CausalBroadcastHandler(clientMessage));
+                        break;
+                    case TRANSACTION:
+                        threadPool.submit(new TransactionHandler(clientMessage, snapshotCollector.getBitcakeManager()));
                         break;
                 }
             } catch (SocketTimeoutException timeoutEx) {

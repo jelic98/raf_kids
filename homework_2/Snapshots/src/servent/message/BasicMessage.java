@@ -116,6 +116,13 @@ public class BasicMessage implements Message {
 
             return null;
         }
+    }
+
+    /**
+     * Empty implementation, which will be suitable for most messages.
+     */
+    @Override
+    public void sendEffect() {
 
     }
 

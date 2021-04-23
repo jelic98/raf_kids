@@ -24,6 +24,7 @@ import java.util.Scanner;
  */
 public class MultipleServentStarter {
 
+    private static final String TEST_NAME = "res/snapshot";
     private static final String OUT_DIR = "out/production/Snapshots";
 
     /**
@@ -69,7 +70,7 @@ public class MultipleServentStarter {
     }
 
     public static void main(String[] args) {
-        startServentTest("res");
+        startServentTest(TEST_NAME);
     }
 
     /**

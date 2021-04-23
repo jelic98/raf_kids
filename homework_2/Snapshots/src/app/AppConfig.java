@@ -1,5 +1,8 @@
 package app;
 
+import servent.snapshot.CausalBroadcastShared;
+import servent.snapshot.SnapshotType;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

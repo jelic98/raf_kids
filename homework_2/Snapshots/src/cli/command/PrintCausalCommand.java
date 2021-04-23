@@ -1,7 +1,7 @@
 package cli.command;
 
 import app.AppConfig;
-import app.CausalBroadcastShared;
+import servent.snapshot.CausalBroadcastShared;
 import servent.message.Message;
 
 public class PrintCausalCommand implements Command {

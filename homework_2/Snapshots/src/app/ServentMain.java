@@ -2,6 +2,7 @@ package app;
 
 import cli.Parser;
 import servent.SimpleServentListener;
+import servent.snapshot.SnapshotCollector;
 
 /**
  * Describes the procedure for starting a single Servent
@@ -54,12 +55,13 @@ public class ServentMain {
 
         AppConfig.timestampedStandardPrint("Starting servent " + AppConfig.myServentInfo);
 
-        SimpleServentListener simpleListener = new SimpleServentListener();
-        Thread listenerThread = new Thread(simpleListener);
-        listenerThread.start();
+        SnapshotCollector collector = new SnapshotCollector(AppConfig.SNAPSHOT_TYPE);
+        new Thread(collector).start();
 
-        Parser parser = new Parser(simpleListener);
-        Thread cliThread = new Thread(parser);
-        cliThread.start();
+        SimpleServentListener listener = new SimpleServentListener(collector);
+        new Thread(listener).start();
+
+        Parser parser = new Parser(listener, collector);
+        new Thread(parser).start();
     }
 }

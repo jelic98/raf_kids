@@ -1,5 +1,6 @@
-package app;
+package servent.snapshot;
 
+import app.AppConfig;
 import servent.message.CausalBroadcastMessage;
 import servent.message.Message;
 

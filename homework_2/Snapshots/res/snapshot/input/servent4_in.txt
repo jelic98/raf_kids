@@ -2,5 +2,5 @@ pause 1000
 bitcake_info
 pause 25000
 bitcake_info
-pause 15000
+pause 10000
 stop

@@ -23,7 +23,6 @@ public class MessageUtil {
     private static final boolean MESSAGE_UTIL_PRINTING = false;
 
     public static Message readMessage(Socket socket) {
-
         Message clientMessage = null;
 
         try {
@@ -42,8 +41,6 @@ public class MessageUtil {
         }
 
         return clientMessage;
-
-
     }
 
     public static void sendMessage(Message message) {

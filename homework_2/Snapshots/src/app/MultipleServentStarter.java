@@ -60,9 +60,7 @@ public class MultipleServentStarter {
             }
         }
 
-        Thread t = new Thread(new ServentCLI(serventProcesses));
-
-        t.start(); //CLI thread waiting for user to type "stop".
+        new Thread(new ServentCLI(serventProcesses)).start();
 
         for (Process process : serventProcesses) {
             try {
@@ -76,7 +74,7 @@ public class MultipleServentStarter {
     }
 
     public static void main(String[] args) {
-        startServentTest("res");
+        startServentTest("ly");
     }
 
     /**

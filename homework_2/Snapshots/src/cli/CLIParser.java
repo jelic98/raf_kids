@@ -2,6 +2,7 @@ package cli;
 
 import app.AppConfig;
 import app.Cancellable;
+import app.snapshot_bitcake.SnapshotCollector;
 import cli.command.*;
 import servent.SimpleServentListener;
 
@@ -31,14 +32,14 @@ public class CLIParser implements Runnable, Cancellable {
     private final List<CLICommand> commandList;
     private volatile boolean working = true;
 
-    public CLIParser(SimpleServentListener listener) {
+    public CLIParser(SimpleServentListener listener, SnapshotCollector snapshotCollector) {
         this.commandList = new ArrayList<>();
 
         commandList.add(new InfoCommand());
         commandList.add(new PauseCommand());
-        commandList.add(new CausalBroadcastCommand());
-        commandList.add(new PrintCausalCommand());
-        commandList.add(new StopCommand(this, listener));
+        commandList.add(new TransactionBurstCommand(snapshotCollector.getBitcakeManager()));
+        commandList.add(new BitcakeInfoCommand(snapshotCollector));
+        commandList.add(new StopCommand(this, listener, snapshotCollector));
     }
 
     @Override
@@ -50,7 +51,7 @@ public class CLIParser implements Runnable, Cancellable {
 
             int spacePos = commandLine.indexOf(" ");
 
-            String commandName;
+            String commandName = null;
             String commandArgs = null;
             if (spacePos != -1) {
                 commandName = commandLine.substring(0, spacePos);

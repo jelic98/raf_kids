@@ -1,7 +1,10 @@
 package servent.handler;
 
 import app.AppConfig;
-import servent.message.*;
+import app.Servent;
+import servent.message.Message;
+import servent.message.MessageType;
+import servent.message.MessageUtil;
 import servent.snapshot.CausalBroadcastShared;
 import servent.snapshot.SnapshotCollector;
 
@@ -17,16 +20,14 @@ public class TellHandler implements Runnable {
 
     @Override
     public void run() {
-        if (clientMessage.getMessageType() == MessageType.TELL) {
-            int askSender = CausalBroadcastShared.getAskSender();
+        if (clientMessage.getType() == MessageType.TELL) {
+            Servent sender = CausalBroadcastShared.getAskSender();
 
-            if(askSender == AppConfig.myServentInfo.getId()) {
-                snapshotCollector.addSnapshot(clientMessage.getOriginalSenderInfo().getId(),
-                        Integer.parseInt(clientMessage.getMessageText()));
-            }else {
-                AppConfig.timestampedStandardPrint(String.format("Redirecting TELL from %d to %d",
-                        clientMessage.getOriginalSenderInfo().getId(), askSender));
-                MessageUtil.sendMessage(clientMessage.changeReceiver(askSender).makeMeASender());
+            if (sender.equals(AppConfig.LOCAL_SERVENT)) {
+                snapshotCollector.addSnapshot(clientMessage.getSender(), Integer.parseInt(clientMessage.getText()));
+            } else {
+                AppConfig.print(String.format("Redirecting TELL from %s to %s", clientMessage.getSender(), sender));
+                MessageUtil.sendMessage(clientMessage.setReceiver(sender).setSender());
             }
         }
     }

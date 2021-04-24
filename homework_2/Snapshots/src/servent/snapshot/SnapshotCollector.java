@@ -1,9 +1,8 @@
 package servent.snapshot;
 
 import app.AppConfig;
-import app.ServentInfo;
+import app.Servent;
 import servent.message.AskMessage;
-import servent.message.CausalBroadcastMessage;
 import servent.message.Message;
 import servent.message.MessageUtil;
 
@@ -12,21 +11,15 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/**
- * Main snapshot collector class.
- *
- * @author bmilojkovic
- *
- */
 public class SnapshotCollector implements Runnable {
 
     private volatile boolean working = true;
     private AtomicBoolean collecting = new AtomicBoolean(false);
-    private Map<Integer, Integer> results = new ConcurrentHashMap<>();
+    private Map<Servent, Integer> results = new ConcurrentHashMap<>();
     private BitcakeManager bitcakeManager;
 
     public SnapshotCollector() {
-        switch(AppConfig.SNAPSHOT_TYPE) {
+        switch (AppConfig.SNAPSHOT_TYPE) {
             case AB:
                 bitcakeManager = new ABBitcakeManager();
                 break;
@@ -42,35 +35,35 @@ public class SnapshotCollector implements Runnable {
 
     @Override
     public void run() {
-        while(working) {
-            if(!collecting.get()) {
+        while (working) {
+            if (!collecting.get()) {
                 continue;
             }
 
-            AppConfig.timestampedStandardPrint("Sending ASK messages");
+            AppConfig.print("Sending ASK messages");
 
             switch (AppConfig.SNAPSHOT_TYPE) {
                 case AB:
-                    CausalBroadcastShared.setAskSender(AppConfig.myServentInfo.getId());
+                    CausalBroadcastShared.setAskSender(AppConfig.LOCAL_SERVENT);
 
-                    Message broadcastMessage = new AskMessage(AppConfig.myServentInfo,
+                    Message broadcastMessage = new AskMessage(AppConfig.LOCAL_SERVENT,
                             null, CausalBroadcastShared.getVectorClock());
 
-                    for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
-                        AppConfig.timestampedStandardPrint("Sending ASK to servent " + neighbor);
-                        MessageUtil.sendMessage(broadcastMessage.changeReceiver(neighbor));
+                    for (Servent neighbor : AppConfig.LOCAL_SERVENT.getNeighbors()) {
+                        AppConfig.print("Sending ASK to servent " + neighbor);
+                        MessageUtil.sendMessage(broadcastMessage.setReceiver(neighbor));
                     }
 
-                    CausalBroadcastShared.commitCausalMessage(broadcastMessage.changeReceiver(AppConfig.myServentInfo.getId()), true);
+                    CausalBroadcastShared.commitMessage(broadcastMessage.setReceiver(AppConfig.LOCAL_SERVENT), true);
 
-                    addSnapshot(AppConfig.myServentInfo.getId(), bitcakeManager.getCurrentBitcakeAmount());
+                    addSnapshot(AppConfig.LOCAL_SERVENT, bitcakeManager.getCurrentBitcakeAmount());
 
                     break;
                 case AV:
                     break;
             }
 
-            AppConfig.timestampedStandardPrint("Waiting for TELL messages");
+            AppConfig.print("Receiving TELL messages");
 
             while (results.size() < AppConfig.SERVENT_COUNT) {
                 try {
@@ -84,18 +77,18 @@ public class SnapshotCollector implements Runnable {
                 }
             }
 
-            AppConfig.timestampedStandardPrint("Gathering results");
+            AppConfig.print("Gathering results");
 
             switch (AppConfig.SNAPSHOT_TYPE) {
                 case AB:
                     int sum = 0;
 
-                    for (Entry<Integer, Integer> e : results.entrySet()) {
+                    for (Entry<Servent, Integer> e : results.entrySet()) {
                         sum += e.getValue();
-                        AppConfig.timestampedStandardPrint(String.format("Servent %d has %d bitcakes", e.getKey(), e.getValue()));
+                        AppConfig.print(String.format("Servent %s has %d bitcakes", e.getKey(), e.getValue()));
                     }
 
-                    AppConfig.timestampedStandardPrint("Total bitcakes: " + sum);
+                    AppConfig.print("Total bitcakes: " + sum);
 
                     results.clear();
                     collecting.set(false);
@@ -107,16 +100,16 @@ public class SnapshotCollector implements Runnable {
         }
     }
 
-    public void addSnapshot(int id, int amount) {
-        results.put(id, amount);
-        AppConfig.timestampedStandardPrint(String.format("Adding snapshot for servent %d (%d bitcakes)", id, amount));
+    public void addSnapshot(Servent servent, int amount) {
+        results.put(servent, amount);
+        AppConfig.print(String.format("Adding snapshot for servent %s (%d bitcakes)", servent, amount));
     }
 
     public void startCollecting() {
         boolean oldValue = collecting.getAndSet(true);
 
         if (oldValue) {
-            AppConfig.timestampedErrorPrint("Tried to start collecting before finished with previous.");
+            AppConfig.error("Already snapshotting");
         }
     }
 

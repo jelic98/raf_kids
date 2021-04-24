@@ -1,26 +1,18 @@
 package servent.handler;
 
 import app.AppConfig;
-import app.ServentInfo;
+import app.Servent;
 import servent.message.*;
 import servent.snapshot.BitcakeManager;
 import servent.snapshot.CausalBroadcastShared;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Handles the CAUSAL_BROADCAST message. Fairly simple, as we assume that we are
- * in a clique. We add the message to a pending queue, and let the check on the queue
- * take care of the rest.
- *
- * @author bmilojkovic
- */
 public class CausalBroadcastHandler implements Runnable {
 
-    private static final Set<Message> receivedBroadcasts = Collections.newSetFromMap(new ConcurrentHashMap<Message, Boolean>());
+    private static final Set<Message> receivedBroadcasts = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private final Message clientMessage;
     private final BitcakeManager bitcakeManager;
 
@@ -31,45 +23,40 @@ public class CausalBroadcastHandler implements Runnable {
 
     @Override
     public void run() {
-        if (clientMessage.getMessageType() == MessageType.CAUSAL_BROADCAST ||
-                clientMessage.getMessageType() == MessageType.ASK) {
-            ServentInfo senderInfo = clientMessage.getOriginalSenderInfo();
-            ServentInfo lastSenderInfo = clientMessage.getRoute().size() == 0 ?
-                    clientMessage.getOriginalSenderInfo() :
-                    clientMessage.getRoute().get(clientMessage.getRoute().size() - 1);
+        if (clientMessage.getType() == MessageType.CAUSAL_BROADCAST ||
+                clientMessage.getType() == MessageType.ASK) {
 
-            String text = String.format("Got %s from %s broadcast by %s with clock %s",
-                    clientMessage.getMessageText() == null ? clientMessage.getMessageType() : clientMessage.getMessageText(),
-                    lastSenderInfo, senderInfo, ((CausalBroadcastMessage) clientMessage).getSenderVectorClock());
+            Servent sender = clientMessage.getSender();
+            Servent lastSender = clientMessage.getLastSender();
+            String clock = ((CausalBroadcastMessage) clientMessage).getClock().toString();
+            String content = clientMessage.getText() == null ? clientMessage.getType().toString() : clientMessage.getText();
 
-            AppConfig.timestampedStandardPrint(text);
+            AppConfig.print(String.format("Got %s from %s broadcast by %s with clock %s", content, lastSender, sender, clock));
 
             if (AppConfig.IS_CLIQUE) {
                 CausalBroadcastShared.addPendingMessage(clientMessage);
                 CausalBroadcastShared.checkPendingMessages();
             } else {
-                boolean didPut = receivedBroadcasts.add(clientMessage);
+                boolean absent = receivedBroadcasts.add(clientMessage);
 
-                if (didPut && clientMessage.getOriginalSenderInfo().getId() != AppConfig.myServentInfo.getId()) {
+                if (absent) {
                     CausalBroadcastShared.addPendingMessage(clientMessage);
                     CausalBroadcastShared.checkPendingMessages();
 
-                    for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
-                        if(!clientMessage.routeContains(neighbor)) {
-                            MessageUtil.sendMessage(clientMessage.changeReceiver(neighbor).makeMeASender());
+                    for (Servent neighbor : AppConfig.LOCAL_SERVENT.getNeighbors()) {
+                        if (!clientMessage.containsSender(neighbor)) {
+                            MessageUtil.sendMessage(clientMessage.setReceiver(neighbor).setSender());
                         }
                     }
 
-                    if (clientMessage.getMessageType() == MessageType.ASK) {
-                        CausalBroadcastShared.setAskSender(clientMessage.getLastSenderInfo().getId());
+                    if (clientMessage.getType() == MessageType.ASK) {
+                        CausalBroadcastShared.setAskSender(lastSender);
 
                         int amount = bitcakeManager.getCurrentBitcakeAmount();
 
-                        AppConfig.timestampedStandardPrint(String.format("Sending TELL message (%d bitcakes) to %d",
-                                amount, clientMessage.getLastSenderInfo().getId()));
+                        AppConfig.print(String.format("Sending TELL to %s (%d bitcakes)", lastSender, amount));
 
-                        MessageUtil.sendMessage(new TellMessage(clientMessage.getReceiverInfo(),
-                                clientMessage.getLastSenderInfo(), amount));
+                        MessageUtil.sendMessage(new TellMessage(clientMessage.getReceiver(), lastSender, amount));
                     }
                 }
             }

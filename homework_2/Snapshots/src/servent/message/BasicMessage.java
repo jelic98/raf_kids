@@ -1,80 +1,86 @@
 package servent.message;
 
 import app.AppConfig;
-import app.ServentInfo;
+import app.Servent;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * A default message implementation. This should cover most situations.
- * If you want to add stuff, remember to think about the modificator methods.
- * If you don't override the modificators, you might drop stuff.
- *
- * @author bmilojkovic
- */
 public class BasicMessage implements Message {
 
     private static final long serialVersionUID = 1L;
     private static final AtomicInteger messageCounter = new AtomicInteger(0);
+
     private final MessageType type;
-    private final ServentInfo originalSenderInfo;
-    private final ServentInfo receiverInfo;
-    private final List<ServentInfo> routeList;
-    private final String messageText;
+    private final String text;
+    private final Servent sender;
+    private final Servent receiver;
+    private final List<Servent> route;
     private final int messageId;
 
-    public BasicMessage(MessageType type, ServentInfo originalSenderInfo, ServentInfo receiverInfo,
-                        String messageText) {
+    public BasicMessage(MessageType type, String text, Servent sender, Servent receiver) {
         this.type = type;
-        this.originalSenderInfo = originalSenderInfo;
-        this.receiverInfo = receiverInfo;
-        this.routeList = new ArrayList<>();
-        this.messageText = messageText;
-        this.messageId = messageCounter.getAndIncrement();
+        this.text = text;
+        this.sender = sender;
+        this.receiver = receiver;
+
+        route = new ArrayList<>();
+        messageId = messageCounter.getAndIncrement();
     }
 
-    protected BasicMessage(MessageType type, ServentInfo originalSenderInfo, ServentInfo receiverInfo,
-                           List<ServentInfo> routeList, String messageText, int messageId) {
+    protected BasicMessage(MessageType type, String text, Servent sender, Servent receiver, List<Servent> route, int messageId) {
         this.type = type;
-        this.originalSenderInfo = originalSenderInfo;
-        this.receiverInfo = receiverInfo;
-        this.routeList = routeList;
-        this.messageText = messageText;
+        this.text = text;
+        this.sender = sender;
+        this.receiver = receiver;
+        this.route = route;
         this.messageId = messageId;
     }
 
     @Override
-    public MessageType getMessageType() {
+    public MessageType getType() {
         return type;
     }
 
     @Override
-    public ServentInfo getOriginalSenderInfo() {
-        return originalSenderInfo;
+    public String getText() {
+        return text;
     }
 
     @Override
-    public ServentInfo getLastSenderInfo() {
-        int size = routeList.size();
-
-        if(size == 0) {
-            return originalSenderInfo;
-        }
-
-        return routeList.get(size - 1);
+    public Servent getSender() {
+        return sender;
     }
 
     @Override
-    public boolean routeContains(int serventId) {
-        if(routeList.isEmpty()) {
-            return originalSenderInfo.getId() == serventId;
+    public Message setSender() {
+        List<Servent> route = new ArrayList<>(this.route);
+        route.add(AppConfig.LOCAL_SERVENT);
+
+        return createInstance(type, text, sender, receiver, route, messageId);
+    }
+
+    @Override
+    public Servent getLastSender() {
+        int size = route.size();
+
+        if (size == 0) {
+            return sender;
         }
 
-        for(ServentInfo route : routeList) {
-            if(route.getId() == serventId) {
+        return route.get(size - 1);
+    }
+
+    @Override
+    public boolean containsSender(Servent sender) {
+        if (route.isEmpty()) {
+            return this.sender.equals(sender);
+        }
+
+        for (Servent s : route) {
+            if (s.equals(sender)) {
                 return true;
             }
         }
@@ -83,103 +89,53 @@ public class BasicMessage implements Message {
     }
 
     @Override
-    public ServentInfo getReceiverInfo() {
-        return receiverInfo;
+    public Servent getReceiver() {
+        return receiver;
     }
 
     @Override
-    public List<ServentInfo> getRoute() {
-        return routeList;
-    }
-
-    @Override
-    public String getMessageText() {
-        return messageText;
-    }
-
-    @Override
-    public int getMessageId() {
-        return messageId;
-    }
-
-    /**
-     * Used when resending a message. It will not change the original owner
-     * (so equality is not affected), but will add us to the route list, so
-     * message path can be retraced later.
-     */
-    @Override
-    public Message makeMeASender() {
-        ServentInfo newRouteItem = AppConfig.myServentInfo;
-
-        List<ServentInfo> newRouteList = new ArrayList<>(routeList);
-        newRouteList.add(newRouteItem);
-        return createInstance(getMessageType(), getOriginalSenderInfo(),
-                getReceiverInfo(), newRouteList, getMessageText(), getMessageId());
-    }
-
-    protected Message createInstance(MessageType type, ServentInfo originalSenderInfo, ServentInfo receiverInfo,
-                                     List<ServentInfo> routeList, String messageText, int messageId) {
-        return new BasicMessage(type, originalSenderInfo, receiverInfo, routeList, messageText, messageId);
-    }
-
-    /**
-     * Change the message received based on ID. The receiver has to be our neighbor.
-     * Use this when you want to send a message to multiple neighbors, or when resending.
-     */
-    @Override
-    public Message changeReceiver(Integer newReceiverId) {
-        if (AppConfig.myServentInfo.getNeighbors().contains(newReceiverId)
-                || AppConfig.myServentInfo.getId() == newReceiverId) {
-            ServentInfo newReceiverInfo = AppConfig.getInfoById(newReceiverId);
-
-            return createInstance(getMessageType(), getOriginalSenderInfo(),
-                    newReceiverInfo, getRoute(), getMessageText(), getMessageId());
+    public Message setReceiver(Servent receiver) {
+        if (AppConfig.LOCAL_SERVENT.getNeighbors().contains(receiver) || receiver.equals(AppConfig.LOCAL_SERVENT)) {
+            return createInstance(type, text, sender, receiver, route, messageId);
         } else {
-            AppConfig.timestampedErrorPrint("Trying to make a message for " + newReceiverId + " who is not a neighbor.");
+            AppConfig.error("Servent " + receiver + " is not a neighbor");
 
             return null;
         }
     }
 
-    /**
-     * Empty implementation, which will be suitable for most messages.
-     */
     @Override
     public void sendEffect() {
 
     }
 
-    /**
-     * Comparing messages is based on their unique id and the original sender id.
-     */
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof BasicMessage) {
-            BasicMessage other = (BasicMessage) obj;
-
-            return getMessageId() == other.getMessageId() &&
-                    getOriginalSenderInfo().getId() == other.getOriginalSenderInfo().getId();
+            BasicMessage m = (BasicMessage) obj;
+            return messageId == m.messageId && sender.equals(m.sender);
         }
 
         return false;
     }
 
-    /**
-     * Hash needs to mirror equals, especially if we are gonna keep this object
-     * in a set or a map. So, this is based on message id and original sender id also.
-     */
     @Override
     public int hashCode() {
-        return Objects.hash(getMessageId(), getOriginalSenderInfo().getId());
+        return Objects.hash(messageId, sender);
     }
 
-    /**
-     * Returns the message in the format: <code>[sender_id|message_id|text|type|receiver_id]</code>
-     */
     @Override
     public String toString() {
-        return "[" + getOriginalSenderInfo().getId() + "|" + getMessageId() + "|" +
-                getMessageText() + "|" + getMessageType() + "|" +
-                getReceiverInfo().getId() + "]";
+        return String.format("[%s|%d|%s|%s|%s]",
+                sender,
+                messageId,
+                text,
+                type,
+                receiver);
+    }
+
+    protected Message createInstance(MessageType type, String text, Servent sender, Servent receiver,
+                                     List<Servent> route, int messageId) {
+        return new BasicMessage(type, text, sender, receiver, route, messageId);
     }
 }

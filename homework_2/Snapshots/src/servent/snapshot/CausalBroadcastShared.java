@@ -1,88 +1,73 @@
 package servent.snapshot;
 
 import app.AppConfig;
+import app.Servent;
 import servent.message.CausalBroadcastMessage;
 import servent.message.Message;
-import java.util.*;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.BiFunction;
 
-/**
- * This class contains shared data for the Causal Broadcast implementation:
- * <ul>
- * <li> Vector clock for current instance
- * <li> Commited message list
- * <li> Pending queue
- * </ul>
- * As well as operations for working with all of the above.
- *
- * @author bmilojkovic
- */
 public class CausalBroadcastShared {
 
-    private static final Map<Integer, Integer> vectorClock = new ConcurrentHashMap<>();
-    private static final List<Message> commitedCausalMessageList = new CopyOnWriteArrayList<>();
+    private static final Map<Servent, Integer> vectorClock = new ConcurrentHashMap<>();
+    private static final List<Message> committedMessages = new CopyOnWriteArrayList<>();
     private static final Queue<Message> pendingMessages = new ConcurrentLinkedQueue<>();
     private static final Object pendingMessagesLock = new Object();
-    private static int askSender;
+    private static Servent askSender;
 
     public static void initializeVectorClock() {
-        for (int i = 0; i < AppConfig.SERVENT_COUNT; i++) {
-            vectorClock.put(i, 0);
+        for (Servent servent : AppConfig.SERVENTS) {
+            vectorClock.put(servent, 0);
         }
     }
 
-    public static void incrementClock(int serventId) {
-        vectorClock.computeIfPresent(serventId, new BiFunction<Integer, Integer, Integer>() {
-
-            @Override
-            public Integer apply(Integer key, Integer oldValue) {
-                return oldValue + 1;
-            }
-        });
+    public static void incrementClock(Servent servent) {
+        vectorClock.computeIfPresent(servent, (key, value) -> value + 1);
     }
 
-    public static Map<Integer, Integer> getVectorClock() {
+    public static Map<Servent, Integer> getVectorClock() {
         return new ConcurrentHashMap<>(vectorClock);
     }
 
-    public static List<Message> getCommittedCausalMessages() {
-        return new CopyOnWriteArrayList<>(commitedCausalMessageList);
+    public static List<Message> getCommittedMessages() {
+        return new CopyOnWriteArrayList<>(committedMessages);
     }
 
-    public static List<Message> getPendingCausalMessages() {
+    public static List<Message> getPendingMessages() {
         return new CopyOnWriteArrayList<>(pendingMessages);
+    }
+
+    public static void commitMessage(Message message, boolean checkPending) {
+        committedMessages.add(message);
+        incrementClock(message.getSender());
+
+        if (checkPending) {
+            checkPendingMessages();
+        }
+
+        String content = message.getText() == null ? message.getType().toString() : message.getText();
+
+        AppConfig.print("Committed " + content);
     }
 
     public static void addPendingMessage(Message msg) {
         pendingMessages.add(msg);
     }
 
-    public static void commitCausalMessage(Message newMessage, boolean checkPending) {
-        AppConfig.timestampedStandardPrint("Committing " +
-                (newMessage.getMessageText() == null ? newMessage.getMessageType() : newMessage.getMessageText()));
-        commitedCausalMessageList.add(newMessage);
-        incrementClock(newMessage.getOriginalSenderInfo().getId());
-
-        if(checkPending) {
-            checkPendingMessages();
-        }
-    }
-
-    private static boolean otherClockGreater(Map<Integer, Integer> clock1, Map<Integer, Integer> clock2) {
-        if (clock1.size() != clock2.size()) {
-            throw new IllegalArgumentException("Clocks are not same size how why");
-        }
-
-        for (int i = 0; i < clock1.size(); i++) {
-            if (clock2.get(i) > clock1.get(i)) {
-                return true;
+    private static boolean shouldCommit(Map<Servent, Integer> clock1, Map<Servent, Integer> clock2) {
+        for (Servent servent : clock1.keySet()) {
+            if (clock2.get(servent) > clock1.get(servent)) {
+                return false;
             }
         }
 
-        return false;
+        return true;
     }
 
     public static void checkPendingMessages() {
@@ -92,19 +77,17 @@ public class CausalBroadcastShared {
             gotWork = false;
 
             synchronized (pendingMessagesLock) {
-                Iterator<Message> iterator = pendingMessages.iterator();
-                Map<Integer, Integer> myVectorClock = getVectorClock();
+                Iterator<Message> i = pendingMessages.iterator();
 
-                while (iterator.hasNext()) {
-                    Message pendingMessage = iterator.next();
-                    CausalBroadcastMessage cbm = (CausalBroadcastMessage) pendingMessage;
+                while (i.hasNext()) {
+                    CausalBroadcastMessage message = (CausalBroadcastMessage) i.next();
 
-                    if (!otherClockGreater(myVectorClock, cbm.getSenderVectorClock())) {
+                    if (shouldCommit(getVectorClock(), message.getClock())) {
+                        commitMessage(message, false);
+
+                        i.remove();
+
                         gotWork = true;
-
-                        commitCausalMessage(cbm, false);
-
-                        iterator.remove();
 
                         break;
                     }
@@ -113,11 +96,11 @@ public class CausalBroadcastShared {
         }
     }
 
-    public static int getAskSender() {
+    public static Servent getAskSender() {
         return askSender;
     }
 
-    public static void setAskSender(int askSender1) {
-        askSender = askSender1;
+    public static void setAskSender(Servent sender) {
+        askSender = sender;
     }
 }

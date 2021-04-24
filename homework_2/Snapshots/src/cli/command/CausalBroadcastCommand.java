@@ -1,6 +1,7 @@
 package cli.command;
 
 import app.AppConfig;
+import app.Servent;
 import servent.message.CausalBroadcastMessage;
 import servent.message.Message;
 import servent.message.MessageUtil;
@@ -15,13 +16,13 @@ public class CausalBroadcastCommand implements Command {
 
     @Override
     public void execute(String args) {
-        Message broadcastMessage = new CausalBroadcastMessage(AppConfig.myServentInfo,
+        Message broadcastMessage = new CausalBroadcastMessage(AppConfig.LOCAL_SERVENT,
                 null, args, CausalBroadcastShared.getVectorClock());
 
-        for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
-            MessageUtil.sendMessage(broadcastMessage.changeReceiver(neighbor));
+        for (Servent neighbor : AppConfig.LOCAL_SERVENT.getNeighbors()) {
+            MessageUtil.sendMessage(broadcastMessage.setReceiver(neighbor));
         }
 
-        CausalBroadcastShared.commitCausalMessage(broadcastMessage.changeReceiver(AppConfig.myServentInfo.getId()), true);
+        CausalBroadcastShared.commitMessage(broadcastMessage.setReceiver(AppConfig.LOCAL_SERVENT), true);
     }
 }

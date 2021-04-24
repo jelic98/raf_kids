@@ -7,6 +7,7 @@ import servent.handler.TransactionHandler;
 import servent.message.Message;
 import servent.message.MessageUtil;
 import servent.snapshot.SnapshotCollector;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -28,22 +29,21 @@ public class ServentListener implements Runnable {
     public void run() {
         ServerSocket listenerSocket = null;
         try {
-            listenerSocket = new ServerSocket(AppConfig.myServentInfo.getListenerPort());
+            listenerSocket = new ServerSocket(AppConfig.LOCAL_SERVENT.getPort());
             listenerSocket.setSoTimeout(1000);
         } catch (IOException e) {
-            AppConfig.timestampedErrorPrint("Cannot open listener socket on: " + AppConfig.myServentInfo.getListenerPort());
+            AppConfig.error("Cannot open listener socket on port " + AppConfig.LOCAL_SERVENT.getPort());
             System.exit(0);
         }
 
         while (working) {
             try {
                 Socket clientSocket = listenerSocket.accept();
-
                 Message clientMessage = MessageUtil.readMessage(clientSocket);
 
-                switch (clientMessage.getMessageType()) {
-                    case CAUSAL_BROADCAST:
+                switch (clientMessage.getType()) {
                     case ASK:
+                    case CAUSAL_BROADCAST:
                         threadPool.submit(new CausalBroadcastHandler(clientMessage, snapshotCollector.getBitcakeManager()));
                         break;
                     case TRANSACTION:
@@ -56,7 +56,7 @@ public class ServentListener implements Runnable {
             } catch (SocketTimeoutException timeoutEx) {
                 // Ignore
             } catch (IOException e) {
-                e.printStackTrace();
+                AppConfig.error("Error while listening socket");
             }
         }
     }

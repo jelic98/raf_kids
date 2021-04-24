@@ -1,53 +1,41 @@
 package servent.message;
 
-import app.ServentInfo;
+import app.Servent;
 
 import java.util.List;
 import java.util.Map;
 
-/**
- * Has all the fancy stuff from {@link BasicMessage}, with an
- * added vector clock.
- *
- * @author bmilojkovic
- */
 public class CausalBroadcastMessage extends BasicMessage {
 
     private static final long serialVersionUID = 1L;
-    private final Map<Integer, Integer> senderVectorClock;
+    private final Map<Servent, Integer> clock;
 
-    public CausalBroadcastMessage(ServentInfo originalSenderInfo, ServentInfo receiverInfo,
-                                  String messageText, Map<Integer, Integer> senderVectorClock) {
-        this(MessageType.CAUSAL_BROADCAST, originalSenderInfo, receiverInfo, messageText, senderVectorClock);
+    public CausalBroadcastMessage(Servent sender, Servent receiver, String text, Map<Servent, Integer> clock) {
+        this(MessageType.CAUSAL_BROADCAST, sender, receiver, text, clock);
     }
 
-    protected CausalBroadcastMessage(MessageType messageType, ServentInfo originalSenderInfo, ServentInfo receiverInfo,
-                                     String messageText, Map<Integer, Integer> senderVectorClock) {
-        super(messageType, originalSenderInfo, receiverInfo, messageText);
+    protected CausalBroadcastMessage(MessageType messageType, Servent sender, Servent receiver, String text, Map<Servent, Integer> clock) {
+        super(messageType, text, sender, receiver);
 
-        this.senderVectorClock = senderVectorClock;
+        this.clock = clock;
     }
 
-    private CausalBroadcastMessage(ServentInfo originalSenderInfo, ServentInfo receiverInfo,
-                                   List<ServentInfo> routeList, String messageText, int messageId,
-                                   Map<Integer, Integer> senderVectorClock) {
-        this(MessageType.CAUSAL_BROADCAST, originalSenderInfo, receiverInfo, routeList, messageText, messageId, senderVectorClock);
+    private CausalBroadcastMessage(Servent sender, Servent receiver, List<Servent> route, String text, int messageId, Map<Servent, Integer> clock) {
+        this(MessageType.CAUSAL_BROADCAST, sender, receiver, route, text, messageId, clock);
     }
 
-    protected CausalBroadcastMessage(MessageType messageType, ServentInfo originalSenderInfo, ServentInfo receiverInfo,
-                                     List<ServentInfo> routeList, String messageText, int messageId,
-                                     Map<Integer, Integer> senderVectorClock) {
-        super(messageType, originalSenderInfo, receiverInfo, routeList, messageText, messageId);
+    protected CausalBroadcastMessage(MessageType type, Servent sender, Servent receiver, List<Servent> route, String text, int messageId, Map<Servent, Integer> clock) {
+        super(type, text, sender, receiver, route, messageId);
 
-        this.senderVectorClock = senderVectorClock;
+        this.clock = clock;
     }
 
     @Override
-    protected Message createInstance(MessageType type, ServentInfo originalSenderInfo, ServentInfo receiverInfo, List<ServentInfo> routeList, String messageText, int messageId) {
-        return new CausalBroadcastMessage(originalSenderInfo, receiverInfo, routeList, messageText, messageId, senderVectorClock);
+    protected Message createInstance(MessageType type, String text, Servent sender, Servent receiver, List<Servent> route, int messageId) {
+        return new CausalBroadcastMessage(sender, receiver, route, text, messageId, clock);
     }
 
-    public Map<Integer, Integer> getSenderVectorClock() {
-        return senderVectorClock;
+    public Map<Servent, Integer> getClock() {
+        return clock;
     }
 }

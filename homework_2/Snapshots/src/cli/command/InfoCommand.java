@@ -1,6 +1,7 @@
 package cli.command;
 
 import app.AppConfig;
+import app.Servent;
 
 public class InfoCommand implements Command {
 
@@ -11,16 +12,17 @@ public class InfoCommand implements Command {
 
     @Override
     public void execute(String args) {
-        AppConfig.timestampedStandardPrint("My info: " + AppConfig.myServentInfo);
-        AppConfig.timestampedStandardPrint("Neighbors:");
+        AppConfig.print("Info: " + AppConfig.LOCAL_SERVENT);
 
         StringBuilder sb = new StringBuilder();
 
-        for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
-            sb.append(neighbor);
+        sb.append("Neighbors:");
+
+        for (Servent neighbor : AppConfig.LOCAL_SERVENT.getNeighbors()) {
             sb.append(" ");
+            sb.append(neighbor);
         }
 
-        AppConfig.timestampedStandardPrint(sb.toString());
+        AppConfig.print(sb.toString());
     }
 }

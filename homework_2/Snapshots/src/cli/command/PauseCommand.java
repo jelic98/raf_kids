@@ -13,7 +13,7 @@ public class PauseCommand implements Command {
     public void execute(String args) {
         int millis = Integer.parseInt(args);
 
-        AppConfig.timestampedStandardPrint("Pausing for " + millis + " ms");
+        AppConfig.print("Pausing for " + millis + " ms");
 
         try {
             Thread.sleep(millis);

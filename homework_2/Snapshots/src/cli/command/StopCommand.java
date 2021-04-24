@@ -24,9 +24,9 @@ public class StopCommand implements Command {
 
     @Override
     public void execute(String args) {
-        AppConfig.timestampedStandardPrint("Stopping...");
         parser.stop();
         listener.stop();
         collector.stop();
+        AppConfig.print("Stopped");
     }
 }

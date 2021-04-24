@@ -2,6 +2,7 @@ package app;
 
 import servent.snapshot.CausalBroadcastShared;
 import servent.snapshot.SnapshotType;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -12,77 +13,21 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
-/**
- * This class contains all the global application configuration stuff.
- *
- * @author bmilojkovic
- */
 public class AppConfig {
 
-    private static final List<ServentInfo> serventInfoList = new ArrayList<>();
-    /**
-     * Convenience access for this servent's information
-     */
-    public static ServentInfo myServentInfo;
-
+    public static List<Servent> SERVENTS;
+    public static Servent LOCAL_SERVENT;
     public static int SERVENT_COUNT;
     public static boolean IS_CLIQUE;
     public static SnapshotType SNAPSHOT_TYPE;
 
-    /**
-     * Print a message to stdout with a timestamp
-     *
-     * @param message message to print
-     */
-    public static void timestampedStandardPrint(String message) {
-        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-        Date now = new Date();
-
-        System.out.println(timeFormat.format(now) + " - " + message);
-    }
-
-    /**
-     * Print a message to stderr with a timestamp
-     *
-     * @param message message to print
-     */
-    public static void timestampedErrorPrint(String message) {
-        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-        Date now = new Date();
-
-        System.err.println(timeFormat.format(now) + " - " + message);
-    }
-
-    /**
-     * Reads a config file. Should be called once at start of app.
-     * The config file should be of the following format:
-     * <br/>
-     * <code><br/>
-     * servent_count=3 			- number of servents in the system <br/>
-     * clique=false 			- is it a clique or not <br/>
-     * servent0.port=1100 		- listener ports for each servent <br/>
-     * servent1.port=1200 <br/>
-     * servent2.port=1300 <br/>
-     * servent0.neighbors=1,2 	- if not a clique, who are the neighbors <br/>
-     * servent1.neighbors=0 <br/>
-     * servent2.neighbors=0 <br/>
-     *
-     * </code>
-     * <br/>
-     * So in this case, we would have three servents, listening on ports:
-     * 1100, 1200, and 1300. This is not a clique, and:<br/>
-     * servent 0 sees servent 1 and 2<br/>
-     * servent 1 sees servent 0<br/>
-     * servent 2 sees servent 0<br/>
-     *
-     * @param configName name of configuration file
-     */
-    public static void readConfig(String configName) {
+    public static Properties readConfig(String configPath) {
         Properties properties = new Properties();
+
         try {
-            properties.load(new FileInputStream(new File(configName)));
+            properties.load(new FileInputStream(new File(configPath)));
         } catch (IOException e) {
-            timestampedErrorPrint("Cannot open properties file.");
+            error("Cannot open properties file");
             System.exit(0);
         }
 
@@ -90,55 +35,64 @@ public class AppConfig {
         IS_CLIQUE = Boolean.parseBoolean(properties.getProperty("clique"));
         SNAPSHOT_TYPE = SnapshotType.valueOf(properties.getProperty("snapshot").toUpperCase());
 
-        for (int i = 0; i < SERVENT_COUNT; i++) {
-            String portProperty = "servent" + i + ".port";
-            int serventPort = Integer.parseInt(properties.getProperty(portProperty));
+        return properties;
+    }
 
-            List<Integer> neighborList = new ArrayList<>();
+    public static void readConfig(String configPath, int localServent) {
+        Properties properties = readConfig(configPath);
+
+        SERVENTS = new ArrayList<>();
+        List<List<Integer>> globalNeighbors = new ArrayList<>();
+
+        for (int i = 0; i < SERVENT_COUNT; i++) {
+            int serventPort = Integer.parseInt(properties.getProperty("servent" + i + ".port"));
+            List<Integer> localNeighbors = new ArrayList<>();
+
             if (IS_CLIQUE) {
                 for (int j = 0; j < SERVENT_COUNT; j++) {
                     if (j == i) {
                         continue;
                     }
 
-                    neighborList.add(j);
+                    localNeighbors.add(j);
                 }
             } else {
-                String neighborListProp = properties.getProperty("servent" + i + ".neighbors");
+                String neighborsProp = properties.getProperty("servent" + i + ".neighbors");
 
-                if (neighborListProp == null) {
-                    timestampedErrorPrint("Warning: graph is not clique, and node " + i + " doesnt have neighbors");
-                } else {
-                    String[] neighborListArr = neighborListProp.split(",");
-
-                    try {
-                        for (String neighbor : neighborListArr) {
-                            neighborList.add(Integer.parseInt(neighbor));
-                        }
-                    } catch (NumberFormatException e) {
-                        timestampedErrorPrint("Bad neighbor list for node " + i + ": " + neighborListProp);
-                    }
+                for (String neighbor : neighborsProp.split(",")) {
+                    localNeighbors.add(Integer.parseInt(neighbor));
                 }
             }
 
-            ServentInfo newInfo = new ServentInfo("localhost", i, serventPort, neighborList);
-            serventInfoList.add(newInfo);
+            globalNeighbors.add(localNeighbors);
+
+            SERVENTS.add(new Servent(i, "localhost", serventPort));
         }
+
+        for (int i = 0; i < SERVENT_COUNT; i++) {
+            List<Servent> neighbors = SERVENTS.get(i).getNeighbors();
+
+            for (Integer neighbor : globalNeighbors.get(i)) {
+                neighbors.add(SERVENTS.get(neighbor));
+            }
+        }
+
+        LOCAL_SERVENT = SERVENTS.get(localServent);
 
         CausalBroadcastShared.initializeVectorClock();
     }
 
-    /**
-     * Get info for a servent selected by a given id.
-     *
-     * @param id id of servent to get info for
-     * @return {@link ServentInfo} object for this id
-     */
-    public static ServentInfo getInfoById(int id) {
-        if (id >= SERVENT_COUNT) {
-            throw new IllegalArgumentException(
-                    "Trying to get info for servent " + id + " when there are " + SERVENT_COUNT + " servents.");
-        }
-        return serventInfoList.get(id);
+    public static void print(String message) {
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        Date now = new Date();
+
+        System.out.println(timeFormat.format(now) + " - " + message);
+    }
+
+    public static void error(String message) {
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        Date now = new Date();
+
+        System.err.println(timeFormat.format(now) + " - " + message);
     }
 }

@@ -9,23 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-/**
- * A simple CLI parser. Each command has a name and arbitrary arguments.
- * <p>
- * Currently supported commands:
- *
- * <ul>
- * <li><code>info</code> - prints information about the current node</li>
- * <li><code>pause [ms]</code> - pauses exection given number of ms - useful when scripting</li>
- * <li><code>ping [id]</code> - sends a PING message to node [id] </li>
- * <li><code>broadcast [text]</code> - broadcasts the given text to all nodes</li>
- * <li><code>causal_broadcast [text]</code> - causally broadcasts the given text to all nodes</li>
- * <li><code>print_causal</code> - prints all received causal broadcast messages</li>
- * <li><code>stop</code> - stops the servent and program finishes</li>
- * </ul>
- *
- * @author bmilojkovic
- */
 public class Parser implements Runnable {
 
     private final List<Command> commandList;
@@ -49,7 +32,7 @@ public class Parser implements Runnable {
         while (working) {
             String commandLine = sc.nextLine();
 
-            if(commandLine.startsWith("#")) {
+            if (commandLine.startsWith("#")) {
                 continue;
             }
 
@@ -75,7 +58,7 @@ public class Parser implements Runnable {
             }
 
             if (!found) {
-                AppConfig.timestampedErrorPrint("Unknown command: " + commandName);
+                AppConfig.error("Unknown command: " + commandName);
             }
         }
 

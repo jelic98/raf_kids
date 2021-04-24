@@ -1,6 +1,7 @@
 package cli.command;
 
 import app.AppConfig;
+import app.Servent;
 import servent.message.MessageUtil;
 import servent.message.TransactionMessage;
 import servent.snapshot.BitcakeManager;
@@ -24,18 +25,14 @@ public class TransactionBurstCommand implements Command {
 
     @Override
     public void execute(String args) {
-        AppConfig.timestampedStandardPrint(String.format("Bursting %d transactions", BURST_WORKERS * TRANSACTION_COUNT));
+        AppConfig.print(String.format("Bursting %d transactions", BURST_WORKERS * TRANSACTION_COUNT));
 
         for (int i = 0; i < BURST_WORKERS; i++) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    for (int i = 0; i < TRANSACTION_COUNT; i++) {
-                        for (int neighbor : AppConfig.myServentInfo.getNeighbors()) {
-                            int amount = 1 + (int) (Math.random() * MAX_TRANSFER_AMOUNT);
-                            MessageUtil.sendMessage(new TransactionMessage(AppConfig.myServentInfo,
-                                    AppConfig.getInfoById(neighbor), amount, bitcakeManager));
-                        }
+            new Thread(() -> {
+                for (int i1 = 0; i1 < TRANSACTION_COUNT; i1++) {
+                    for (Servent neighbor : AppConfig.LOCAL_SERVENT.getNeighbors()) {
+                        int amount = 1 + (int) (Math.random() * MAX_TRANSFER_AMOUNT);
+                        MessageUtil.sendMessage(new TransactionMessage(AppConfig.LOCAL_SERVENT, neighbor, amount, bitcakeManager));
                     }
                 }
             }).start();

@@ -1,27 +1,21 @@
 package servent.message;
 
-import app.ServentInfo;
+import app.Servent;
 import servent.snapshot.BitcakeManager;
 
-/**
- * Represents a bitcake transaction. We are sending some bitcakes to another node.
- *
- * @author bmilojkovic
- *
- */
 public class TransactionMessage extends BasicMessage {
 
     private static final long serialVersionUID = 1L;
 
     private transient BitcakeManager bitcakeManager;
 
-    public TransactionMessage(ServentInfo sender, ServentInfo receiver, int amount, BitcakeManager bitcakeManager) {
-        super(MessageType.TRANSACTION, sender, receiver, String.valueOf(amount));
+    public TransactionMessage(Servent sender, Servent receiver, int amount, BitcakeManager bitcakeManager) {
+        super(MessageType.TRANSACTION, String.valueOf(amount), sender, receiver);
         this.bitcakeManager = bitcakeManager;
     }
 
     @Override
     public void sendEffect() {
-        bitcakeManager.takeBitcakes(Integer.parseInt(getMessageText()));
+        bitcakeManager.takeBitcakes(Integer.parseInt(getText()));
     }
 }

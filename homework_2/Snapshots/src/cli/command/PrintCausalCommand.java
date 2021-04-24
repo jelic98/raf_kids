@@ -4,6 +4,8 @@ import app.AppConfig;
 import servent.message.Message;
 import servent.snapshot.CausalBroadcastShared;
 
+import java.util.List;
+
 public class PrintCausalCommand implements Command {
 
     @Override
@@ -13,18 +15,18 @@ public class PrintCausalCommand implements Command {
 
     @Override
     public void execute(String args) {
+        AppConfig.print("PENDING messages:");
+        printMessages(CausalBroadcastShared.getPendingMessages());
+
+        AppConfig.print("COMMITTED messages:");
+        printMessages(CausalBroadcastShared.getCommittedMessages());
+    }
+
+    private void printMessages(List<Message> messages) {
         int i = 1;
-        AppConfig.timestampedStandardPrint("Current PENDING messages:");
-        for (Message message : CausalBroadcastShared.getPendingCausalMessages()) {
-            AppConfig.timestampedStandardPrint("Message " + i + ": " + message.getMessageText() +
-                    " from " + message.getOriginalSenderInfo().getId());
-            i++;
-        }
-        i = 1;
-        AppConfig.timestampedStandardPrint("Current COMMITTED messages:");
-        for (Message message : CausalBroadcastShared.getCommittedCausalMessages()) {
-            AppConfig.timestampedStandardPrint("Message " + i + ": " + message.getMessageText() +
-                    " from " + message.getOriginalSenderInfo().getId());
+
+        for (Message message : messages) {
+            AppConfig.print(String.format("Message %d: %s from %s", i, message.getText(), message.getSender()));
             i++;
         }
     }

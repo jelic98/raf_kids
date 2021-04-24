@@ -18,7 +18,7 @@ public class BitcakeInfoCommand implements Command {
 
     @Override
     public void execute(String args) {
-        AppConfig.timestampedStandardPrint("Creating snapshot");
+        AppConfig.print("Creating snapshot");
 
         collector.startCollecting();
     }

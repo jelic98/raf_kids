@@ -15,12 +15,12 @@ public class MessageUtil {
     private static final Random random = new Random();
 
     public static Message readMessage(Socket socket) {
-        Message clientMessage = null;
+        Message message = null;
 
         try {
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
 
-            clientMessage = (Message) ois.readObject();
+            message = (Message) ois.readObject();
 
             socket.close();
         } catch (Exception e) {
@@ -28,10 +28,10 @@ public class MessageUtil {
         }
 
         if (MESSAGE_UTIL_PRINTING) {
-            AppConfig.print("Got message " + clientMessage);
+            AppConfig.print("Got message " + message);
         }
 
-        return clientMessage;
+        return message;
     }
 
     public static void sendMessage(Message message) {

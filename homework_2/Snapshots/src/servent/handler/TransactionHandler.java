@@ -6,18 +6,18 @@ import servent.snapshot.BitcakeManager;
 
 public class TransactionHandler implements Runnable {
 
-    private Message clientMessage;
+    private Message message;
     private BitcakeManager bitcakeManager;
 
-    public TransactionHandler(Message clientMessage, BitcakeManager bitcakeManager) {
-        this.clientMessage = clientMessage;
+    public TransactionHandler(Message message, BitcakeManager bitcakeManager) {
+        this.message = message;
         this.bitcakeManager = bitcakeManager;
     }
 
     @Override
     public void run() {
-        if (clientMessage.getType() == MessageType.TRANSACTION) {
-            bitcakeManager.addBitcakes(Integer.parseInt(clientMessage.getText()));
+        if (message.getType() == MessageType.TRANSACTION) {
+            bitcakeManager.addBitcakes(Integer.parseInt(message.getText()));
         }
     }
 }

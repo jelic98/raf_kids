@@ -18,19 +18,20 @@ import java.util.concurrent.Executors;
 public class ServentListener implements Runnable {
 
     private final ExecutorService threadPool = Executors.newWorkStealingPool();
-    private SnapshotCollector snapshotCollector;
+    private SnapshotCollector collector;
     private volatile boolean working = true;
 
-    public ServentListener(SnapshotCollector snapshotCollector) {
-        this.snapshotCollector = snapshotCollector;
+    public ServentListener(SnapshotCollector collector) {
+        this.collector = collector;
     }
 
     @Override
     public void run() {
-        ServerSocket listenerSocket = null;
+        ServerSocket server = null;
+
         try {
-            listenerSocket = new ServerSocket(AppConfig.LOCAL_SERVENT.getPort());
-            listenerSocket.setSoTimeout(1000);
+            server = new ServerSocket(AppConfig.LOCAL_SERVENT.getPort());
+            server.setSoTimeout(1000);
         } catch (IOException e) {
             AppConfig.error("Cannot open listener socket on port " + AppConfig.LOCAL_SERVENT.getPort());
             System.exit(0);
@@ -38,19 +39,19 @@ public class ServentListener implements Runnable {
 
         while (working) {
             try {
-                Socket clientSocket = listenerSocket.accept();
-                Message clientMessage = MessageUtil.readMessage(clientSocket);
+                Socket client = server.accept();
+                Message message = MessageUtil.readMessage(client);
 
-                switch (clientMessage.getType()) {
+                switch (message.getType()) {
                     case ASK:
                     case CAUSAL_BROADCAST:
-                        threadPool.submit(new CausalBroadcastHandler(clientMessage, snapshotCollector.getBitcakeManager()));
+                        threadPool.submit(new CausalBroadcastHandler(message, collector.getBitcakeManager()));
                         break;
                     case TRANSACTION:
-                        threadPool.submit(new TransactionHandler(clientMessage, snapshotCollector.getBitcakeManager()));
+                        threadPool.submit(new TransactionHandler(message, collector.getBitcakeManager()));
                         break;
                     case TELL:
-                        threadPool.submit(new TellHandler(clientMessage, snapshotCollector));
+                        threadPool.submit(new TellHandler(message, collector));
                         break;
                 }
             } catch (SocketTimeoutException timeoutEx) {

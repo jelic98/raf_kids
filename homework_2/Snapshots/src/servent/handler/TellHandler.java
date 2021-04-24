@@ -10,24 +10,24 @@ import servent.snapshot.SnapshotCollector;
 
 public class TellHandler implements Runnable {
 
-    private Message clientMessage;
-    private SnapshotCollector snapshotCollector;
+    private Message message;
+    private SnapshotCollector collector;
 
-    public TellHandler(Message clientMessage, SnapshotCollector snapshotCollector) {
-        this.clientMessage = clientMessage;
-        this.snapshotCollector = snapshotCollector;
+    public TellHandler(Message message, SnapshotCollector collector) {
+        this.message = message;
+        this.collector = collector;
     }
 
     @Override
     public void run() {
-        if (clientMessage.getType() == MessageType.TELL) {
+        if (message.getType() == MessageType.TELL) {
             Servent sender = CausalBroadcastShared.getAskSender();
 
             if (sender.equals(AppConfig.LOCAL_SERVENT)) {
-                snapshotCollector.addSnapshot(clientMessage.getSender(), Integer.parseInt(clientMessage.getText()));
+                collector.addSnapshot(message.getSender(), Integer.parseInt(message.getText()));
             } else {
-                AppConfig.print(String.format("Redirecting TELL from %s to %s", clientMessage.getSender(), sender));
-                MessageUtil.sendMessage(clientMessage.setReceiver(sender).setSender());
+                AppConfig.print(String.format("Redirecting TELL from %s to %s", message.getSender(), sender));
+                MessageUtil.sendMessage(message.setReceiver(sender).setSender());
             }
         }
     }

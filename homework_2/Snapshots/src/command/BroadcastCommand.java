@@ -17,10 +17,10 @@ public class BroadcastCommand implements Command {
     public void execute(String args) {
         BroadcastMessage message = new BroadcastMessage(args);
 
+        ServentState.commitMessage((BroadcastMessage) message.setReceiver(Config.LOCAL_SERVENT), true);
+
         for (Servent neighbor : Config.LOCAL_SERVENT.getNeighbors()) {
             App.send(message.setReceiver(neighbor));
         }
-
-        ServentState.commitMessage((BroadcastMessage) message.setReceiver(Config.LOCAL_SERVENT), true);
     }
 }

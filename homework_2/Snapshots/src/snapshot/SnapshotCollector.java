@@ -40,12 +40,12 @@ public class SnapshotCollector implements Runnable {
 
                     BroadcastMessage message = new AskMessage(Config.LOCAL_SERVENT);
 
+                    ServentState.commitMessage((BroadcastMessage) message.setReceiver(Config.LOCAL_SERVENT), true);
+
                     for (Servent neighbor : Config.LOCAL_SERVENT.getNeighbors()) {
                         App.print("Sending ASK to servent " + neighbor);
                         App.send(message.setReceiver(neighbor));
                     }
-
-                    ServentState.commitMessage((BroadcastMessage) message.setReceiver(Config.LOCAL_SERVENT), true);
 
                     addSnapshot(Config.LOCAL_SERVENT, snapshotManager.getSnapshot());
 

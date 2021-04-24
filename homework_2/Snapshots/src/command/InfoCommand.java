@@ -36,8 +36,8 @@ public class InfoCommand implements Command {
         App.print("COMMITTED messages:");
         printMessages(ServentState.getCommittedMessages());
 
-        App.print("util.Clock (received): " + ServentState.getClockReceived());
-        App.print("util.Clock (sent): " + ServentState.getClockSent());
+        App.print("Clock (received): " + ServentState.getClockReceived());
+        App.print("Clock (sent): " + ServentState.getClockSent());
     }
 
     private void printMessages(List<BroadcastMessage> messages) {

@@ -29,20 +29,23 @@ public abstract class Message implements Serializable {
     private Servent receiver;
     private List<Servent> route;
 
-    public Message(Type type, String text, Servent sender, Servent receiver) {
+    public Message(int id, Type type, String text, Servent sender, Servent receiver) {
+        this.id = id;
         this.type = type;
         this.text = text;
         this.sender = sender;
         this.receiver = receiver;
 
-        id = messageCounter.getAndIncrement();
         route = new ArrayList<>();
     }
 
-    public Message(Message m) {
-        this(m.type, m.text, m.sender, m.receiver);
+    public Message(Type type, String text, Servent sender, Servent receiver) {
+        this(messageCounter.getAndIncrement(), type, text, sender, receiver);
+    }
 
-        id = m.id;
+    public Message(Message m) {
+        this(m.id, m.type, m.text, m.sender, m.receiver);
+
         route.addAll(m.route);
     }
 

@@ -34,12 +34,6 @@ public class MessageHandler implements Runnable {
             ServentState.addPendingMessage(message);
             ServentState.checkPendingMessages();
 
-            for (Servent neighbor : Config.LOCAL_SERVENT.getNeighbors()) {
-                if (!message.containsSender(neighbor)) {
-                    App.send(message.setReceiver(neighbor).setSender());
-                }
-            }
-
             switch (message.getType()) {
                 case ASK:
                     handleAsk();
@@ -56,12 +50,18 @@ public class MessageHandler implements Runnable {
 
     private void handleAsk() {
         AskMessage ask = (AskMessage) this.message;
-        Servent lastSender = message.getLastSender();
+        Servent lastSender = ask.getLastSender();
 
         ServentState.setAskSender(lastSender);
 
         App.print(String.format("Sending TELL to %s", lastSender));
-        App.send(new TellMessage(ask.getReceiver(), lastSender, snapshotManager.getSnapshot()));
+        App.send(new TellMessage(Config.LOCAL_SERVENT, lastSender, snapshotManager.getSnapshot()));
+
+        for (Servent neighbor : Config.LOCAL_SERVENT.getNeighbors()) {
+            if (!ask.containsSender(neighbor)) {
+                App.send(ask.setReceiver(neighbor).setSender());
+            }
+        }
     }
 
     private void handleTell() {

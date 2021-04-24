@@ -33,8 +33,6 @@ public class SnapshotCollector implements Runnable {
                 continue;
             }
 
-            AppConfig.print("Sending ASK messages");
-
             switch (AppConfig.SNAPSHOT_TYPE) {
                 case AB:
                     BroadcastShared.setAskSender(AppConfig.LOCAL_SERVENT);
@@ -55,8 +53,6 @@ public class SnapshotCollector implements Runnable {
                     break;
             }
 
-            AppConfig.print("Receiving TELL messages");
-
             while (results.size() < AppConfig.SERVENT_COUNT) {
                 try {
                     Thread.sleep(1000);
@@ -68,8 +64,6 @@ public class SnapshotCollector implements Runnable {
                     return;
                 }
             }
-
-            AppConfig.print("Gathering results");
 
             switch (AppConfig.SNAPSHOT_TYPE) {
                 case AB:

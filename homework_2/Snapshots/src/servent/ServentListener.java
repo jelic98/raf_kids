@@ -1,15 +1,12 @@
 package servent;
 
 import app.AppConfig;
-import servent.handler.BroadcastHandler;
-import servent.handler.TellHandler;
-import servent.handler.TransactionHandler;
+import servent.handler.MessageHandler;
 import servent.message.*;
 import servent.snapshot.SnapshotCollector;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -38,21 +35,8 @@ public class ServentListener implements Runnable {
 
         while (working) {
             try {
-                Socket client = server.accept();
-                Message message = MessageUtil.readMessage(client);
-
-                switch (message.getType()) {
-                    case ASK:
-                    case BROADCAST:
-                        threadPool.submit(new BroadcastHandler((BroadcastMessage) message, collector.getSnapshotManager()));
-                        break;
-                    case TRANSACTION:
-                        threadPool.submit(new TransactionHandler((TransactionMessage) message, collector.getSnapshotManager()));
-                        break;
-                    case TELL:
-                        threadPool.submit(new TellHandler((TellMessage) message, collector));
-                        break;
-                }
+                Message message = MessageUtil.readMessage(server.accept());
+                threadPool.submit(new MessageHandler((BroadcastMessage) message, collector));
             } catch (SocketTimeoutException timeoutEx) {
                 // Ignore
             } catch (IOException e) {

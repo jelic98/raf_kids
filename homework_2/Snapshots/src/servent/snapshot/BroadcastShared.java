@@ -56,10 +56,6 @@ public class BroadcastShared {
         committedMessages.add(message);
         incrementClockReceived(message.getSender());
 
-        String content = message.getText() == null ? message.getType().toString() : message.getText();
-
-        AppConfig.print("Committed " + content);
-
         if (checkPending) {
             checkPendingMessages();
         }

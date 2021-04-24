@@ -18,7 +18,6 @@ public class AppConfig {
     public static List<Servent> SERVENTS;
     public static Servent LOCAL_SERVENT;
     public static int SERVENT_COUNT;
-    public static boolean IS_CLIQUE;
     public static SnapshotType SNAPSHOT_TYPE;
 
     public static Properties readConfig(String configPath) {
@@ -32,7 +31,6 @@ public class AppConfig {
         }
 
         SERVENT_COUNT = Integer.parseInt(properties.getProperty("servent_count"));
-        IS_CLIQUE = Boolean.parseBoolean(properties.getProperty("clique"));
         SNAPSHOT_TYPE = SnapshotType.valueOf(properties.getProperty("snapshot").toUpperCase());
 
         return properties;
@@ -46,22 +44,12 @@ public class AppConfig {
 
         for (int i = 0; i < SERVENT_COUNT; i++) {
             int serventPort = Integer.parseInt(properties.getProperty("servent" + i + ".port"));
+            String neighbors = properties.getProperty("servent" + i + ".neighbors");
+
             List<Integer> localNeighbors = new ArrayList<>();
 
-            if (IS_CLIQUE) {
-                for (int j = 0; j < SERVENT_COUNT; j++) {
-                    if (j == i) {
-                        continue;
-                    }
-
-                    localNeighbors.add(j);
-                }
-            } else {
-                String neighborsProp = properties.getProperty("servent" + i + ".neighbors");
-
-                for (String neighbor : neighborsProp.split(",")) {
-                    localNeighbors.add(Integer.parseInt(neighbor));
-                }
+            for (String neighbor : neighbors.split(",")) {
+                localNeighbors.add(Integer.parseInt(neighbor));
             }
 
             globalNeighbors.add(localNeighbors);

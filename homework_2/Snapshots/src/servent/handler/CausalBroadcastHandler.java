@@ -33,31 +33,26 @@ public class CausalBroadcastHandler implements Runnable {
 
             AppConfig.print(String.format("Got %s from %s broadcast by %s with clock %s", content, lastSender, sender, clock));
 
-            if (AppConfig.IS_CLIQUE) {
+            boolean absent = inbox.add(message);
+
+            if (absent) {
                 CausalBroadcastShared.addPendingMessage(message);
                 CausalBroadcastShared.checkPendingMessages();
-            } else {
-                boolean absent = inbox.add(message);
 
-                if (absent) {
-                    CausalBroadcastShared.addPendingMessage(message);
-                    CausalBroadcastShared.checkPendingMessages();
-
-                    for (Servent neighbor : AppConfig.LOCAL_SERVENT.getNeighbors()) {
-                        if (!message.containsSender(neighbor)) {
-                            MessageUtil.sendMessage(message.setReceiver(neighbor).setSender());
-                        }
+                for (Servent neighbor : AppConfig.LOCAL_SERVENT.getNeighbors()) {
+                    if (!message.containsSender(neighbor)) {
+                        MessageUtil.sendMessage(message.setReceiver(neighbor).setSender());
                     }
+                }
 
-                    if (message.getType() == MessageType.ASK) {
-                        CausalBroadcastShared.setAskSender(lastSender);
+                if (message.getType() == MessageType.ASK) {
+                    CausalBroadcastShared.setAskSender(lastSender);
 
-                        int amount = bitcakeManager.getCurrentBitcakeAmount();
+                    int amount = bitcakeManager.getCurrentBitcakeAmount();
 
-                        AppConfig.print(String.format("Sending TELL to %s (%d bitcakes)", lastSender, amount));
+                    AppConfig.print(String.format("Sending TELL to %s (%d bitcakes)", lastSender, amount));
 
-                        MessageUtil.sendMessage(new TellMessage(message.getReceiver(), lastSender, amount));
-                    }
+                    MessageUtil.sendMessage(new TellMessage(message.getReceiver(), lastSender, amount));
                 }
             }
         }

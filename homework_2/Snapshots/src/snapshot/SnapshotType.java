@@ -1,4 +1,4 @@
-package servent.snapshot;
+package snapshot;
 
 public enum SnapshotType {
     AB, // Acharya-Badrinath

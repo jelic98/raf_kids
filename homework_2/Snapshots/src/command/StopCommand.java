@@ -1,17 +1,16 @@
-package cli.command;
+package command;
 
-import app.AppConfig;
-import cli.Parser;
-import servent.ServentListener;
-import servent.snapshot.SnapshotCollector;
+import message.MessageListener;
+import app.App;
+import snapshot.SnapshotCollector;
 
 public class StopCommand implements Command {
 
-    private final Parser parser;
-    private final ServentListener listener;
+    private final CommandParser parser;
+    private final MessageListener listener;
     private final SnapshotCollector collector;
 
-    public StopCommand(Parser parser, ServentListener listener, SnapshotCollector collector) {
+    public StopCommand(CommandParser parser, MessageListener listener, SnapshotCollector collector) {
         this.parser = parser;
         this.listener = listener;
         this.collector = collector;
@@ -27,6 +26,6 @@ public class StopCommand implements Command {
         parser.stop();
         listener.stop();
         collector.stop();
-        AppConfig.print("Stopped");
+        App.print("Stopped");
     }
 }

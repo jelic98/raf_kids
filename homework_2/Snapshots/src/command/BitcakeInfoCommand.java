@@ -1,7 +1,7 @@
-package cli.command;
+package command;
 
-import app.AppConfig;
-import servent.snapshot.SnapshotCollector;
+import app.App;
+import snapshot.SnapshotCollector;
 
 public class BitcakeInfoCommand implements Command {
 
@@ -18,7 +18,7 @@ public class BitcakeInfoCommand implements Command {
 
     @Override
     public void execute(String args) {
-        AppConfig.print("Creating snapshot");
+        App.print("Creating snapshot");
 
         collector.startCollecting();
     }

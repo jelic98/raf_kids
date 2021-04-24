@@ -1,8 +1,8 @@
-package servent.message;
+package message;
 
-import app.AppConfig;
+import app.ServentState;
+import app.Config;
 import app.Servent;
-import servent.snapshot.BroadcastShared;
 
 import java.util.Map;
 
@@ -12,14 +12,14 @@ public class BroadcastMessage extends Message {
 
     private Map<Servent, Integer> clock;
 
-    public BroadcastMessage(MessageType type, String text, Servent sender, Servent receiver) {
+    public BroadcastMessage(Message.Type type, String text, Servent sender, Servent receiver) {
         super(type, text, sender, receiver);
 
-        clock = BroadcastShared.getClockReceived();
+        clock = ServentState.getClockReceived();
     }
 
     public BroadcastMessage(String text) {
-        this(MessageType.BROADCAST, text, AppConfig.LOCAL_SERVENT, null);
+        this(Message.Type.BROADCAST, text, Config.LOCAL_SERVENT, null);
     }
 
     public BroadcastMessage(BroadcastMessage m) {
@@ -31,6 +31,11 @@ public class BroadcastMessage extends Message {
     @Override
     protected Message clone() {
         return new BroadcastMessage(this);
+    }
+
+    @Override
+    public String toString() {
+        return getType() + " " + getText();
     }
 
     public Map<Servent, Integer> getClock() {

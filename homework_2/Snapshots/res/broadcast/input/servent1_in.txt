@@ -1,7 +1,6 @@
-info
 pause 4000
 broadcast b1
 broadcast b2
 pause 12000
-print_messages
+info
 stop

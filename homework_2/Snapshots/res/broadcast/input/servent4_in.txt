@@ -1,7 +1,6 @@
-info
 pause 13000
 broadcast e1
 broadcast e2
 pause 3000
-print_messages
+info
 stop

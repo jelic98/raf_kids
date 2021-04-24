@@ -1,6 +1,7 @@
-package servent.message;
+package message;
 
-import app.AppConfig;
+import app.App;
+import app.Config;
 import app.Servent;
 
 import java.io.Serializable;
@@ -14,14 +15,21 @@ public abstract class Message implements Serializable {
     private static final long serialVersionUID = 1L;
     private static final AtomicInteger messageCounter = new AtomicInteger(0);
 
+    public enum Type {
+        BROADCAST,
+        TRANSACTION,
+        ASK,
+        TELL
+    }
+
     private int id;
-    private MessageType type;
+    private Type type;
     private String text;
     private Servent sender;
     private Servent receiver;
     private List<Servent> route;
 
-    public Message(MessageType type, String text, Servent sender, Servent receiver) {
+    public Message(Type type, String text, Servent sender, Servent receiver) {
         this.type = type;
         this.text = text;
         this.sender = sender;
@@ -38,7 +46,7 @@ public abstract class Message implements Serializable {
         route.addAll(m.route);
     }
 
-    public MessageType getType() {
+    public Type getType() {
         return type;
     }
 
@@ -52,7 +60,7 @@ public abstract class Message implements Serializable {
 
     public Message setSender() {
         Message message = clone();
-        message.route.add(AppConfig.LOCAL_SERVENT);
+        message.route.add(Config.LOCAL_SERVENT);
 
         return message;
     }
@@ -86,13 +94,13 @@ public abstract class Message implements Serializable {
     }
 
     public Message setReceiver(Servent receiver) {
-        if (AppConfig.LOCAL_SERVENT.getNeighbors().contains(receiver) || receiver.equals(AppConfig.LOCAL_SERVENT)) {
+        if (Config.LOCAL_SERVENT.getNeighbors().contains(receiver) || receiver.equals(Config.LOCAL_SERVENT)) {
             Message message = clone();
             message.receiver = receiver;
 
             return message;
         } else {
-            AppConfig.error("Servent " + receiver + " is not a neighbor");
+            App.error("Servent " + receiver + " is not a neighbor");
 
             return null;
         }

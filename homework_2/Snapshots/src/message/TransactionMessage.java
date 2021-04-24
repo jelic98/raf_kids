@@ -1,8 +1,8 @@
-package servent.message;
+package message;
 
-import app.AppConfig;
+import app.Config;
 import app.Servent;
-import servent.snapshot.SnapshotManager;
+import snapshot.SnapshotManager;
 
 public class TransactionMessage extends BroadcastMessage {
 
@@ -11,7 +11,7 @@ public class TransactionMessage extends BroadcastMessage {
     private final transient SnapshotManager snapshotManager;
 
     public TransactionMessage(int amount, Servent receiver, SnapshotManager snapshotManager) {
-        super(MessageType.TRANSACTION, String.valueOf(amount), AppConfig.LOCAL_SERVENT, receiver);
+        super(Message.Type.TRANSACTION, String.valueOf(amount), Config.LOCAL_SERVENT, receiver);
 
         this.snapshotManager = snapshotManager;
     }
@@ -25,6 +25,11 @@ public class TransactionMessage extends BroadcastMessage {
     @Override
     protected Message clone() {
         return new TransactionMessage(this);
+    }
+
+    @Override
+    public String toString() {
+        return getType() + " " + getText();
     }
 
     @Override

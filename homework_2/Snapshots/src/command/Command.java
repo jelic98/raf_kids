@@ -1,4 +1,4 @@
-package cli.command;
+package command;
 
 public interface Command {
 

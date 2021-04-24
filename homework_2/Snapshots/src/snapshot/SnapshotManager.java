@@ -1,4 +1,4 @@
-package servent.snapshot;
+package snapshot;
 
 import app.Servent;
 

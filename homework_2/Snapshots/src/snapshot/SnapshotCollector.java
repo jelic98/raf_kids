@@ -1,10 +1,11 @@
-package servent.snapshot;
+package snapshot;
 
-import app.AppConfig;
+import app.App;
+import app.Config;
 import app.Servent;
-import servent.message.AskMessage;
-import servent.message.BroadcastMessage;
-import servent.message.MessageUtil;
+import message.AskMessage;
+import message.BroadcastMessage;
+import app.ServentState;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -33,27 +34,27 @@ public class SnapshotCollector implements Runnable {
                 continue;
             }
 
-            switch (AppConfig.SNAPSHOT_TYPE) {
+            switch (Config.SNAPSHOT_TYPE) {
                 case AB:
-                    BroadcastShared.setAskSender(AppConfig.LOCAL_SERVENT);
+                    ServentState.setAskSender(Config.LOCAL_SERVENT);
 
-                    BroadcastMessage message = new AskMessage(AppConfig.LOCAL_SERVENT);
+                    BroadcastMessage message = new AskMessage(Config.LOCAL_SERVENT);
 
-                    for (Servent neighbor : AppConfig.LOCAL_SERVENT.getNeighbors()) {
-                        AppConfig.print("Sending ASK to servent " + neighbor);
-                        MessageUtil.sendMessage(message.setReceiver(neighbor));
+                    for (Servent neighbor : Config.LOCAL_SERVENT.getNeighbors()) {
+                        App.print("Sending ASK to servent " + neighbor);
+                        App.send(message.setReceiver(neighbor));
                     }
 
-                    BroadcastShared.commitMessage((BroadcastMessage) message.setReceiver(AppConfig.LOCAL_SERVENT), true);
+                    ServentState.commitMessage((BroadcastMessage) message.setReceiver(Config.LOCAL_SERVENT), true);
 
-                    addSnapshot(AppConfig.LOCAL_SERVENT, snapshotManager.getSnapshot());
+                    addSnapshot(Config.LOCAL_SERVENT, snapshotManager.getSnapshot());
 
                     break;
                 case AV:
                     break;
             }
 
-            while (results.size() < AppConfig.SERVENT_COUNT) {
+            while (results.size() < Config.SERVENT_COUNT) {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -65,17 +66,17 @@ public class SnapshotCollector implements Runnable {
                 }
             }
 
-            switch (AppConfig.SNAPSHOT_TYPE) {
+            switch (Config.SNAPSHOT_TYPE) {
                 case AB:
                     int sum = 0;
 
                     for (Entry<Servent, Snapshot> e : results.entrySet()) {
                         int balance = e.getValue().getBalance();
                         sum += balance;
-                        AppConfig.print(String.format("Servent %s has %d bitcakes", e.getKey(), balance));
+                        App.print(String.format("Servent %s has %d bitcakes", e.getKey(), balance));
                     }
 
-                    AppConfig.print("Total bitcakes: " + sum);
+                    App.print("Total bitcakes: " + sum);
 
                     results.clear();
                     collecting.set(false);
@@ -89,14 +90,14 @@ public class SnapshotCollector implements Runnable {
 
     public void addSnapshot(Servent servent, Snapshot snapshot) {
         results.put(servent, snapshot);
-        AppConfig.print(String.format("Adding snapshot for servent %s", servent));
+        App.print(String.format("Adding snapshot for servent %s", servent));
     }
 
     public void startCollecting() {
         boolean oldValue = collecting.getAndSet(true);
 
         if (oldValue) {
-            AppConfig.error("Already snapshotting");
+            App.error("Already snapshotting");
         }
     }
 

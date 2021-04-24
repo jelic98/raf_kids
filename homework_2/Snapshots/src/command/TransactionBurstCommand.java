@@ -1,10 +1,10 @@
-package cli.command;
+package command;
 
-import app.AppConfig;
+import app.App;
+import app.Config;
 import app.Servent;
-import servent.message.MessageUtil;
-import servent.message.TransactionMessage;
-import servent.snapshot.SnapshotManager;
+import message.TransactionMessage;
+import snapshot.SnapshotManager;
 
 public class TransactionBurstCommand implements Command {
 
@@ -25,14 +25,14 @@ public class TransactionBurstCommand implements Command {
 
     @Override
     public void execute(String args) {
-        AppConfig.print(String.format("Bursting %d transactions", BURST_WORKERS * TRANSACTION_COUNT));
+        App.print(String.format("Bursting %d transactions", BURST_WORKERS * TRANSACTION_COUNT));
 
         for (int i = 0; i < BURST_WORKERS; i++) {
             new Thread(() -> {
                 for (int i1 = 0; i1 < TRANSACTION_COUNT; i1++) {
-                    for (Servent neighbor : AppConfig.LOCAL_SERVENT.getNeighbors()) {
+                    for (Servent neighbor : Config.LOCAL_SERVENT.getNeighbors()) {
                         int amount = 1 + (int) (Math.random() * MAX_TRANSFER_AMOUNT);
-                        MessageUtil.sendMessage(new TransactionMessage(amount, neighbor, snapshotManager));
+                        App.send(new TransactionMessage(amount, neighbor, snapshotManager));
                     }
                 }
             }).start();

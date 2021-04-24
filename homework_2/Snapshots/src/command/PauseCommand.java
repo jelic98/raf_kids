@@ -1,6 +1,6 @@
-package cli.command;
+package command;
 
-import app.AppConfig;
+import app.App;
 
 public class PauseCommand implements Command {
 
@@ -13,7 +13,7 @@ public class PauseCommand implements Command {
     public void execute(String args) {
         int millis = Integer.parseInt(args);
 
-        AppConfig.print("Pausing for " + millis + " ms");
+        App.print("Pausing for " + millis + " ms");
 
         try {
             Thread.sleep(millis);

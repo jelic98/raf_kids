@@ -1,8 +1,6 @@
-package servent.snapshot;
+package app;
 
-import app.AppConfig;
-import app.Servent;
-import servent.message.BroadcastMessage;
+import message.BroadcastMessage;
 
 import java.util.Iterator;
 import java.util.List;
@@ -12,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class BroadcastShared {
+public class ServentState {
 
     private static final Map<Servent, Integer> clockReceived = new ConcurrentHashMap<>();
     private static final Map<Servent, Integer> clockSent = new ConcurrentHashMap<>();
@@ -22,7 +20,7 @@ public class BroadcastShared {
     private static Servent askSender;
 
     public static void initializeVectorClock() {
-        for (Servent servent : AppConfig.SERVENTS) {
+        for (Servent servent : Config.SERVENTS) {
             clockReceived.put(servent, 0);
             clockSent.put(servent, 0);
         }

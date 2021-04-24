@@ -1,26 +1,24 @@
-package cli;
+package command;
 
-import app.AppConfig;
-import cli.command.*;
-import servent.ServentListener;
-import servent.snapshot.SnapshotCollector;
+import app.App;
+import snapshot.SnapshotCollector;
+import message.MessageListener;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class Parser implements Runnable {
+public class CommandParser implements Runnable {
 
     private final List<Command> commandList;
     private volatile boolean working = true;
 
-    public Parser(ServentListener listener, SnapshotCollector collector) {
+    public CommandParser(MessageListener listener, SnapshotCollector collector) {
         commandList = new ArrayList<>();
         commandList.add(new BitcakeInfoCommand(collector));
         commandList.add(new BroadcastCommand());
         commandList.add(new InfoCommand());
         commandList.add(new PauseCommand());
-        commandList.add(new PrintMessagesCommand());
         commandList.add(new StopCommand(this, listener, collector));
         commandList.add(new TransactionBurstCommand(collector.getSnapshotManager()));
     }
@@ -58,7 +56,7 @@ public class Parser implements Runnable {
             }
 
             if (!found) {
-                AppConfig.error("Unknown command: " + commandName);
+                App.error("Unknown command: " + commandName);
             }
         }
 

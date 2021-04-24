@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class MultipleServentStarter {
+public class ServentMultiple {
 
     private static final String TEST_NAME = "res/snapshot";
     private static final String OUT_DIR = "out/production/Snapshots";
@@ -14,13 +14,13 @@ public class MultipleServentStarter {
     public static void main(String[] args) {
         List<Process> servents = new ArrayList<>();
 
-        AppConfig.readConfig(TEST_NAME + "/servent_list.properties");
+        Config.load(TEST_NAME + "/servent_list.properties");
 
-        AppConfig.print("Starting multiple servents - Type \"stop\" to exit");
+        App.print("Starting multiple servents - Type \"stop\" to exit");
 
-        for (int i = 0; i < AppConfig.SERVENT_COUNT; i++) {
+        for (int i = 0; i < Config.SERVENT_COUNT; i++) {
             try {
-                ProcessBuilder builder = new ProcessBuilder("java", "-cp", OUT_DIR, "app.ServentMain",
+                ProcessBuilder builder = new ProcessBuilder("java", "-cp", OUT_DIR, "app.ServentSingle",
                         TEST_NAME + "/servent_list.properties", String.valueOf(i));
 
                 builder.redirectOutput(new File(TEST_NAME + "/output/servent" + i + "_out.txt"));
@@ -29,7 +29,7 @@ public class MultipleServentStarter {
 
                 servents.add(builder.start());
             } catch (IOException e) {
-                AppConfig.error("Error while starting servents");
+                App.error("Error while starting servents");
             }
         }
 
@@ -57,6 +57,6 @@ public class MultipleServentStarter {
             }
         }
 
-        AppConfig.print("All servent processes finished - Type \"stop\" to exit");
+        App.print("All servent processes finished - Type \"stop\" to exit");
     }
 }

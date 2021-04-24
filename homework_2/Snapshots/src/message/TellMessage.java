@@ -1,7 +1,7 @@
-package servent.message;
+package message;
 
 import app.Servent;
-import servent.snapshot.Snapshot;
+import snapshot.Snapshot;
 
 public class TellMessage extends BroadcastMessage {
 
@@ -10,7 +10,7 @@ public class TellMessage extends BroadcastMessage {
     private final Snapshot snapshot;
 
     public TellMessage(Servent sender, Servent receiver, Snapshot snapshot) {
-        super(MessageType.TELL, null, sender, receiver);
+        super(Message.Type.TELL, null, sender, receiver);
 
         this.snapshot = snapshot;
     }
@@ -24,6 +24,11 @@ public class TellMessage extends BroadcastMessage {
     @Override
     protected Message clone() {
         return new TellMessage(this);
+    }
+
+    @Override
+    public String toString() {
+        return getType() + " " + snapshot.getBalance();
     }
 
     public Snapshot getSnapshot() {

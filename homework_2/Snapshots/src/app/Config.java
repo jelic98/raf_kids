@@ -1,32 +1,28 @@
 package app;
 
-import servent.snapshot.BroadcastShared;
-import servent.snapshot.SnapshotType;
+import snapshot.SnapshotType;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
-public class AppConfig {
+public class Config {
 
     public static List<Servent> SERVENTS;
     public static Servent LOCAL_SERVENT;
     public static int SERVENT_COUNT;
     public static SnapshotType SNAPSHOT_TYPE;
 
-    public static Properties readConfig(String configPath) {
+    public static Properties load(String path) {
         Properties properties = new Properties();
 
         try {
-            properties.load(new FileInputStream(new File(configPath)));
+            properties.load(new FileInputStream(new File(path)));
         } catch (IOException e) {
-            error("Cannot open properties file");
+            App.error("Cannot open properties file");
             System.exit(0);
         }
 
@@ -36,8 +32,8 @@ public class AppConfig {
         return properties;
     }
 
-    public static void readConfig(String configPath, int localServent) {
-        Properties properties = readConfig(configPath);
+    public static void load(String path, int localServent) {
+        Properties properties = load(path);
 
         SERVENTS = new ArrayList<>();
         List<List<Integer>> globalNeighbors = new ArrayList<>();
@@ -67,20 +63,6 @@ public class AppConfig {
 
         LOCAL_SERVENT = SERVENTS.get(localServent);
 
-        BroadcastShared.initializeVectorClock();
-    }
-
-    public static void print(String message) {
-        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-        Date now = new Date();
-
-        System.out.println(timeFormat.format(now) + " - " + message);
-    }
-
-    public static void error(String message) {
-        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-        Date now = new Date();
-
-        System.err.println(timeFormat.format(now) + " - " + message);
+        ServentState.initializeVectorClock();
     }
 }

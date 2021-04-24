@@ -5,6 +5,7 @@ import app.Servent;
 import servent.message.MessageUtil;
 import servent.message.TransactionMessage;
 import servent.snapshot.BitcakeManager;
+import servent.snapshot.CausalBroadcastShared;
 
 public class TransactionBurstCommand implements Command {
 
@@ -32,7 +33,7 @@ public class TransactionBurstCommand implements Command {
                 for (int i1 = 0; i1 < TRANSACTION_COUNT; i1++) {
                     for (Servent neighbor : AppConfig.LOCAL_SERVENT.getNeighbors()) {
                         int amount = 1 + (int) (Math.random() * MAX_TRANSFER_AMOUNT);
-                        MessageUtil.sendMessage(new TransactionMessage(AppConfig.LOCAL_SERVENT, neighbor, amount, bitcakeManager));
+                        MessageUtil.sendMessage(new TransactionMessage(AppConfig.LOCAL_SERVENT, neighbor, amount, bitcakeManager, CausalBroadcastShared.getClockReceived()));
                     }
                 }
             }).start();

@@ -1,7 +1,7 @@
 package cli.command;
 
 import app.AppConfig;
-import servent.message.Message;
+import servent.message.CausalBroadcastMessage;
 import servent.snapshot.CausalBroadcastShared;
 
 import java.util.List;
@@ -22,10 +22,10 @@ public class PrintCausalCommand implements Command {
         printMessages(CausalBroadcastShared.getCommittedMessages());
     }
 
-    private void printMessages(List<Message> messages) {
+    private void printMessages(List<CausalBroadcastMessage> messages) {
         int i = 1;
 
-        for (Message message : messages) {
+        for (CausalBroadcastMessage message : messages) {
             AppConfig.print(String.format("Message %d: %s from %s", i, message.getText(), message.getSender()));
             i++;
         }

@@ -3,7 +3,7 @@ package servent.snapshot;
 import app.AppConfig;
 import app.Servent;
 import servent.message.AskMessage;
-import servent.message.Message;
+import servent.message.CausalBroadcastMessage;
 import servent.message.MessageUtil;
 
 import java.util.Map;
@@ -46,15 +46,14 @@ public class SnapshotCollector implements Runnable {
                 case AB:
                     CausalBroadcastShared.setAskSender(AppConfig.LOCAL_SERVENT);
 
-                    Message broadcastMessage = new AskMessage(AppConfig.LOCAL_SERVENT,
-                            null, CausalBroadcastShared.getVectorClock());
+                    CausalBroadcastMessage message = new AskMessage(AppConfig.LOCAL_SERVENT, null, CausalBroadcastShared.getClockReceived());
 
                     for (Servent neighbor : AppConfig.LOCAL_SERVENT.getNeighbors()) {
                         AppConfig.print("Sending ASK to servent " + neighbor);
-                        MessageUtil.sendMessage(broadcastMessage.setReceiver(neighbor));
+                        MessageUtil.sendMessage(message.setReceiver(neighbor));
                     }
 
-                    CausalBroadcastShared.commitMessage(broadcastMessage.setReceiver(AppConfig.LOCAL_SERVENT), true);
+                    CausalBroadcastShared.commitMessage((CausalBroadcastMessage) message.setReceiver(AppConfig.LOCAL_SERVENT), true);
 
                     addSnapshot(AppConfig.LOCAL_SERVENT, bitcakeManager.getCurrentBitcakeAmount());
 

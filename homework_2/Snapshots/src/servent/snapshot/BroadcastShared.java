@@ -2,7 +2,7 @@ package servent.snapshot;
 
 import app.AppConfig;
 import app.Servent;
-import servent.message.CausalBroadcastMessage;
+import servent.message.BroadcastMessage;
 
 import java.util.Iterator;
 import java.util.List;
@@ -12,12 +12,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class CausalBroadcastShared {
+public class BroadcastShared {
 
     private static final Map<Servent, Integer> clockReceived = new ConcurrentHashMap<>();
     private static final Map<Servent, Integer> clockSent = new ConcurrentHashMap<>();
-    private static final List<CausalBroadcastMessage> committedMessages = new CopyOnWriteArrayList<>();
-    private static final Queue<CausalBroadcastMessage> pendingMessages = new ConcurrentLinkedQueue<>();
+    private static final List<BroadcastMessage> committedMessages = new CopyOnWriteArrayList<>();
+    private static final Queue<BroadcastMessage> pendingMessages = new ConcurrentLinkedQueue<>();
     private static final Object pendingMessagesLock = new Object();
     private static Servent askSender;
 
@@ -44,15 +44,15 @@ public class CausalBroadcastShared {
         return new ConcurrentHashMap<>(clockSent);
     }
 
-    public static List<CausalBroadcastMessage> getCommittedMessages() {
+    public static List<BroadcastMessage> getCommittedMessages() {
         return new CopyOnWriteArrayList<>(committedMessages);
     }
 
-    public static List<CausalBroadcastMessage> getPendingMessages() {
+    public static List<BroadcastMessage> getPendingMessages() {
         return new CopyOnWriteArrayList<>(pendingMessages);
     }
 
-    public static void commitMessage(CausalBroadcastMessage message, boolean checkPending) {
+    public static void commitMessage(BroadcastMessage message, boolean checkPending) {
         committedMessages.add(message);
         incrementClockReceived(message.getSender());
 
@@ -65,11 +65,11 @@ public class CausalBroadcastShared {
         }
     }
 
-    public static void addPendingMessage(CausalBroadcastMessage msg) {
+    public static void addPendingMessage(BroadcastMessage msg) {
         pendingMessages.add(msg);
     }
 
-    private static boolean shouldCommit(CausalBroadcastMessage message) {
+    private static boolean shouldCommit(BroadcastMessage message) {
         for (Servent servent : clockReceived.keySet()) {
             if (message.getClock().get(servent) > clockReceived.get(servent)) {
                 return false;
@@ -86,10 +86,10 @@ public class CausalBroadcastShared {
             gotWork = false;
 
             synchronized (pendingMessagesLock) {
-                Iterator<CausalBroadcastMessage> i = pendingMessages.iterator();
+                Iterator<BroadcastMessage> i = pendingMessages.iterator();
 
                 while (i.hasNext()) {
-                    CausalBroadcastMessage message = i.next();
+                    BroadcastMessage message = i.next();
 
                     if (shouldCommit(message)) {
                         commitMessage(message, false);

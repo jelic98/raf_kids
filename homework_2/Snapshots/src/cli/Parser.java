@@ -17,10 +17,10 @@ public class Parser implements Runnable {
     public Parser(ServentListener listener, SnapshotCollector collector) {
         commandList = new ArrayList<>();
         commandList.add(new BitcakeInfoCommand(collector));
-        commandList.add(new CausalBroadcastCommand());
+        commandList.add(new BroadcastCommand());
         commandList.add(new InfoCommand());
         commandList.add(new PauseCommand());
-        commandList.add(new PrintCausalCommand());
+        commandList.add(new PrintMessagesCommand());
         commandList.add(new StopCommand(this, listener, collector));
         commandList.add(new TransactionBurstCommand(collector.getSnapshotManager()));
     }

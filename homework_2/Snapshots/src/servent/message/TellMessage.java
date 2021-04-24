@@ -3,7 +3,7 @@ package servent.message;
 import app.Servent;
 import servent.snapshot.Snapshot;
 
-public class TellMessage extends CausalBroadcastMessage {
+public class TellMessage extends BroadcastMessage {
 
     private static final long serialVersionUID = 1L;
 

@@ -1,7 +1,7 @@
 package servent;
 
 import app.AppConfig;
-import servent.handler.CausalBroadcastHandler;
+import servent.handler.BroadcastHandler;
 import servent.handler.TellHandler;
 import servent.handler.TransactionHandler;
 import servent.message.*;
@@ -43,8 +43,8 @@ public class ServentListener implements Runnable {
 
                 switch (message.getType()) {
                     case ASK:
-                    case CAUSAL_BROADCAST:
-                        threadPool.submit(new CausalBroadcastHandler((CausalBroadcastMessage) message, collector.getSnapshotManager()));
+                    case BROADCAST:
+                        threadPool.submit(new BroadcastHandler((BroadcastMessage) message, collector.getSnapshotManager()));
                         break;
                     case TRANSACTION:
                         threadPool.submit(new TransactionHandler((TransactionMessage) message, collector.getSnapshotManager()));

@@ -2,7 +2,7 @@ package servent.message;
 
 import app.AppConfig;
 import app.Servent;
-import servent.snapshot.CausalBroadcastShared;
+import servent.snapshot.BroadcastShared;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -58,7 +58,7 @@ public class MessageUtil {
             sendSocket.close();
 
             // TODO This should be placed here?
-            CausalBroadcastShared.incrementClockSent(receiver);
+            BroadcastShared.incrementClockSent(receiver);
 
             message.sendEffect();
         } catch (IOException e) {

@@ -3,7 +3,7 @@ package servent.snapshot;
 import app.AppConfig;
 import app.Servent;
 import servent.message.AskMessage;
-import servent.message.CausalBroadcastMessage;
+import servent.message.BroadcastMessage;
 import servent.message.MessageUtil;
 
 import java.util.Map;
@@ -37,16 +37,16 @@ public class SnapshotCollector implements Runnable {
 
             switch (AppConfig.SNAPSHOT_TYPE) {
                 case AB:
-                    CausalBroadcastShared.setAskSender(AppConfig.LOCAL_SERVENT);
+                    BroadcastShared.setAskSender(AppConfig.LOCAL_SERVENT);
 
-                    CausalBroadcastMessage message = new AskMessage(AppConfig.LOCAL_SERVENT);
+                    BroadcastMessage message = new AskMessage(AppConfig.LOCAL_SERVENT);
 
                     for (Servent neighbor : AppConfig.LOCAL_SERVENT.getNeighbors()) {
                         AppConfig.print("Sending ASK to servent " + neighbor);
                         MessageUtil.sendMessage(message.setReceiver(neighbor));
                     }
 
-                    CausalBroadcastShared.commitMessage((CausalBroadcastMessage) message.setReceiver(AppConfig.LOCAL_SERVENT), true);
+                    BroadcastShared.commitMessage((BroadcastMessage) message.setReceiver(AppConfig.LOCAL_SERVENT), true);
 
                     addSnapshot(AppConfig.LOCAL_SERVENT, snapshotManager.getSnapshot());
 

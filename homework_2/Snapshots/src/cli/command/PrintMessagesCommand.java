@@ -1,31 +1,31 @@
 package cli.command;
 
 import app.AppConfig;
-import servent.message.CausalBroadcastMessage;
-import servent.snapshot.CausalBroadcastShared;
+import servent.message.BroadcastMessage;
+import servent.snapshot.BroadcastShared;
 
 import java.util.List;
 
-public class PrintCausalCommand implements Command {
+public class PrintMessagesCommand implements Command {
 
     @Override
     public String getName() {
-        return "print_causal";
+        return "print_messages";
     }
 
     @Override
     public void execute(String args) {
         AppConfig.print("PENDING messages:");
-        printMessages(CausalBroadcastShared.getPendingMessages());
+        printMessages(BroadcastShared.getPendingMessages());
 
         AppConfig.print("COMMITTED messages:");
-        printMessages(CausalBroadcastShared.getCommittedMessages());
+        printMessages(BroadcastShared.getCommittedMessages());
     }
 
-    private void printMessages(List<CausalBroadcastMessage> messages) {
+    private void printMessages(List<BroadcastMessage> messages) {
         int i = 1;
 
-        for (CausalBroadcastMessage message : messages) {
+        for (BroadcastMessage message : messages) {
             AppConfig.print(String.format("Message %d: %s from %s", i, message.getText(), message.getSender()));
             i++;
         }

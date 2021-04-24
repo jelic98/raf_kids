@@ -4,7 +4,7 @@ import app.AppConfig;
 import app.Servent;
 import servent.snapshot.SnapshotManager;
 
-public class TransactionMessage extends CausalBroadcastMessage {
+public class TransactionMessage extends BroadcastMessage {
 
     private static final long serialVersionUID = 1L;
 

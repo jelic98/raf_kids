@@ -4,7 +4,7 @@ import app.AppConfig;
 import app.Servent;
 import servent.message.MessageUtil;
 import servent.message.TellMessage;
-import servent.snapshot.CausalBroadcastShared;
+import servent.snapshot.BroadcastShared;
 import servent.snapshot.SnapshotCollector;
 
 public class TellHandler implements Runnable {
@@ -19,7 +19,7 @@ public class TellHandler implements Runnable {
 
     @Override
     public void run() {
-        Servent sender = CausalBroadcastShared.getAskSender();
+        Servent sender = BroadcastShared.getAskSender();
 
         if (sender.equals(AppConfig.LOCAL_SERVENT)) {
             collector.addSnapshot(message.getSender(), message.getSnapshot());

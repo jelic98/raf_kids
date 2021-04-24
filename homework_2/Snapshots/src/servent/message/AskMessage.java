@@ -2,7 +2,7 @@ package servent.message;
 
 import app.Servent;
 
-public class AskMessage extends CausalBroadcastMessage {
+public class AskMessage extends BroadcastMessage {
 
     private static final long serialVersionUID = 1L;
 

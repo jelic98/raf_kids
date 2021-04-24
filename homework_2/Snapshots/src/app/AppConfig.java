@@ -1,6 +1,6 @@
 package app;
 
-import servent.snapshot.CausalBroadcastShared;
+import servent.snapshot.BroadcastShared;
 import servent.snapshot.SnapshotType;
 
 import java.io.File;
@@ -67,7 +67,7 @@ public class AppConfig {
 
         LOCAL_SERVENT = SERVENTS.get(localServent);
 
-        CausalBroadcastShared.initializeVectorClock();
+        BroadcastShared.initializeVectorClock();
     }
 
     public static void print(String message) {

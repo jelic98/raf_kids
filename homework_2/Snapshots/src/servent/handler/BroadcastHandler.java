@@ -3,21 +3,21 @@ package servent.handler;
 import app.AppConfig;
 import app.Servent;
 import servent.message.*;
-import servent.snapshot.CausalBroadcastShared;
+import servent.snapshot.BroadcastShared;
 import servent.snapshot.SnapshotManager;
 
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class CausalBroadcastHandler implements Runnable {
+public class BroadcastHandler implements Runnable {
 
     private static final Set<Message> inbox = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
-    private final CausalBroadcastMessage message;
+    private final BroadcastMessage message;
     private final SnapshotManager snapshotManager;
 
-    public CausalBroadcastHandler(CausalBroadcastMessage message, SnapshotManager snapshotManager) {
+    public BroadcastHandler(BroadcastMessage message, SnapshotManager snapshotManager) {
         this.message = message;
         this.snapshotManager = snapshotManager;
     }
@@ -34,8 +34,8 @@ public class CausalBroadcastHandler implements Runnable {
         boolean absent = inbox.add(message);
 
         if (absent) {
-            CausalBroadcastShared.addPendingMessage(message);
-            CausalBroadcastShared.checkPendingMessages();
+            BroadcastShared.addPendingMessage(message);
+            BroadcastShared.checkPendingMessages();
 
             for (Servent neighbor : AppConfig.LOCAL_SERVENT.getNeighbors()) {
                 if (!message.containsSender(neighbor)) {
@@ -44,7 +44,7 @@ public class CausalBroadcastHandler implements Runnable {
             }
 
             if (message.getType() == MessageType.ASK) {
-                CausalBroadcastShared.setAskSender(lastSender);
+                BroadcastShared.setAskSender(lastSender);
 
                 AppConfig.print(String.format("Sending TELL to %s", lastSender));
 

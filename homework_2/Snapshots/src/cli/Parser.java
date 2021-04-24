@@ -22,7 +22,7 @@ public class Parser implements Runnable {
         commandList.add(new PauseCommand());
         commandList.add(new PrintCausalCommand());
         commandList.add(new StopCommand(this, listener, collector));
-        commandList.add(new TransactionBurstCommand(collector.getBitcakeManager()));
+        commandList.add(new TransactionBurstCommand(collector.getSnapshotManager()));
     }
 
     @Override

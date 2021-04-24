@@ -15,7 +15,7 @@ public class CausalBroadcastCommand implements Command {
 
     @Override
     public void execute(String args) {
-        CausalBroadcastMessage message = new CausalBroadcastMessage(AppConfig.LOCAL_SERVENT, null, args, CausalBroadcastShared.getClockReceived());
+        CausalBroadcastMessage message = new CausalBroadcastMessage(args);
 
         for (Servent neighbor : AppConfig.LOCAL_SERVENT.getNeighbors()) {
             MessageUtil.sendMessage(message.setReceiver(neighbor));

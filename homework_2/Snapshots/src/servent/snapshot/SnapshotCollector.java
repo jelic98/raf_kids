@@ -15,22 +15,15 @@ public class SnapshotCollector implements Runnable {
 
     private volatile boolean working = true;
     private AtomicBoolean collecting = new AtomicBoolean(false);
-    private Map<Servent, Integer> results = new ConcurrentHashMap<>();
-    private BitcakeManager bitcakeManager;
+    private Map<Servent, Snapshot> results = new ConcurrentHashMap<>();
+    private SnapshotManager snapshotManager;
 
     public SnapshotCollector() {
-        switch (AppConfig.SNAPSHOT_TYPE) {
-            case AB:
-                bitcakeManager = new ABBitcakeManager();
-                break;
-            case AV:
-                bitcakeManager = new AVBitcakeManager();
-                break;
-        }
+        snapshotManager = new SnapshotManager();
     }
 
-    public BitcakeManager getBitcakeManager() {
-        return bitcakeManager;
+    public SnapshotManager getSnapshotManager() {
+        return snapshotManager;
     }
 
     @Override
@@ -46,7 +39,7 @@ public class SnapshotCollector implements Runnable {
                 case AB:
                     CausalBroadcastShared.setAskSender(AppConfig.LOCAL_SERVENT);
 
-                    CausalBroadcastMessage message = new AskMessage(AppConfig.LOCAL_SERVENT, null, CausalBroadcastShared.getClockReceived());
+                    CausalBroadcastMessage message = new AskMessage(AppConfig.LOCAL_SERVENT);
 
                     for (Servent neighbor : AppConfig.LOCAL_SERVENT.getNeighbors()) {
                         AppConfig.print("Sending ASK to servent " + neighbor);
@@ -55,7 +48,7 @@ public class SnapshotCollector implements Runnable {
 
                     CausalBroadcastShared.commitMessage((CausalBroadcastMessage) message.setReceiver(AppConfig.LOCAL_SERVENT), true);
 
-                    addSnapshot(AppConfig.LOCAL_SERVENT, bitcakeManager.getCurrentBitcakeAmount());
+                    addSnapshot(AppConfig.LOCAL_SERVENT, snapshotManager.getSnapshot());
 
                     break;
                 case AV:
@@ -82,9 +75,10 @@ public class SnapshotCollector implements Runnable {
                 case AB:
                     int sum = 0;
 
-                    for (Entry<Servent, Integer> e : results.entrySet()) {
-                        sum += e.getValue();
-                        AppConfig.print(String.format("Servent %s has %d bitcakes", e.getKey(), e.getValue()));
+                    for (Entry<Servent, Snapshot> e : results.entrySet()) {
+                        int balance = e.getValue().getBalance();
+                        sum += balance;
+                        AppConfig.print(String.format("Servent %s has %d bitcakes", e.getKey(), balance));
                     }
 
                     AppConfig.print("Total bitcakes: " + sum);
@@ -99,9 +93,9 @@ public class SnapshotCollector implements Runnable {
         }
     }
 
-    public void addSnapshot(Servent servent, int amount) {
-        results.put(servent, amount);
-        AppConfig.print(String.format("Adding snapshot for servent %s (%d bitcakes)", servent, amount));
+    public void addSnapshot(Servent servent, Snapshot snapshot) {
+        results.put(servent, snapshot);
+        AppConfig.print(String.format("Adding snapshot for servent %s", servent));
     }
 
     public void startCollecting() {

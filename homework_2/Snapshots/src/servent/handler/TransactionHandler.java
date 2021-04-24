@@ -1,23 +1,20 @@
 package servent.handler;
 
-import servent.message.Message;
-import servent.message.MessageType;
-import servent.snapshot.BitcakeManager;
+import servent.message.TransactionMessage;
+import servent.snapshot.SnapshotManager;
 
 public class TransactionHandler implements Runnable {
 
-    private Message message;
-    private BitcakeManager bitcakeManager;
+    private final TransactionMessage message;
+    private final SnapshotManager snapshotManager;
 
-    public TransactionHandler(Message message, BitcakeManager bitcakeManager) {
+    public TransactionHandler(TransactionMessage message, SnapshotManager snapshotManager) {
         this.message = message;
-        this.bitcakeManager = bitcakeManager;
+        this.snapshotManager = snapshotManager;
     }
 
     @Override
     public void run() {
-        if (message.getType() == MessageType.TRANSACTION) {
-            bitcakeManager.addBitcakes(Integer.parseInt(message.getText()));
-        }
+        snapshotManager.plus(Integer.parseInt(message.getText()));
     }
 }

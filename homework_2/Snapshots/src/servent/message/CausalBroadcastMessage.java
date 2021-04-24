@@ -1,38 +1,35 @@
 package servent.message;
 
+import app.AppConfig;
 import app.Servent;
-
-import java.util.List;
+import servent.snapshot.CausalBroadcastShared;
 import java.util.Map;
 
-public class CausalBroadcastMessage extends BasicMessage {
+public class CausalBroadcastMessage extends Message {
 
     private static final long serialVersionUID = 1L;
-    private final Map<Servent, Integer> clock;
 
-    public CausalBroadcastMessage(Servent sender, Servent receiver, String text, Map<Servent, Integer> clock) {
-        this(MessageType.CAUSAL_BROADCAST, sender, receiver, text, clock);
+    private Map<Servent, Integer> clock;
+
+    public CausalBroadcastMessage(MessageType type, String text, Servent sender, Servent receiver) {
+        super(type, text, sender, receiver);
+
+        clock = CausalBroadcastShared.getClockReceived();
     }
 
-    protected CausalBroadcastMessage(MessageType messageType, Servent sender, Servent receiver, String text, Map<Servent, Integer> clock) {
-        super(messageType, text, sender, receiver);
-
-        this.clock = clock;
+    public CausalBroadcastMessage(String text) {
+        this(MessageType.CAUSAL_BROADCAST, text, AppConfig.LOCAL_SERVENT, null);
     }
 
-    private CausalBroadcastMessage(Servent sender, Servent receiver, List<Servent> route, String text, int messageId, Map<Servent, Integer> clock) {
-        this(MessageType.CAUSAL_BROADCAST, sender, receiver, route, text, messageId, clock);
-    }
+    public CausalBroadcastMessage(CausalBroadcastMessage m) {
+        super(m);
 
-    protected CausalBroadcastMessage(MessageType type, Servent sender, Servent receiver, List<Servent> route, String text, int messageId, Map<Servent, Integer> clock) {
-        super(type, text, sender, receiver, route, messageId);
-
-        this.clock = clock;
+        clock = m.clock;
     }
 
     @Override
-    protected Message createInstance(MessageType type, String text, Servent sender, Servent receiver, List<Servent> route, int messageId) {
-        return new CausalBroadcastMessage(sender, receiver, route, text, messageId, clock);
+    protected Message clone() {
+        return new CausalBroadcastMessage(this);
     }
 
     public Map<Servent, Integer> getClock() {

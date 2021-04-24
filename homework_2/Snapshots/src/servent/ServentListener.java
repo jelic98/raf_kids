@@ -4,9 +4,7 @@ import app.AppConfig;
 import servent.handler.CausalBroadcastHandler;
 import servent.handler.TellHandler;
 import servent.handler.TransactionHandler;
-import servent.message.CausalBroadcastMessage;
-import servent.message.Message;
-import servent.message.MessageUtil;
+import servent.message.*;
 import servent.snapshot.SnapshotCollector;
 
 import java.io.IOException;
@@ -46,13 +44,13 @@ public class ServentListener implements Runnable {
                 switch (message.getType()) {
                     case ASK:
                     case CAUSAL_BROADCAST:
-                        threadPool.submit(new CausalBroadcastHandler((CausalBroadcastMessage) message, collector.getBitcakeManager()));
+                        threadPool.submit(new CausalBroadcastHandler((CausalBroadcastMessage) message, collector.getSnapshotManager()));
                         break;
                     case TRANSACTION:
-                        threadPool.submit(new TransactionHandler(message, collector.getBitcakeManager()));
+                        threadPool.submit(new TransactionHandler((TransactionMessage) message, collector.getSnapshotManager()));
                         break;
                     case TELL:
-                        threadPool.submit(new TellHandler(message, collector));
+                        threadPool.submit(new TellHandler((TellMessage) message, collector));
                         break;
                 }
             } catch (SocketTimeoutException timeoutEx) {

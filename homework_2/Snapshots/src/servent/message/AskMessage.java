@@ -2,23 +2,20 @@ package servent.message;
 
 import app.Servent;
 
-import java.util.List;
-import java.util.Map;
-
 public class AskMessage extends CausalBroadcastMessage {
 
     private static final long serialVersionUID = 1L;
 
-    public AskMessage(Servent sender, Servent receiver, Map<Servent, Integer> clock) {
-        super(MessageType.ASK, sender, receiver, null, clock);
+    public AskMessage(Servent sender) {
+        super(MessageType.ASK, null, sender, null);
     }
 
-    private AskMessage(Servent sender, Servent receiver, List<Servent> route, int messageId, Map<Servent, Integer> clock) {
-        super(MessageType.ASK, sender, receiver, route, null, messageId, clock);
+    public AskMessage(AskMessage m) {
+        super(m);
     }
 
     @Override
-    protected Message createInstance(MessageType type, String text, Servent sender, Servent receiver, List<Servent> route, int messageId) {
-        return new AskMessage(sender, receiver, route, messageId, getClock());
+    protected Message clone() {
+        return new AskMessage(this);
     }
 }

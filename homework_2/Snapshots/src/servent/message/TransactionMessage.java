@@ -1,34 +1,35 @@
 package servent.message;
 
+import app.AppConfig;
 import app.Servent;
-import servent.snapshot.BitcakeManager;
-
-import java.util.List;
-import java.util.Map;
+import servent.snapshot.SnapshotManager;
 
 public class TransactionMessage extends CausalBroadcastMessage {
 
     private static final long serialVersionUID = 1L;
 
-    private transient BitcakeManager bitcakeManager;
+    private final transient SnapshotManager snapshotManager;
 
-    public TransactionMessage(Servent sender, Servent receiver, int amount, BitcakeManager bitcakeManager, Map<Servent, Integer> clock) {
-        super(MessageType.TRANSACTION, sender, receiver, String.valueOf(amount), clock);
-        this.bitcakeManager = bitcakeManager;
+    public TransactionMessage(int amount, Servent receiver, SnapshotManager snapshotManager) {
+        super(MessageType.TRANSACTION, String.valueOf(amount), AppConfig.LOCAL_SERVENT, receiver);
+
+        this.snapshotManager = snapshotManager;
     }
 
-    private TransactionMessage(Servent sender, Servent receiver, String text, List<Servent> route, int messageId, Map<Servent, Integer> clock) {
-        super(MessageType.TRANSACTION, sender, receiver, route, text, messageId, clock);
+    public TransactionMessage(TransactionMessage m) {
+        super(m);
+
+        snapshotManager = m.snapshotManager;
     }
 
     @Override
-    protected Message createInstance(MessageType type, String text, Servent sender, Servent receiver, List<Servent> route, int messageId) {
-        return new TransactionMessage(sender, receiver, text, route, messageId, getClock());
+    protected Message clone() {
+        return new TransactionMessage(this);
     }
 
     @Override
     public void sendEffect() {
-        bitcakeManager.takeBitcakes(Integer.parseInt(getText()));
+        snapshotManager.minus(Integer.parseInt(getText()));
     }
 }
 

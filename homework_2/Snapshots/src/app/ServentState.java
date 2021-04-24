@@ -17,7 +17,6 @@ public class ServentState {
     private static final List<BroadcastMessage> committedMessages = new CopyOnWriteArrayList<>();
     private static final Queue<BroadcastMessage> pendingMessages = new ConcurrentLinkedQueue<>();
     private static final Object pendingMessagesLock = new Object();
-    private static Servent askSender;
 
     public static void initializeVectorClock() {
         for (Servent servent : Config.SERVENTS) {
@@ -52,6 +51,7 @@ public class ServentState {
 
     public static void commitMessage(BroadcastMessage message, boolean checkPending) {
         committedMessages.add(message);
+
         incrementClockReceived(message.getSender());
 
         if (checkPending) {
@@ -97,13 +97,5 @@ public class ServentState {
                 }
             }
         }
-    }
-
-    public static Servent getAskSender() {
-        return askSender;
-    }
-
-    public static void setAskSender(Servent sender) {
-        askSender = sender;
     }
 }

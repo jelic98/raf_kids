@@ -31,6 +31,8 @@ public class MessageHandler implements Runnable {
         boolean absent = inbox.add(message);
 
         if (absent) {
+            App.print(String.format("Received %s from %s via %s", message.getType(), message.getSender(), message.getLastSender()));
+
             ServentState.addPendingMessage(message);
             ServentState.checkPendingMessages();
 
@@ -45,40 +47,39 @@ public class MessageHandler implements Runnable {
                     handleTransaction();
                     break;
             }
+
+            for (Servent neighbor : Config.LOCAL_SERVENT.getNeighbors()) {
+                if (!message.containsSender(neighbor)) {
+                    App.print(String.format("Redirecting %s from %s to %s", message.getType(), message.getSender(), neighbor));
+                    App.send(message.setReceiver(neighbor).setSender());
+                }
+            }
         }
     }
 
     private void handleAsk() {
         AskMessage ask = (AskMessage) this.message;
+
         Servent lastSender = ask.getLastSender();
 
-        ServentState.setAskSender(lastSender);
-
         App.print(String.format("Sending TELL to %s", lastSender));
-        App.send(new TellMessage(Config.LOCAL_SERVENT, lastSender, snapshotManager.getSnapshot()));
 
-        for (Servent neighbor : Config.LOCAL_SERVENT.getNeighbors()) {
-            if (!ask.containsSender(neighbor)) {
-                App.send(ask.setReceiver(neighbor).setSender());
-            }
-        }
+        TellMessage tell = new TellMessage(Config.LOCAL_SERVENT, Config.LOCAL_SERVENT, snapshotManager.getSnapshot());
+
+        ServentState.commitMessage(tell, true);
+
+        App.send(tell.setReceiver(lastSender));
     }
 
     private void handleTell() {
         TellMessage tell = (TellMessage) this.message;
-        Servent askSender = ServentState.getAskSender();
 
-        if (askSender.equals(Config.LOCAL_SERVENT)) {
-            App.print(String.format("Received TELL from %s", tell.getSender()));
-            snapshotCollector.addSnapshot(tell.getSender(), tell.getSnapshot());
-        } else {
-            App.print(String.format("Redirecting TELL from %s to %s", tell.getSender(), askSender));
-            App.send(tell.setReceiver(askSender).setSender());
-        }
+        snapshotCollector.addSnapshot(tell.getSender(), tell.getSnapshot());
     }
 
     private void handleTransaction() {
         TransactionMessage transaction = (TransactionMessage) this.message;
+
         snapshotManager.plus(Integer.parseInt(transaction.getText()));
     }
 }

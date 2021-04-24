@@ -35,7 +35,7 @@ public class BroadcastMessage extends Message {
 
     @Override
     public String toString() {
-        return getType() + " " + getText();
+        return getType() + " " + getText() + " " + clock;
     }
 
     public Map<Servent, Integer> getClock() {

@@ -28,7 +28,7 @@ public class TellMessage extends BroadcastMessage {
 
     @Override
     public String toString() {
-        return getType() + " " + snapshot.getBalance();
+        return getType() + " " + snapshot.getBalance() + " " + getClock();
     }
 
     public Snapshot getSnapshot() {

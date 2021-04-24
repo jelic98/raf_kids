@@ -29,11 +29,13 @@ public class TransactionMessage extends BroadcastMessage {
 
     @Override
     public String toString() {
-        return getType() + " " + getText();
+        return getType() + " " + getText() + " " + getClock();
     }
 
     @Override
     public void sendEffect() {
+        super.sendEffect();
+
         snapshotManager.minus(Integer.parseInt(getText()));
     }
 }

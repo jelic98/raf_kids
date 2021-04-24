@@ -21,6 +21,6 @@ public class AskMessage extends BroadcastMessage {
 
     @Override
     public String toString() {
-        return getType().toString();
+        return getType().toString() + " " + getClock();
     }
 }

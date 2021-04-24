@@ -17,8 +17,6 @@ public class InfoCommand implements Command {
 
     @Override
     public void execute(String args) {
-        App.print("Servent: " + Config.LOCAL_SERVENT);
-
         StringBuilder sb = new StringBuilder();
 
         sb.append("Neighbors:");

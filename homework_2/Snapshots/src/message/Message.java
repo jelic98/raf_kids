@@ -3,6 +3,7 @@ package message;
 import app.App;
 import app.Config;
 import app.Servent;
+import app.ServentState;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ public abstract class Message implements Serializable {
         this.receiver = receiver;
 
         route = new ArrayList<>();
+        route.add(sender);
     }
 
     public Message(Type type, String text, Servent sender, Servent receiver) {
@@ -69,27 +71,11 @@ public abstract class Message implements Serializable {
     }
 
     public Servent getLastSender() {
-        int size = route.size();
-
-        if (size == 0) {
-            return sender;
-        }
-
-        return route.get(size - 1);
+        return route.get(route.size() - 1);
     }
 
     public boolean containsSender(Servent sender) {
-        if (route.isEmpty()) {
-            return this.sender.equals(sender);
-        }
-
-        for (Servent s : route) {
-            if (s.equals(sender)) {
-                return true;
-            }
-        }
-
-        return false;
+        return route.contains(sender);
     }
 
     public Servent getReceiver() {
@@ -110,7 +96,7 @@ public abstract class Message implements Serializable {
     }
 
     public void sendEffect() {
-
+        ServentState.incrementClockSent(receiver);
     }
 
     @Override

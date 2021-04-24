@@ -37,33 +37,33 @@ public class App {
     }
 
     public static void send(Message message) {
-        try {
-            Thread.sleep(random.nextInt(501) + 500);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+        new Thread(() -> {
+            try {
+                Thread.sleep(random.nextInt(501) + 500);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
 
-        Servent receiver = message.getReceiver();
+            Servent receiver = message.getReceiver();
 
-        if (MESSAGE_UTIL_PRINTING) {
-            print("Sending message " + message);
-        }
+            if (MESSAGE_UTIL_PRINTING) {
+                print("Sending message " + message);
+            }
 
-        try {
-            Socket sendSocket = new Socket(receiver.getIp(), receiver.getPort());
+            try {
+                Socket sendSocket = new Socket(receiver.getIp(), receiver.getPort());
 
-            ObjectOutputStream oos = new ObjectOutputStream(sendSocket.getOutputStream());
-            oos.writeObject(message);
-            oos.flush();
+                ObjectOutputStream oos = new ObjectOutputStream(sendSocket.getOutputStream());
+                oos.writeObject(message);
+                oos.flush();
 
-            message.sendEffect();
+                message.sendEffect();
 
-            ServentState.incrementClockSent(receiver);
-
-            sendSocket.close();
-        } catch (IOException e) {
-            error(String.format("Cannot send message %s (%s)", message, e.getMessage()));
-        }
+                sendSocket.close();
+            } catch (IOException e) {
+                error(String.format("Cannot send message %s (%s)", message, e.getMessage()));
+            }
+        }).start();
     }
 
     public static void print(String message) {

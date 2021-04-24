@@ -36,8 +36,6 @@ public class SnapshotCollector implements Runnable {
 
             switch (Config.SNAPSHOT_TYPE) {
                 case AB:
-                    ServentState.setAskSender(Config.LOCAL_SERVENT);
-
                     BroadcastMessage message = new AskMessage(Config.LOCAL_SERVENT);
 
                     ServentState.commitMessage((BroadcastMessage) message.setReceiver(Config.LOCAL_SERVENT), true);
@@ -89,14 +87,14 @@ public class SnapshotCollector implements Runnable {
     }
 
     public void addSnapshot(Servent servent, Snapshot snapshot) {
-        results.put(servent, snapshot);
-        App.print(String.format("Adding snapshot for servent %s", servent));
+        if(collecting.get()) {
+            App.print(String.format("Saving snapshot for servent %s", servent));
+            results.put(servent, snapshot);
+        }
     }
 
     public void startCollecting() {
-        boolean oldValue = collecting.getAndSet(true);
-
-        if (oldValue) {
+        if (collecting.getAndSet(true)) {
             App.error("Already snapshotting");
         }
     }

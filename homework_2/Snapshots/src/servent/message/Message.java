@@ -38,6 +38,10 @@ public interface Message extends Serializable {
      */
     ServentInfo getOriginalSenderInfo();
 
+    ServentInfo getLastSenderInfo();
+
+    boolean routeContains(int serventId);
+
     /**
      * If a servent uses <code>makeMeASender</code> when resending a message, it will
      * be added to this list. So we can use this to see how this message got to us.

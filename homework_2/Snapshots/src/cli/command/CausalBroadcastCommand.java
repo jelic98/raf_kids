@@ -1,13 +1,10 @@
 package cli.command;
 
 import app.AppConfig;
-import app.ServentInfo;
 import servent.message.CausalBroadcastMessage;
 import servent.message.Message;
 import servent.message.MessageUtil;
 import servent.snapshot.CausalBroadcastShared;
-
-import java.util.Map;
 
 public class CausalBroadcastCommand implements Command {
 
@@ -18,20 +15,13 @@ public class CausalBroadcastCommand implements Command {
 
     @Override
     public void execute(String args) {
-        if (args == null) {
-            AppConfig.timestampedErrorPrint("No message to causally broadcast");
-            return;
-        }
-
-        ServentInfo myInfo = AppConfig.myServentInfo;
-        Map<Integer, Integer> myClock = CausalBroadcastShared.getVectorClock();
-
-        Message broadcastMessage = new CausalBroadcastMessage(myInfo, null, args, myClock);
+        Message broadcastMessage = new CausalBroadcastMessage(AppConfig.myServentInfo,
+                null, args, CausalBroadcastShared.getVectorClock());
 
         for (Integer neighbor : AppConfig.myServentInfo.getNeighbors()) {
             MessageUtil.sendMessage(broadcastMessage.changeReceiver(neighbor));
         }
 
-        CausalBroadcastShared.commitCausalMessage(broadcastMessage.changeReceiver(myInfo.getId()), true);
+        CausalBroadcastShared.commitCausalMessage(broadcastMessage.changeReceiver(AppConfig.myServentInfo.getId()), true);
     }
 }

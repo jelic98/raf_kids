@@ -57,6 +57,32 @@ public class BasicMessage implements Message {
     }
 
     @Override
+    public ServentInfo getLastSenderInfo() {
+        int size = routeList.size();
+
+        if(size == 0) {
+            return originalSenderInfo;
+        }
+
+        return routeList.get(size - 1);
+    }
+
+    @Override
+    public boolean routeContains(int serventId) {
+        if(routeList.isEmpty()) {
+            return originalSenderInfo.getId() == serventId;
+        }
+
+        for(ServentInfo route : routeList) {
+            if(route.getId() == serventId) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
     public ServentInfo getReceiverInfo() {
         return receiverInfo;
     }
@@ -93,8 +119,7 @@ public class BasicMessage implements Message {
 
     protected Message createInstance(MessageType type, ServentInfo originalSenderInfo, ServentInfo receiverInfo,
                                      List<ServentInfo> routeList, String messageText, int messageId) {
-        return new BasicMessage(type, originalSenderInfo,
-                receiverInfo, routeList, messageText, messageId);
+        return new BasicMessage(type, originalSenderInfo, receiverInfo, routeList, messageText, messageId);
     }
 
     /**

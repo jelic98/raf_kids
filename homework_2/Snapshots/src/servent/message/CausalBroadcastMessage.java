@@ -18,25 +18,36 @@ public class CausalBroadcastMessage extends BasicMessage {
 
     public CausalBroadcastMessage(ServentInfo originalSenderInfo, ServentInfo receiverInfo,
                                   String messageText, Map<Integer, Integer> senderVectorClock) {
-        super(MessageType.CAUSAL_BROADCAST, originalSenderInfo, receiverInfo, messageText);
+        this(MessageType.CAUSAL_BROADCAST, originalSenderInfo, receiverInfo, messageText, senderVectorClock);
+    }
+
+    protected CausalBroadcastMessage(MessageType messageType, ServentInfo originalSenderInfo, ServentInfo receiverInfo,
+                                     String messageText, Map<Integer, Integer> senderVectorClock) {
+        super(messageType, originalSenderInfo, receiverInfo, messageText);
 
         this.senderVectorClock = senderVectorClock;
     }
 
-    protected CausalBroadcastMessage(ServentInfo originalSenderInfo, ServentInfo receiverInfo,
+    private CausalBroadcastMessage(ServentInfo originalSenderInfo, ServentInfo receiverInfo,
+                                   List<ServentInfo> routeList, String messageText, int messageId,
+                                   Map<Integer, Integer> senderVectorClock) {
+        this(MessageType.CAUSAL_BROADCAST, originalSenderInfo, receiverInfo, routeList, messageText, messageId, senderVectorClock);
+    }
+
+    protected CausalBroadcastMessage(MessageType messageType, ServentInfo originalSenderInfo, ServentInfo receiverInfo,
                                      List<ServentInfo> routeList, String messageText, int messageId,
                                      Map<Integer, Integer> senderVectorClock) {
-        super(MessageType.CAUSAL_BROADCAST, originalSenderInfo, receiverInfo, routeList, messageText, messageId);
+        super(messageType, originalSenderInfo, receiverInfo, routeList, messageText, messageId);
 
         this.senderVectorClock = senderVectorClock;
-    }
-
-    public Map<Integer, Integer> getSenderVectorClock() {
-        return senderVectorClock;
     }
 
     @Override
     protected Message createInstance(MessageType type, ServentInfo originalSenderInfo, ServentInfo receiverInfo, List<ServentInfo> routeList, String messageText, int messageId) {
         return new CausalBroadcastMessage(originalSenderInfo, receiverInfo, routeList, messageText, messageId, senderVectorClock);
+    }
+
+    public Map<Integer, Integer> getSenderVectorClock() {
+        return senderVectorClock;
     }
 }

@@ -3,11 +3,7 @@ package servent.snapshot;
 import app.AppConfig;
 import servent.message.CausalBroadcastMessage;
 import servent.message.Message;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -30,6 +26,7 @@ public class CausalBroadcastShared {
     private static final List<Message> commitedCausalMessageList = new CopyOnWriteArrayList<>();
     private static final Queue<Message> pendingMessages = new ConcurrentLinkedQueue<>();
     private static final Object pendingMessagesLock = new Object();
+    private static int askSender;
 
     public static void initializeVectorClock() {
         for (int i = 0; i < AppConfig.SERVENT_COUNT; i++) {
@@ -64,7 +61,8 @@ public class CausalBroadcastShared {
     }
 
     public static void commitCausalMessage(Message newMessage, boolean checkPending) {
-        AppConfig.timestampedStandardPrint("Committing " + newMessage.getMessageText());
+        AppConfig.timestampedStandardPrint("Committing " +
+                (newMessage.getMessageText() == null ? newMessage.getMessageType() : newMessage.getMessageText()));
         commitedCausalMessageList.add(newMessage);
         incrementClock(newMessage.getOriginalSenderInfo().getId());
 
@@ -113,5 +111,13 @@ public class CausalBroadcastShared {
                 }
             }
         }
+    }
+
+    public static int getAskSender() {
+        return askSender;
+    }
+
+    public static void setAskSender(int askSender1) {
+        askSender = askSender1;
     }
 }

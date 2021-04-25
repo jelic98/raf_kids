@@ -4,6 +4,7 @@ import app.App;
 import app.Config;
 import app.Servent;
 import app.ServentState;
+import com.sun.org.apache.xpath.internal.axes.AttributeIterator;
 import message.BroadcastMessage;
 
 import java.util.List;
@@ -28,16 +29,20 @@ public class InfoCommand implements Command {
 
         App.print(sb.toString());
 
-        App.print("PENDING messages:");
-        printMessages(ServentState.getPendingMessages());
-
-        App.print("COMMITTED messages:");
-        printMessages(ServentState.getCommittedMessages());
+        printMessages(ServentState.getPendingMessages(), "PENDING");
+        printMessages(ServentState.getCommittedMessages(), "COMMITTED");
 
         App.print("Clock (received): " + ServentState.getClockReceived());
     }
 
-    private void printMessages(List<BroadcastMessage> messages) {
+    private void printMessages(List<BroadcastMessage> messages, String type) {
+        if(messages.isEmpty()) {
+            App.print("No " + type + " messages");
+            return;
+        }
+
+        App.print(type + " messages:");
+
         int i = 1;
 
         for (BroadcastMessage message : messages) {

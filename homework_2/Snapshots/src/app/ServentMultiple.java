@@ -61,7 +61,6 @@ public class ServentMultiple {
 
         @Override
         public void run() {
-
             try (Scanner sc = new Scanner(System.in)) {
                 while (working) {
                     if (System.in.available() > 0 && sc.nextLine().equals("stop")) {

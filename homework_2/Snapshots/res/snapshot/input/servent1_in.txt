@@ -1,5 +1,2 @@
-pause 1000
-#transaction_burst
-pause 29000
+pause 2000
 info
-stop

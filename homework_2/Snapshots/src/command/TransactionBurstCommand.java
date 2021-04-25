@@ -9,6 +9,7 @@ import message.TransactionMessage;
 public class TransactionBurstCommand implements Command {
 
     private static final int TRANSACTION_COUNT = 5;
+    private static final int TRANSACTION_AMOUNT = 10;
 
     @Override
     public String getName() {
@@ -26,7 +27,8 @@ public class TransactionBurstCommand implements Command {
                         continue;
                     }
 
-                    ServentState.broadcast(new TransactionMessage(i + 1, destination));
+                    ServentState.getSnapshotManager().minus(TRANSACTION_AMOUNT, destination);
+                    ServentState.broadcast(new TransactionMessage(TRANSACTION_AMOUNT, destination));
                 }
             }
         }).start();

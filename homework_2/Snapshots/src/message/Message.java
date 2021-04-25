@@ -19,7 +19,8 @@ public abstract class Message implements Serializable {
         BROADCAST,
         TRANSACTION,
         ASK,
-        TELL
+        TELL,
+        STOP
     }
 
     private int id;
@@ -92,10 +93,6 @@ public abstract class Message implements Serializable {
 
             return null;
         }
-    }
-
-    public void sendEffect() {
-
     }
 
     @Override

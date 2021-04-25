@@ -3,22 +3,22 @@ package command;
 import app.App;
 import snapshot.SnapshotCollector;
 
-public class BitcakeInfoCommand implements Command {
+public class SnapshotCommand implements Command {
 
     private SnapshotCollector collector;
 
-    public BitcakeInfoCommand(SnapshotCollector collector) {
+    public SnapshotCommand(SnapshotCollector collector) {
         this.collector = collector;
     }
 
     @Override
     public String getName() {
-        return "bitcake_info";
+        return "snapshot";
     }
 
     @Override
     public void execute(String args) {
-        App.print("Creating snapshot");
+        App.print("Snapshotting");
 
         collector.startCollecting();
     }

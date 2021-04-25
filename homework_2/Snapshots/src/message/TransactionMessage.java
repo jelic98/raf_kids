@@ -35,13 +35,6 @@ public class TransactionMessage extends BroadcastMessage {
         return getType() + " of " + amount + " bitcakes to " + destination + " with clock " + getClock();
     }
 
-    @Override
-    public void sendEffect() {
-        super.sendEffect();
-
-        ServentState.getSnapshotManager().minus(destination, amount);
-    }
-
     public int getAmount() {
         return amount;
     }

@@ -57,8 +57,6 @@ public class App {
                 oos.writeObject(message);
                 oos.flush();
 
-                message.sendEffect();
-
                 sendSocket.close();
             } catch (IOException e) {
                 error(String.format("Cannot send message %s (%s)", message, e.getMessage()));

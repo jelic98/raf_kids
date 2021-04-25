@@ -7,7 +7,6 @@ import app.ServentState;
 import message.AskMessage;
 
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -74,7 +73,7 @@ public class SnapshotCollector implements Runnable {
     private void calculateResult() {
         int sum = 0;
 
-        for (Entry<Servent, Snapshot> e : results.entrySet()) {
+        for (Map.Entry<Servent, Snapshot> e : results.entrySet()) {
             int balance = e.getValue().getBalance();
             sum += balance;
             App.print(String.format("Servent %s has %d bitcakes", e.getKey(), balance));

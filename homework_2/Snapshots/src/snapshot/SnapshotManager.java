@@ -5,11 +5,9 @@ import app.Servent;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class SnapshotManager {
 
-    private final AtomicInteger balance = new AtomicInteger(1000);
     private final Map<Servent, Integer> plusHistory;
     private final Map<Servent, Integer> minusHistory;
 
@@ -23,17 +21,15 @@ public class SnapshotManager {
         }
     }
 
-    public void plus(Servent servent, int value) {
-        balance.getAndAdd(value);
+    public void plus(int value, Servent servent) {
         plusHistory.compute(servent, (k, v) -> v + value);
     }
 
-    public void minus(Servent servent, int value) {
-        balance.getAndAdd(-value);
+    public void minus(int value, Servent servent) {
         minusHistory.compute(servent, (k, v) -> v + value);
     }
 
     public Snapshot getSnapshot() {
-        return new Snapshot(balance.get(), plusHistory, minusHistory);
+        return new Snapshot(plusHistory, minusHistory);
     }
 }

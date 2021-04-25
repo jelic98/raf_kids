@@ -1,9 +1,6 @@
 package message;
 
-import app.App;
-import app.Config;
-import app.Servent;
-import app.ServentState;
+import app.*;
 import snapshot.Snapshot;
 import snapshot.SnapshotCollector;
 
@@ -34,14 +31,14 @@ public class MessageHandler implements Runnable {
             ServentState.checkPendingMessages();
 
             switch (message.getType()) {
+                case TRANSACTION:
+                    handleTransaction();
+                    break;
                 case ASK:
                     handleAsk();
                     break;
                 case TELL:
                     handleTell();
-                    break;
-                case TRANSACTION:
-                    handleTransaction();
                     break;
             }
 
@@ -51,6 +48,19 @@ public class MessageHandler implements Runnable {
                     App.send(message.setReceiver(neighbor).setSender());
                 }
             }
+
+            if(message.getType() == Message.Type.STOP) {
+                ServentSingle.stop();
+            }
+        }
+    }
+
+
+    private void handleTransaction() {
+        TransactionMessage transaction = (TransactionMessage) this.message;
+
+        if(transaction.getDestination().equals(Config.LOCAL_SERVENT)) {
+            ServentState.getSnapshotManager().plus(transaction.getAmount(), transaction.getSender());
         }
     }
 
@@ -67,14 +77,6 @@ public class MessageHandler implements Runnable {
 
         if(tell.getDestination().equals(Config.LOCAL_SERVENT)) {
             snapshotCollector.addSnapshot(tell.getSender(), tell.getSnapshot());
-        }
-    }
-
-    private void handleTransaction() {
-        TransactionMessage transaction = (TransactionMessage) this.message;
-
-        if(transaction.getDestination().equals(Config.LOCAL_SERVENT)) {
-            ServentState.getSnapshotManager().plus(transaction.getSender(), transaction.getAmount());
         }
     }
 }

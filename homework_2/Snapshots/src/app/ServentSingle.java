@@ -6,21 +6,30 @@ import snapshot.SnapshotCollector;
 
 public class ServentSingle {
 
-    public static void main(String[] args) {
-        String configPath = args[0];
-        int localServent = Integer.parseInt(args[1]);
+    private static SnapshotCollector collector;
+    private static MessageListener listener;
+    private static CommandParser parser;
 
-        Config.load(configPath, localServent);
+    public static void main(String[] args) {
+        Config.load(args[0], Integer.parseInt(args[1]));
 
         App.print("Starting servent " + Config.LOCAL_SERVENT);
 
-        SnapshotCollector collector = new SnapshotCollector();
+        collector = new SnapshotCollector();
         new Thread(collector).start();
 
-        MessageListener listener = new MessageListener(collector);
+        listener = new MessageListener(collector);
         new Thread(listener).start();
 
-        CommandParser parser = new CommandParser(listener, collector);
+        parser = new CommandParser(collector);
         new Thread(parser).start();
+    }
+
+    public static void stop() {
+        App.print("Stopping");
+
+        collector.stop();
+        listener.stop();
+        parser.stop();
     }
 }

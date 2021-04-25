@@ -14,22 +14,12 @@ public abstract class Message implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private static final AtomicInteger messageCounter = new AtomicInteger(0);
-
-    public enum Type {
-        BROADCAST,
-        TRANSACTION,
-        ASK,
-        TELL,
-        STOP
-    }
-
     private int id;
     private Type type;
     private String text;
     private Servent sender;
     private Servent receiver;
     private List<Servent> route;
-
     public Message(int id, Type type, String text, Servent sender, Servent receiver) {
         this.id = id;
         this.type = type;
@@ -116,4 +106,12 @@ public abstract class Message implements Serializable {
     }
 
     protected abstract Message clone();
+
+    public enum Type {
+        BROADCAST,
+        TRANSACTION,
+        ASK,
+        TELL,
+        STOP
+    }
 }

@@ -2,7 +2,6 @@ package message;
 
 import app.Config;
 import app.Servent;
-import app.ServentState;
 
 public class TransactionMessage extends BroadcastMessage {
 

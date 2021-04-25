@@ -12,9 +12,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SnapshotCollector implements Runnable {
 
-    private volatile boolean working = true;
     private final Map<Servent, Snapshot> results;
     private final AtomicBoolean collecting;
+    private volatile boolean working = true;
 
     public SnapshotCollector() {
         results = new ConcurrentHashMap<>();
@@ -35,7 +35,7 @@ public class SnapshotCollector implements Runnable {
     }
 
     public void addSnapshot(Servent servent, Snapshot snapshot) {
-        if(collecting.get()) {
+        if (collecting.get()) {
             results.put(servent, snapshot);
         }
     }
@@ -79,7 +79,7 @@ public class SnapshotCollector implements Runnable {
             App.print(String.format("Servent %s has %d bitcakes", e.getKey(), balance));
         }
 
-        for(int i = 0; i < Config.SERVENT_COUNT; i++) {
+        for (int i = 0; i < Config.SERVENT_COUNT; i++) {
             for (int j = 0; j < Config.SERVENT_COUNT; j++) {
                 if (i == j) {
                     continue;

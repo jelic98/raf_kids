@@ -74,7 +74,6 @@ public class ServentMultiple {
                 for (Process process : servents) {
                     process.destroy();
                 }
-
             }
         }
 

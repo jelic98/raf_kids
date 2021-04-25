@@ -1,6 +1,5 @@
 package command;
 
-import app.App;
 import app.ServentSingle;
 import app.ServentState;
 import message.StopMessage;

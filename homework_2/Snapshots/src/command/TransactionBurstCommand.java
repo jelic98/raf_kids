@@ -23,7 +23,7 @@ public class TransactionBurstCommand implements Command {
         new Thread(() -> {
             for (int i = 0; i < TRANSACTION_COUNT; i++) {
                 for (Servent destination : Config.SERVENTS) {
-                    if(destination.equals(Config.LOCAL_SERVENT)) {
+                    if (destination.equals(Config.LOCAL_SERVENT)) {
                         continue;
                     }
 

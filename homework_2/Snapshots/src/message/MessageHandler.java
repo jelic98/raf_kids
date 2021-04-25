@@ -49,7 +49,7 @@ public class MessageHandler implements Runnable {
                 }
             }
 
-            if(message.getType() == Message.Type.STOP) {
+            if (message.getType() == Message.Type.STOP) {
                 ServentSingle.stop();
             }
         }
@@ -59,7 +59,7 @@ public class MessageHandler implements Runnable {
     private void handleTransaction() {
         TransactionMessage transaction = (TransactionMessage) this.message;
 
-        if(transaction.getDestination().equals(Config.LOCAL_SERVENT)) {
+        if (transaction.getDestination().equals(Config.LOCAL_SERVENT)) {
             ServentState.getSnapshotManager().plus(transaction.getAmount(), transaction.getSender());
         }
     }
@@ -75,7 +75,7 @@ public class MessageHandler implements Runnable {
     private void handleTell() {
         TellMessage tell = (TellMessage) this.message;
 
-        if(tell.getDestination().equals(Config.LOCAL_SERVENT)) {
+        if (tell.getDestination().equals(Config.LOCAL_SERVENT)) {
             snapshotCollector.addSnapshot(tell.getSender(), tell.getSnapshot());
         }
     }

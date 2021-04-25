@@ -8,17 +8,20 @@ public class TellMessage extends BroadcastMessage {
     private static final long serialVersionUID = 1L;
 
     private final Snapshot snapshot;
+    private final Servent destination;
 
-    public TellMessage(Servent sender, Servent receiver, Snapshot snapshot) {
+    public TellMessage(Servent sender, Servent receiver, Snapshot snapshot, Servent destination) {
         super(Message.Type.TELL, null, sender, receiver);
 
         this.snapshot = snapshot;
+        this.destination = destination;
     }
 
     public TellMessage(TellMessage m) {
         super(m);
 
         snapshot = m.snapshot;
+        destination = m.destination;
     }
 
     @Override
@@ -28,10 +31,14 @@ public class TellMessage extends BroadcastMessage {
 
     @Override
     public String toString() {
-        return getType() + " " + snapshot.getBalance() + " " + getClock();
+        return getType() + " of " + snapshot.getBalance() + " bitcakes with clock " + getClock();
     }
 
     public Snapshot getSnapshot() {
         return snapshot;
+    }
+
+    public Servent getDestination() {
+        return destination;
     }
 }

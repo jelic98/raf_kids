@@ -34,6 +34,10 @@ public class Servent implements Serializable {
         return neighbors;
     }
 
+    public boolean isNeighbor(Servent servent) {
+        return neighbors.contains(servent);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Servent) {

@@ -1,5 +1,6 @@
 package snapshot;
 
+import app.Config;
 import app.Servent;
 
 import java.util.Map;
@@ -15,14 +16,21 @@ public class SnapshotManager {
     public SnapshotManager() {
         plusHistory = new ConcurrentHashMap<>();
         minusHistory = new ConcurrentHashMap<>();
+
+        for (Servent neighbor : Config.SERVENTS) {
+            plusHistory.put(neighbor, 0);
+            minusHistory.put(neighbor, 0);
+        }
     }
 
-    public void plus(int value) {
-        balance.getAndAdd(-value);
-    }
-
-    public void minus(int value) {
+    public void plus(Servent servent, int value) {
         balance.getAndAdd(value);
+        plusHistory.compute(servent, (k, v) -> v + value);
+    }
+
+    public void minus(Servent servent, int value) {
+        balance.getAndAdd(-value);
+        minusHistory.compute(servent, (k, v) -> v + value);
     }
 
     public Snapshot getSnapshot() {

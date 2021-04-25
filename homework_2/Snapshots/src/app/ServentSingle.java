@@ -1,7 +1,7 @@
 package app;
 
-import message.MessageListener;
 import command.CommandParser;
+import message.MessageListener;
 import snapshot.SnapshotCollector;
 
 public class ServentSingle {

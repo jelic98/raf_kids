@@ -1,13 +1,13 @@
 package message;
 
-import app.Servent;
+import app.Config;
 
 public class AskMessage extends BroadcastMessage {
 
     private static final long serialVersionUID = 1L;
 
-    public AskMessage(Servent sender) {
-        super(Message.Type.ASK, null, sender, null);
+    public AskMessage() {
+        super(Message.Type.ASK, null, Config.LOCAL_SERVENT, Config.LOCAL_SERVENT);
     }
 
     public AskMessage(AskMessage m) {
@@ -21,6 +21,6 @@ public class AskMessage extends BroadcastMessage {
 
     @Override
     public String toString() {
-        return getType().toString() + " " + getClock();
+        return getType() + " with clock " + getClock();
     }
 }

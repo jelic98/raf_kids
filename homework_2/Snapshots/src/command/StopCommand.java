@@ -1,7 +1,7 @@
 package command;
 
-import message.MessageListener;
 import app.App;
+import message.MessageListener;
 import snapshot.SnapshotCollector;
 
 public class StopCommand implements Command {

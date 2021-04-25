@@ -1,9 +1,9 @@
 package command;
 
-import app.ServentState;
 import app.App;
 import app.Config;
 import app.Servent;
+import app.ServentState;
 import message.BroadcastMessage;
 
 import java.util.List;
@@ -35,7 +35,6 @@ public class InfoCommand implements Command {
         printMessages(ServentState.getCommittedMessages());
 
         App.print("Clock (received): " + ServentState.getClockReceived());
-        App.print("Clock (sent): " + ServentState.getClockSent());
     }
 
     private void printMessages(List<BroadcastMessage> messages) {

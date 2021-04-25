@@ -1,8 +1,8 @@
 package message;
 
-import app.ServentState;
 import app.Config;
 import app.Servent;
+import app.ServentState;
 
 import java.util.Map;
 
@@ -19,7 +19,7 @@ public class BroadcastMessage extends Message {
     }
 
     public BroadcastMessage(String text) {
-        this(Message.Type.BROADCAST, text, Config.LOCAL_SERVENT, null);
+        this(Message.Type.BROADCAST, text, Config.LOCAL_SERVENT, Config.LOCAL_SERVENT);
     }
 
     public BroadcastMessage(BroadcastMessage m) {
@@ -35,7 +35,7 @@ public class BroadcastMessage extends Message {
 
     @Override
     public String toString() {
-        return getType() + " " + getText() + " " + clock;
+        return getType() + " of " + getText() + " with clock " + clock;
     }
 
     public Map<Servent, Integer> getClock() {

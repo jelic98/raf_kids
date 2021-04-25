@@ -1,8 +1,8 @@
 package command;
 
 import app.App;
-import snapshot.SnapshotCollector;
 import message.MessageListener;
+import snapshot.SnapshotCollector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ public class CommandParser implements Runnable {
         commandList.add(new InfoCommand());
         commandList.add(new PauseCommand());
         commandList.add(new StopCommand(this, listener, collector));
-        commandList.add(new TransactionBurstCommand(collector.getSnapshotManager()));
+        commandList.add(new TransactionBurstCommand());
     }
 
     @Override

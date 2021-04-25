@@ -3,7 +3,6 @@ package message;
 import app.App;
 import app.Config;
 import app.Servent;
-import app.ServentState;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -83,7 +82,7 @@ public abstract class Message implements Serializable {
     }
 
     public Message setReceiver(Servent receiver) {
-        if (Config.LOCAL_SERVENT.getNeighbors().contains(receiver) || receiver.equals(Config.LOCAL_SERVENT)) {
+        if (Config.LOCAL_SERVENT.isNeighbor(receiver) || receiver.equals(Config.LOCAL_SERVENT)) {
             Message message = clone();
             message.receiver = receiver;
 
@@ -96,7 +95,7 @@ public abstract class Message implements Serializable {
     }
 
     public void sendEffect() {
-        ServentState.incrementClockSent(receiver);
+
     }
 
     @Override

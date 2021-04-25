@@ -3,9 +3,8 @@ package snapshot;
 import app.App;
 import app.Config;
 import app.Servent;
-import message.AskMessage;
-import message.BroadcastMessage;
 import app.ServentState;
+import message.AskMessage;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -15,16 +14,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class SnapshotCollector implements Runnable {
 
     private volatile boolean working = true;
-    private AtomicBoolean collecting = new AtomicBoolean(false);
-    private Map<Servent, Snapshot> results = new ConcurrentHashMap<>();
-    private SnapshotManager snapshotManager;
+    private final Map<Servent, Snapshot> results;
+    private final AtomicBoolean collecting;
 
     public SnapshotCollector() {
-        snapshotManager = new SnapshotManager();
-    }
-
-    public SnapshotManager getSnapshotManager() {
-        return snapshotManager;
+        results = new ConcurrentHashMap<>();
+        collecting = new AtomicBoolean(false);
     }
 
     @Override
@@ -34,61 +29,14 @@ public class SnapshotCollector implements Runnable {
                 continue;
             }
 
-            switch (Config.SNAPSHOT_TYPE) {
-                case AB:
-                    BroadcastMessage message = new AskMessage(Config.LOCAL_SERVENT);
-
-                    ServentState.commitMessage((BroadcastMessage) message.setReceiver(Config.LOCAL_SERVENT), true);
-
-                    for (Servent neighbor : Config.LOCAL_SERVENT.getNeighbors()) {
-                        App.print("Sending ASK to servent " + neighbor);
-                        App.send(message.setReceiver(neighbor));
-                    }
-
-                    addSnapshot(Config.LOCAL_SERVENT, snapshotManager.getSnapshot());
-
-                    break;
-                case AV:
-                    break;
-            }
-
-            while (results.size() < Config.SERVENT_COUNT) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-
-                if (!working) {
-                    return;
-                }
-            }
-
-            switch (Config.SNAPSHOT_TYPE) {
-                case AB:
-                    int sum = 0;
-
-                    for (Entry<Servent, Snapshot> e : results.entrySet()) {
-                        int balance = e.getValue().getBalance();
-                        sum += balance;
-                        App.print(String.format("Servent %s has %d bitcakes", e.getKey(), balance));
-                    }
-
-                    App.print("Total bitcakes: " + sum);
-
-                    results.clear();
-                    collecting.set(false);
-
-                    break;
-                case AV:
-                    break;
-            }
+            sendAskMessages();
+            receiveTellMessages();
+            calculateResult();
         }
     }
 
     public void addSnapshot(Servent servent, Snapshot snapshot) {
         if(collecting.get()) {
-            App.print(String.format("Saving snapshot for servent %s", servent));
             results.put(servent, snapshot);
         }
     }
@@ -101,5 +49,60 @@ public class SnapshotCollector implements Runnable {
 
     public void stop() {
         working = false;
+    }
+
+    private void sendAskMessages() {
+        ServentState.broadcast(new AskMessage());
+
+        addSnapshot(Config.LOCAL_SERVENT, ServentState.getSnapshotManager().getSnapshot());
+    }
+
+    private void receiveTellMessages() {
+        while (results.size() < Config.SERVENT_COUNT) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
+            if (!working) {
+                return;
+            }
+        }
+    }
+
+    private void calculateResult() {
+        int sum = 0;
+
+        for (Entry<Servent, Snapshot> e : results.entrySet()) {
+            int balance = e.getValue().getBalance();
+            sum += balance;
+            App.print(String.format("Servent %s has %d bitcakes", e.getKey(), balance));
+        }
+
+        for(int i = 0; i < Config.SERVENT_COUNT; i++) {
+            for (int j = 0; j < Config.SERVENT_COUNT; j++) {
+                if (i == j) {
+                    continue;
+                }
+
+                Servent si = Config.SERVENTS.get(i);
+                Servent sj = Config.SERVENTS.get(j);
+
+                if (si.isNeighbor(sj) && sj.isNeighbor(si)) {
+                    int diff = results.get(si).getMinusHistory().get(sj) - results.get(sj).getPlusHistory().get(si);
+
+                    if (diff > 0) {
+                        App.print(String.format("Servent %s has %d unreceived bitcakes from %s", sj, diff, si));
+                        sum += diff;
+                    }
+                }
+            }
+        }
+
+        App.print("Total bitcakes: " + sum);
+
+        results.clear();
+        collecting.set(false);
     }
 }

@@ -3,9 +3,9 @@ package message;
 import app.App;
 import app.Config;
 import app.Servent;
-import snapshot.SnapshotCollector;
-import snapshot.SnapshotManager;
 import app.ServentState;
+import snapshot.Snapshot;
+import snapshot.SnapshotCollector;
 
 import java.util.Collections;
 import java.util.Set;
@@ -17,13 +17,10 @@ public class MessageHandler implements Runnable {
 
     private final BroadcastMessage message;
     private final SnapshotCollector snapshotCollector;
-    private final SnapshotManager snapshotManager;
 
     public MessageHandler(BroadcastMessage message, SnapshotCollector snapshotCollector) {
         this.message = message;
         this.snapshotCollector = snapshotCollector;
-
-        snapshotManager = snapshotCollector.getSnapshotManager();
     }
 
     @Override
@@ -31,7 +28,7 @@ public class MessageHandler implements Runnable {
         boolean absent = inbox.add(message);
 
         if (absent) {
-            App.print(String.format("Received %s from %s via %s", message.getType(), message.getSender(), message.getLastSender()));
+            App.print(String.format("Received via %s: %s", message.getLastSender(), message));
 
             ServentState.addPendingMessage(message);
             ServentState.checkPendingMessages();
@@ -59,27 +56,25 @@ public class MessageHandler implements Runnable {
 
     private void handleAsk() {
         AskMessage ask = (AskMessage) this.message;
+        Snapshot snapshot = ServentState.getSnapshotManager().getSnapshot();
+        TellMessage tell = new TellMessage(Config.LOCAL_SERVENT, Config.LOCAL_SERVENT, snapshot, ask.getSender());
 
-        Servent lastSender = ask.getLastSender();
-
-        App.print(String.format("Sending TELL to %s", lastSender));
-
-        TellMessage tell = new TellMessage(Config.LOCAL_SERVENT, Config.LOCAL_SERVENT, snapshotManager.getSnapshot());
-
-        ServentState.commitMessage(tell, true);
-
-        App.send(tell.setReceiver(lastSender));
+        ServentState.broadcast(tell);
     }
 
     private void handleTell() {
         TellMessage tell = (TellMessage) this.message;
 
-        snapshotCollector.addSnapshot(tell.getSender(), tell.getSnapshot());
+        if(tell.getDestination().equals(Config.LOCAL_SERVENT)) {
+            snapshotCollector.addSnapshot(tell.getSender(), tell.getSnapshot());
+        }
     }
 
     private void handleTransaction() {
         TransactionMessage transaction = (TransactionMessage) this.message;
 
-        snapshotManager.plus(Integer.parseInt(transaction.getText()));
+        if(transaction.getDestination().equals(Config.LOCAL_SERVENT)) {
+            ServentState.getSnapshotManager().plus(transaction.getSender(), transaction.getAmount());
+        }
     }
 }

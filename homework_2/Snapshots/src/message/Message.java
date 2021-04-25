@@ -20,6 +20,7 @@ public abstract class Message implements Serializable {
     private Servent sender;
     private Servent receiver;
     private List<Servent> route;
+
     public Message(int id, Type type, String text, Servent sender, Servent receiver) {
         this.id = id;
         this.type = type;

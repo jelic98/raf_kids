@@ -55,7 +55,6 @@ public class MessageHandler implements Runnable {
         }
     }
 
-
     private void handleTransaction() {
         TransactionMessage transaction = (TransactionMessage) this.message;
 

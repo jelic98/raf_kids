@@ -36,6 +36,7 @@ public class SnapshotCollector implements Runnable {
 
     public void addSnapshot(Servent servent, Snapshot snapshot) {
         if (collecting.get()) {
+            App.print(String.format("Servent %s received %s and gave %s", servent, snapshot.getPlusHistory(), snapshot.getMinusHistory()));
             results.put(servent, snapshot);
         }
     }
@@ -88,13 +89,11 @@ public class SnapshotCollector implements Runnable {
                 Servent si = Config.SERVENTS.get(i);
                 Servent sj = Config.SERVENTS.get(j);
 
-                if (si.isNeighbor(sj) && sj.isNeighbor(si)) {
-                    int diff = results.get(si).getMinusHistory().get(sj) - results.get(sj).getPlusHistory().get(si);
+                int diff = results.get(si).getMinusHistory().get(sj) - results.get(sj).getPlusHistory().get(si);
 
-                    if (diff > 0) {
-                        App.print(String.format("Servent %s has %d unreceived bitcakes from %s", sj, diff, si));
-                        sum += diff;
-                    }
+                if (diff > 0) {
+                    App.print(String.format("Servent %s has %d unreceived bitcakes from %s", sj, diff, si));
+                    sum += diff;
                 }
             }
         }

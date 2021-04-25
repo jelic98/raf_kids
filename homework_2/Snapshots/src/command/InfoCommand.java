@@ -4,7 +4,6 @@ import app.App;
 import app.Config;
 import app.Servent;
 import app.ServentState;
-import com.sun.org.apache.xpath.internal.axes.AttributeIterator;
 import message.BroadcastMessage;
 
 import java.util.List;
@@ -36,7 +35,7 @@ public class InfoCommand implements Command {
     }
 
     private void printMessages(List<BroadcastMessage> messages, String type) {
-        if(messages.isEmpty()) {
+        if (messages.isEmpty()) {
             App.print("No " + type + " messages");
             return;
         }

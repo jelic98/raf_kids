@@ -1,4 +1,4 @@
-pause 4000
+pause 1000
 info
 snapshot
 pause 8000

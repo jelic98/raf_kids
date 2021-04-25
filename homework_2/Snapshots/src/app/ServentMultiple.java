@@ -33,21 +33,8 @@ public class ServentMultiple {
             }
         }
 
-        new Thread(() -> {
-            Scanner sc = new Scanner(System.in);
-
-            while (true) {
-                if (sc.nextLine().equals("stop")) {
-                    break;
-                }
-            }
-
-            for (Process process : servents) {
-                process.destroy();
-            }
-
-            sc.close();
-        }).start();
+        ServentStarter starter = new ServentStarter(servents);
+        new Thread(starter).start();
 
         for (Process process : servents) {
             try {
@@ -57,6 +44,42 @@ public class ServentMultiple {
             }
         }
 
-        App.print("All servent processes finished - Type \"stop\" to exit");
+        App.print("All servents stopped");
+
+        starter.stop();
+    }
+
+    private static class ServentStarter implements Runnable {
+
+        private volatile boolean working = true;
+
+        private List<Process> servents;
+
+        private ServentStarter(List<Process> servents) {
+            this.servents = servents;
+        }
+
+        @Override
+        public void run() {
+
+            try (Scanner sc = new Scanner(System.in)) {
+                while (working) {
+                    if (System.in.available() > 0 && sc.nextLine().equals("stop")) {
+                        throw new InterruptedException("Stopping servents");
+                    }
+                }
+            } catch (Exception e) {
+                App.error(e.getMessage());
+            } finally {
+                for (Process process : servents) {
+                    process.destroy();
+                }
+
+            }
+        }
+
+        public void stop() {
+            working = false;
+        }
     }
 }

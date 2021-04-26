@@ -13,7 +13,7 @@ public class StopMessage extends Message {
     }
 
     @Override
-    protected Message clone() {
+    protected Message copy() {
         return new StopMessage(this);
     }
 

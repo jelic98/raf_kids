@@ -3,7 +3,6 @@ package snapshot;
 import app.App;
 import app.Config;
 import app.Servent;
-import app.ServentState;
 import message.AskMessage;
 import message.MessageHandler;
 import message.TerminateMessage;
@@ -14,12 +13,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SnapshotCollector implements Runnable {
 
-    private final Map<Servent, Snapshot> results;
+    private final Map<Servent, Snapshot> state;
     private final AtomicBoolean collecting;
     private volatile boolean working = true;
 
     public SnapshotCollector() {
-        results = new ConcurrentHashMap<>();
+        state = new ConcurrentHashMap<>();
         collecting = new AtomicBoolean(false);
     }
 
@@ -37,14 +36,14 @@ public class SnapshotCollector implements Runnable {
                 sendTerminateMessage();
             }
 
-            calculateResult();
+            calculateState();
             stopSnapshot();
         }
     }
 
     public void addSnapshot(Servent servent, Snapshot snapshot) {
         if (collecting.get()) {
-            results.put(servent, snapshot);
+            state.put(servent, snapshot);
         }
     }
 
@@ -63,11 +62,11 @@ public class SnapshotCollector implements Runnable {
     }
 
     private void sendTerminateMessage() {
-        MessageHandler.handle(new TerminateMessage());
+        MessageHandler.handle(new TerminateMessage(new ConcurrentHashMap<>(state)));
     }
 
     private void receiveTellMessages() {
-        while (results.size() < Config.SERVENT_COUNT) {
+        while (state.size() < Config.SERVENT_COUNT) {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -80,10 +79,10 @@ public class SnapshotCollector implements Runnable {
         }
     }
 
-    private void calculateResult() {
+    private void calculateState() {
         int sum = 0;
 
-        for (Map.Entry<Servent, Snapshot> e : results.entrySet()) {
+        for (Map.Entry<Servent, Snapshot> e : state.entrySet()) {
             int balance = e.getValue().getBalance();
             sum += balance;
             App.print(String.format("Servent %s has %d bitcakes", e.getKey(), balance));
@@ -99,7 +98,7 @@ public class SnapshotCollector implements Runnable {
                     Servent from = Config.SERVENTS.get(i);
                     Servent to = Config.SERVENTS.get(j);
 
-                    int diff = results.get(from).getMinusHistory().get(to) - results.get(to).getPlusHistory().get(from);
+                    int diff = state.get(from).getMinusHistory().get(to) - state.get(to).getPlusHistory().get(from);
 
                     if (diff > 0) {
                         App.print(String.format("Servent %s has %d unreceived bitcakes from %s", to, diff, from));
@@ -113,7 +112,7 @@ public class SnapshotCollector implements Runnable {
     }
 
     private void stopSnapshot() {
-        results.clear();
+        state.clear();
         collecting.set(false);
     }
 }

@@ -24,7 +24,7 @@ public class TransactionMessage extends Message {
     }
 
     @Override
-    protected Message clone() {
+    protected Message copy() {
         return new TransactionMessage(this);
     }
 

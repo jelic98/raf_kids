@@ -60,7 +60,7 @@ public class Message implements Serializable {
     }
 
     public Message setSender() {
-        Message message = clone();
+        Message message = copy();
         message.route.add(Config.LOCAL_SERVENT);
 
         return message;
@@ -80,7 +80,7 @@ public class Message implements Serializable {
 
     public Message setReceiver(Servent receiver) {
         if (Config.LOCAL_SERVENT.isNeighbor(receiver) || receiver.equals(Config.LOCAL_SERVENT)) {
-            Message message = clone();
+            Message message = copy();
             message.receiver = receiver;
 
             return message;
@@ -108,7 +108,7 @@ public class Message implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("[%s|%d|%s|%s|%s] %s", sender, id, text, type, receiver, clone());
+        return type + " " + text + " with clock " + clock;
     }
 
     public Map<Servent, Integer> getClock() {
@@ -121,7 +121,7 @@ public class Message implements Serializable {
         return clock.get(sender) <= message.clock.get(sender);
     }
 
-    protected Message clone() {
+    protected Message copy() {
         return new Message(this);
     }
 

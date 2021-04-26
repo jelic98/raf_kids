@@ -25,7 +25,7 @@ public class TellMessage extends Message {
     }
 
     @Override
-    protected Message clone() {
+    protected Message copy() {
         return new TellMessage(this);
     }
 

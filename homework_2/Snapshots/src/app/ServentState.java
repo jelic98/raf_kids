@@ -50,14 +50,14 @@ public class ServentState {
         return clock;
     }
 
-    public static boolean shouldCommit(Message message) {
+    private static boolean missedBroadcast(Message message) {
         for (Map.Entry<Servent, Integer> e : clock.entrySet()) {
             if (message.getClock().get(e.getKey()) > e.getValue()) {
-                return false;
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 
     public static void commitMessage(Message message, MessageHandler handler) {
@@ -95,15 +95,5 @@ public class ServentState {
                 }
             }
         }
-    }
-
-    private static boolean missedBroadcast(Message message) {
-        for (Map.Entry<Servent, Integer> e : clock.entrySet()) {
-            if (message.getClock().get(e.getKey()) > e.getValue()) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

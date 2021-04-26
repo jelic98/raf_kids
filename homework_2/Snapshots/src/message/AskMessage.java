@@ -13,7 +13,7 @@ public class AskMessage extends Message {
     }
 
     @Override
-    protected Message clone() {
+    protected Message copy() {
         return new AskMessage(this);
     }
 

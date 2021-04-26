@@ -5,6 +5,8 @@ import snapshot.Snapshot;
 import snapshot.SnapshotCollector;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -74,56 +76,74 @@ public class MessageHandler implements Runnable {
     public void onCommitted(Message message) {
         switch (message.getType()) {
             case TRANSACTION:
-                TransactionMessage transaction = (TransactionMessage) message;
-
-                if (transaction.getDestination().equals(Config.LOCAL_SERVENT)) {
-                    ServentState.getSnapshotManager().plus(transaction.getAmount(), transaction.getSender());
-                }
-
+                onTransaction(message);
                 break;
             case ASK:
-                AskMessage ask = (AskMessage) message;
-
-                token = ask;
-
-                Snapshot snapshot = ServentState.getSnapshotManager().getSnapshot();
-                handle(new TellMessage(snapshot, ask.getSender()));
-
+                onAsk(message);
                 break;
             case TELL:
-                TellMessage tell = (TellMessage) message;
-
-                if (tell.getDestination().equals(Config.LOCAL_SERVENT)) {
-                    collector.addSnapshot(tell.getSender(), tell.getSnapshot());
-                }
-
+                onTell(message);
                 break;
             case TERMINATE:
-                for (Servent servent : Config.SERVENTS) {
-                    if (servent.equals(Config.LOCAL_SERVENT)) {
-                        continue;
-                    }
-
-                    int diff = 0;
-
-                    for (Message m : ServentState.getCommittedMessages()) {
-                        if (message.getType() == Message.Type.TRANSACTION) {
-                            TransactionMessage t = (TransactionMessage) m;
-
-                            if (t.getSender().equals(servent) && t.getDestination().equals(Config.LOCAL_SERVENT)) {
-                                diff += t.getAmount();
-                            }
-                        }
-                    }
-
-                    if (diff > 0) {
-                        App.print(String.format("Servent %s has %d unreceived bitcakes from %s", Config.LOCAL_SERVENT, diff, servent));
-                    }
-                }
-
-                token = null;
-
+                onTerminate(message);
                 break;
         }
+    }
+
+    private void onTransaction(Message message) {
+        TransactionMessage transaction = (TransactionMessage) message;
+
+        if (transaction.getDestination().equals(Config.LOCAL_SERVENT)) {
+            ServentState.getSnapshotManager().plus(transaction.getAmount(), transaction.getSender());
+        }
+    }
+
+    private void onAsk(Message message) {
+        AskMessage ask = (AskMessage) message;
+
+        token = ask;
+
+        Snapshot snapshot = ServentState.getSnapshotManager().getSnapshot();
+        handle(new TellMessage(snapshot, ask.getSender()));
+    }
+
+    private void onTell(Message message) {
+        TellMessage tell = (TellMessage) message;
+
+        if (tell.getDestination().equals(Config.LOCAL_SERVENT)) {
+            collector.addSnapshot(tell.getSender(), tell.getSnapshot());
+        }
+    }
+
+    private void onTerminate(Message message) {
+        TerminateMessage terminate = (TerminateMessage) message;
+
+        Map<Servent, Snapshot> state = terminate.getState();
+        Snapshot snapshot = state.get(Config.LOCAL_SERVENT);
+        List<Message> messageHistory = snapshot.getMessageHistory();
+
+        for (Servent servent : Config.SERVENTS) {
+            if (servent.equals(Config.LOCAL_SERVENT)) {
+                continue;
+            }
+
+            int diff = 0;
+
+            for (Message m : ServentState.getCommittedMessages()) {
+                if (m.getType() == Message.Type.TRANSACTION) {
+                    TransactionMessage t = (TransactionMessage) m;
+
+                    if (t.precedes(token) && !messageHistory.contains(t) && t.getSender().equals(servent) && t.getDestination().equals(Config.LOCAL_SERVENT)) {
+                        diff += t.getAmount();
+                    }
+                }
+            }
+
+            if (diff > 0) {
+                App.print(String.format("Servent %s has %d unreceived bitcakes from %s", Config.LOCAL_SERVENT, diff, servent));
+            }
+        }
+
+        token = null;
     }
 }

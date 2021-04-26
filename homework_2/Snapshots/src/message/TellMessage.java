@@ -10,8 +10,8 @@ public class TellMessage extends Message {
     private final Snapshot snapshot;
     private final Servent destination;
 
-    public TellMessage(Servent sender, Servent receiver, Snapshot snapshot, Servent destination) {
-        super(Message.Type.TELL, null, sender, receiver);
+    public TellMessage(Snapshot snapshot, Servent destination) {
+        super(Message.Type.TELL);
 
         this.snapshot = snapshot;
         this.destination = destination;

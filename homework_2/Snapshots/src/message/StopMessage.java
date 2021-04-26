@@ -1,13 +1,11 @@
 package message;
 
-import app.Config;
-
 public class StopMessage extends Message {
 
     private static final long serialVersionUID = 1L;
 
     public StopMessage() {
-        super(Type.STOP, null, Config.LOCAL_SERVENT, Config.LOCAL_SERVENT);
+        super(Type.STOP);
     }
 
     public StopMessage(StopMessage m) {

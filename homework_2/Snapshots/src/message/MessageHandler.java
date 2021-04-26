@@ -87,7 +87,7 @@ public class MessageHandler implements Runnable {
                 token = ask;
 
                 Snapshot snapshot = ServentState.getSnapshotManager().getSnapshot();
-                handle(new TellMessage(Config.LOCAL_SERVENT, Config.LOCAL_SERVENT, snapshot, ask.getSender()));
+                handle(new TellMessage(snapshot, ask.getSender()));
 
                 break;
             case TELL:
@@ -110,7 +110,7 @@ public class MessageHandler implements Runnable {
                         if (message.getType() == Message.Type.TRANSACTION) {
                             TransactionMessage t = (TransactionMessage) m;
 
-                            if (t.getSender().equals(servent) && t.getDestination().equals(Config.LOCAL_SERVENT) && t.precedes(token)) {
+                            if (t.getSender().equals(servent) && t.getDestination().equals(Config.LOCAL_SERVENT)) {
                                 diff += t.getAmount();
                             }
                         }

@@ -42,8 +42,12 @@ public class ServentState {
         }
     }
 
-    public static void incrementClock(Servent servent) {
-        clock.computeIfPresent(servent, (k, v) -> v + 1);
+    public static Map<Servent, Integer> incrementClock(Servent servent) {
+        Map<Servent, Integer> clock = getClock();
+
+        ServentState.clock.computeIfPresent(servent, (k, v) -> v + 1);
+
+        return clock;
     }
 
     public static boolean shouldCommit(Message message) {
@@ -59,7 +63,9 @@ public class ServentState {
     public static void commitMessage(Message message, MessageHandler handler) {
         committedMessages.add(message);
 
-        incrementClock(message.getSender());
+        if (!message.getSender().equals(Config.LOCAL_SERVENT)) {
+            incrementClock(message.getSender());
+        }
 
         handler.onCommitted(message);
     }
@@ -80,7 +86,7 @@ public class ServentState {
                 while (i.hasNext()) {
                     Message message = i.next();
 
-                    if (shouldCommit(message)) {
+                    if (!missedBroadcast(message)) {
                         commitMessage(message, handler);
                         gotWork = true;
                         i.remove();
@@ -89,5 +95,15 @@ public class ServentState {
                 }
             }
         }
+    }
+
+    private static boolean missedBroadcast(Message message) {
+        for (Map.Entry<Servent, Integer> e : clock.entrySet()) {
+            if (message.getClock().get(e.getKey()) > e.getValue()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

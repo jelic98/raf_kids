@@ -37,8 +37,12 @@ public class Message implements Serializable {
         route.add(sender);
     }
 
-    public Message(Type type, String text, Servent sender, Servent receiver) {
-        this(messageCounter.getAndIncrement(), type, text, sender, receiver, ServentState.getClock());
+    public Message(Type type, String text) {
+        this(messageCounter.getAndIncrement(), type, text, Config.LOCAL_SERVENT, Config.LOCAL_SERVENT, ServentState.incrementClock(Config.LOCAL_SERVENT));
+    }
+
+    public Message(Type type) {
+        this(type, null);
     }
 
     public Message(Message m) {
@@ -49,10 +53,6 @@ public class Message implements Serializable {
 
     public Type getType() {
         return type;
-    }
-
-    public String getText() {
-        return text;
     }
 
     public Servent getSender() {

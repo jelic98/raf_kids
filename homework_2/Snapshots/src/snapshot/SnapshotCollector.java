@@ -3,6 +3,7 @@ package snapshot;
 import app.App;
 import app.Config;
 import app.Servent;
+import app.ServentState;
 import message.AskMessage;
 import message.MessageHandler;
 import message.TerminateMessage;

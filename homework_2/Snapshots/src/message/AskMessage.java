@@ -1,13 +1,11 @@
 package message;
 
-import app.Config;
-
 public class AskMessage extends Message {
 
     private static final long serialVersionUID = 1L;
 
     public AskMessage() {
-        super(Message.Type.ASK, null, Config.LOCAL_SERVENT, Config.LOCAL_SERVENT);
+        super(Message.Type.ASK);
     }
 
     public AskMessage(AskMessage m) {

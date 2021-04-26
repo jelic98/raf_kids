@@ -1,6 +1,5 @@
 package message;
 
-import app.Config;
 import app.Servent;
 
 public class TransactionMessage extends Message {
@@ -11,7 +10,7 @@ public class TransactionMessage extends Message {
     private final Servent destination;
 
     public TransactionMessage(int amount, Servent destination) {
-        super(Message.Type.TRANSACTION, null, Config.LOCAL_SERVENT, Config.LOCAL_SERVENT);
+        super(Message.Type.TRANSACTION);
 
         this.amount = amount;
         this.destination = destination;

@@ -2,25 +2,14 @@ package message;
 
 import app.App;
 import app.Config;
-import snapshot.SnapshotCollector;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.SocketTimeoutException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class MessageListener implements Runnable {
 
-    private final SnapshotCollector collector;
-    private final ExecutorService threadPool;
     private volatile boolean working = true;
-
-    public MessageListener(SnapshotCollector collector) {
-        this.collector = collector;
-
-        threadPool = Executors.newWorkStealingPool();
-    }
 
     @Override
     public void run() {
@@ -37,7 +26,8 @@ public class MessageListener implements Runnable {
         while (working) {
             try {
                 Message message = App.read(server.accept());
-                threadPool.submit(new MessageHandler((BroadcastMessage) message, collector));
+                // TODO Allow only broadcast messages
+                MessageHandler.handle((Message) message);
             } catch (SocketTimeoutException timeoutEx) {
                 // Ignore
             } catch (IOException e) {

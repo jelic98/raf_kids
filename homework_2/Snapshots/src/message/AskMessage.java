@@ -2,7 +2,7 @@ package message;
 
 import app.Config;
 
-public class AskMessage extends BroadcastMessage {
+public class AskMessage extends Message {
 
     private static final long serialVersionUID = 1L;
 

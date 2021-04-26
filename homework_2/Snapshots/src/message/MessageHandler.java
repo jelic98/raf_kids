@@ -6,28 +6,47 @@ import snapshot.SnapshotCollector;
 
 import java.util.Collections;
 import java.util.Set;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MessageHandler implements Runnable {
 
-    private static final Set<Message> inbox = Collections.newSetFromMap(new ConcurrentHashMap<>());
-    private static Set<TransactionMessage> oldMessages = Collections.newSetFromMap(new ConcurrentHashMap<>());
-    private static AskMessage token;
+    private static final int INBOX_SIZE = 10;
 
-    private final BroadcastMessage message;
+    private static MessageHandler instance;
+
     private final SnapshotCollector collector;
+    private final BlockingQueue<Message> inbox;
+    private final Set<Message> history;
+    private AskMessage token;
 
-    public MessageHandler(BroadcastMessage message, SnapshotCollector collector) {
-        this.message = message;
+    public MessageHandler(SnapshotCollector collector) {
         this.collector = collector;
+
+        inbox = new ArrayBlockingQueue<>(INBOX_SIZE);
+        history = Collections.newSetFromMap(new ConcurrentHashMap<>());
+
+        instance = this;
     }
 
     @Override
     public void run() {
-        if (inbox.add(message)) {
+        while(true) {
+            try {
+                onReceived(inbox.take());
+            }catch(InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+    }
+
+    private void onReceived(Message message) throws InterruptedException {
+        if (history.add(message)) {
             App.print(String.format("Received via %s: %s", message.getLastSender(), message));
 
-            ServentState.addPendingMessage(message, this);
+            ServentState.addPendingMessage(message);
             ServentState.checkPendingMessages(this);
 
             for (Servent neighbor : Config.LOCAL_SERVENT.getNeighbors()) {
@@ -39,24 +58,12 @@ public class MessageHandler implements Runnable {
 
             if (message.getType() == Message.Type.STOP) {
                 ServentSingle.stop();
+                throw new InterruptedException();
             }
         }
     }
 
-    public void onPending() {
-        switch (message.getType()) {
-            case TRANSACTION:
-                TransactionMessage transaction = (TransactionMessage) message;
-
-                if (token != null && transaction.precedes(MessageHandler.token)) {
-                    oldMessages.add(transaction);
-                }
-
-                break;
-        }
-    }
-
-    public void onCommitted() {
+    public void onCommitted(Message message) {
         switch (message.getType()) {
             case TRANSACTION:
                 TransactionMessage transaction = (TransactionMessage) message;
@@ -72,7 +79,7 @@ public class MessageHandler implements Runnable {
                 token = ask;
 
                 Snapshot snapshot = ServentState.getSnapshotManager().getSnapshot();
-                ServentState.broadcast(new TellMessage(Config.LOCAL_SERVENT, Config.LOCAL_SERVENT, snapshot, ask.getSender()), collector);
+                handle(new TellMessage(Config.LOCAL_SERVENT, Config.LOCAL_SERVENT, snapshot, ask.getSender()));
 
                 break;
             case TELL:
@@ -89,30 +96,34 @@ public class MessageHandler implements Runnable {
                         continue;
                     }
 
-                    int plus = 0;
-                    int minus = 0;
+                    int diff = 0;
 
-                    for (TransactionMessage m : oldMessages) {
-                        if (m.getSender().equals(servent) && m.getDestination().equals(Config.LOCAL_SERVENT)) {
-                            plus += m.getAmount();
-                        } else if (m.getDestination().equals(servent) && m.getSender().equals(Config.LOCAL_SERVENT)) {
-                            minus += m.getAmount();
+                    for (Message m : ServentState.getCommittedMessages()) {
+                        if (message.getType() == Message.Type.TRANSACTION) {
+                            TransactionMessage t = (TransactionMessage) m;
+
+                            if (t.getSender().equals(servent) && t.getDestination().equals(Config.LOCAL_SERVENT) && t.precedes(token)) {
+                                diff += t.getAmount();
+                            }
                         }
                     }
 
-                    if (plus > 0) {
-                        App.print(String.format("Servent %s has %d unreceived bitcakes from %s", Config.LOCAL_SERVENT, plus, servent));
-                    }
-
-                    if (minus > 0) {
-                        App.print(String.format("Servent %s has %d unreceived bitcakes from %s", servent, minus, Config.LOCAL_SERVENT));
+                    if (diff > 0) {
+                        App.print(String.format("Servent %s has %d unreceived bitcakes from %s", Config.LOCAL_SERVENT, diff, servent));
                     }
                 }
 
-                oldMessages.clear();
                 token = null;
 
                 break;
+        }
+    }
+
+    public static void handle(Message message) {
+        try {
+            instance.inbox.put(message);
+        }catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 }

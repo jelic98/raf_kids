@@ -5,6 +5,7 @@ import app.Config;
 import app.Servent;
 import app.ServentState;
 import message.AskMessage;
+import message.MessageHandler;
 import message.TerminateMessage;
 
 import java.util.Map;
@@ -58,12 +59,11 @@ public class SnapshotCollector implements Runnable {
     }
 
     private void sendAskMessage() {
-        // TODO ASK messages get committed twice
-        ServentState.broadcast(new AskMessage(), this);
+        MessageHandler.handle(new AskMessage());
     }
 
     private void sendTerminateMessage() {
-        ServentState.broadcast(new TerminateMessage(), this);
+        MessageHandler.handle(new TerminateMessage());
     }
 
     private void receiveTellMessages() {

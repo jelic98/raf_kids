@@ -1,7 +1,6 @@
 package snapshot;
 
 import app.Servent;
-import message.BroadcastMessage;
 import message.Message;
 import message.TransactionMessage;
 
@@ -18,7 +17,7 @@ public class Snapshot implements Serializable {
     private final Servent servent;
     private final Map<Servent, Integer> plusHistory;
     private final Map<Servent, Integer> minusHistory;
-    private final List<BroadcastMessage> messageHistory;
+    private final List<Message> messageHistory;
 
     public Snapshot(Servent servent, Map<Servent, Integer> plusHistory, Map<Servent, Integer> minusHistory) {
         this.servent = servent;
@@ -28,7 +27,7 @@ public class Snapshot implements Serializable {
         messageHistory = null;
     }
 
-    public Snapshot(Servent servent, List<BroadcastMessage> messageHistory) {
+    public Snapshot(Servent servent, List<Message> messageHistory) {
         this.servent = servent;
         this.messageHistory = messageHistory;
 
@@ -40,7 +39,7 @@ public class Snapshot implements Serializable {
         int balance = STARTING_BALANCE;
 
         if (messageHistory != null) {
-            for (BroadcastMessage message : messageHistory) {
+            for (Message message : messageHistory) {
                 if (message.getType() == Message.Type.TRANSACTION) {
                     TransactionMessage transaction = (TransactionMessage) message;
 
@@ -72,7 +71,7 @@ public class Snapshot implements Serializable {
         return minusHistory;
     }
 
-    public List<BroadcastMessage> getMessageHistory() {
+    public List<Message> getMessageHistory() {
         return messageHistory;
     }
 }

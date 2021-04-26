@@ -1,6 +1,8 @@
 package app;
 
 import command.CommandParser;
+import message.Message;
+import message.MessageHandler;
 import message.MessageListener;
 import snapshot.SnapshotCollector;
 
@@ -18,11 +20,15 @@ public class ServentSingle {
         collector = new SnapshotCollector();
         new Thread(collector).start();
 
-        listener = new MessageListener(collector);
+        MessageHandler handler = new MessageHandler(collector);
+        new Thread(handler).start();
+
+        listener = new MessageListener();
         new Thread(listener).start();
 
         parser = new CommandParser(collector);
         new Thread(parser).start();
+
     }
 
     public static void stop() {

@@ -3,7 +3,7 @@ package message;
 import app.Config;
 import app.Servent;
 
-public class TransactionMessage extends BroadcastMessage {
+public class TransactionMessage extends Message {
 
     private static final long serialVersionUID = 1L;
 

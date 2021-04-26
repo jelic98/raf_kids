@@ -4,7 +4,7 @@ import app.App;
 import app.Config;
 import app.Servent;
 import app.ServentState;
-import message.BroadcastMessage;
+import message.Message;
 
 import java.util.List;
 
@@ -31,10 +31,10 @@ public class InfoCommand implements Command {
         printMessages(ServentState.getPendingMessages(), "PENDING");
         printMessages(ServentState.getCommittedMessages(), "COMMITTED");
 
-        App.print("Clock (received): " + ServentState.getClock());
+        App.print("Clock: " + ServentState.getClock());
     }
 
-    private void printMessages(List<BroadcastMessage> messages, String type) {
+    private void printMessages(List<Message> messages, String type) {
         if (messages.isEmpty()) {
             App.print("No " + type + " messages");
             return;
@@ -44,7 +44,7 @@ public class InfoCommand implements Command {
 
         int i = 1;
 
-        for (BroadcastMessage message : messages) {
+        for (Message message : messages) {
             App.print(String.format("Message %d: %s from %s", i, message, message.getSender()));
             i++;
         }

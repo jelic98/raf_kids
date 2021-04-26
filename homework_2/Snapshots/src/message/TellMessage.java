@@ -3,7 +3,7 @@ package message;
 import app.Servent;
 import snapshot.Snapshot;
 
-public class TellMessage extends BroadcastMessage {
+public class TellMessage extends Message {
 
     private static final long serialVersionUID = 1L;
 

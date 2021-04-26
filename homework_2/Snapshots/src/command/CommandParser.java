@@ -15,11 +15,11 @@ public class CommandParser implements Runnable {
     public CommandParser(SnapshotCollector collector) {
         commandList = new ArrayList<>();
         commandList.add(new SnapshotCommand(collector));
-        commandList.add(new BroadcastCommand(collector));
+        commandList.add(new BroadcastCommand());
         commandList.add(new InfoCommand());
         commandList.add(new PauseCommand());
-        commandList.add(new StopCommand(collector));
-        commandList.add(new TransactionBurstCommand(collector));
+        commandList.add(new StopCommand());
+        commandList.add(new TransactionBurstCommand());
     }
 
     @Override

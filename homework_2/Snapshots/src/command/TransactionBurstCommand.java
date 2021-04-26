@@ -4,19 +4,13 @@ import app.App;
 import app.Config;
 import app.Servent;
 import app.ServentState;
+import message.MessageHandler;
 import message.TransactionMessage;
-import snapshot.SnapshotCollector;
 
 public class TransactionBurstCommand implements Command {
 
-    private static final int TRANSACTION_COUNT = 5;
+    private static final int TRANSACTION_COUNT = 2;
     private static final int TRANSACTION_AMOUNT = 10;
-
-    private SnapshotCollector collector;
-
-    public TransactionBurstCommand(SnapshotCollector collector) {
-        this.collector = collector;
-    }
 
     @Override
     public String getName() {
@@ -35,7 +29,7 @@ public class TransactionBurstCommand implements Command {
                     }
 
                     ServentState.getSnapshotManager().minus(TRANSACTION_AMOUNT, destination);
-                    ServentState.broadcast(new TransactionMessage(TRANSACTION_AMOUNT, destination), collector);
+                    MessageHandler.handle(new TransactionMessage(TRANSACTION_AMOUNT, destination));
                 }
             }
         }).start();

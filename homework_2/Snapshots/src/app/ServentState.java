@@ -1,8 +1,7 @@
 package app;
 
-import message.BroadcastMessage;
+import message.Message;
 import message.MessageHandler;
-import snapshot.SnapshotCollector;
 import snapshot.SnapshotManager;
 
 import java.util.Iterator;
@@ -16,8 +15,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class ServentState {
 
     private static final Map<Servent, Integer> clock = new ConcurrentHashMap<>();
-    private static final List<BroadcastMessage> committedMessages = new CopyOnWriteArrayList<>();
-    private static final Queue<BroadcastMessage> pendingMessages = new ConcurrentLinkedQueue<>();
+    private static final List<Message> committedMessages = new CopyOnWriteArrayList<>();
+    private static final Queue<Message> pendingMessages = new ConcurrentLinkedQueue<>();
     private static final SnapshotManager snapshotManager = new SnapshotManager();
     private static final Object pendingMessagesLock = new Object();
 
@@ -25,11 +24,11 @@ public class ServentState {
         return new ConcurrentHashMap<>(clock);
     }
 
-    public static List<BroadcastMessage> getCommittedMessages() {
+    public static List<Message> getCommittedMessages() {
         return new CopyOnWriteArrayList<>(committedMessages);
     }
 
-    public static List<BroadcastMessage> getPendingMessages() {
+    public static List<Message> getPendingMessages() {
         return new CopyOnWriteArrayList<>(pendingMessages);
     }
 
@@ -47,7 +46,7 @@ public class ServentState {
         clock.computeIfPresent(servent, (k, v) -> v + 1);
     }
 
-    public static boolean shouldCommit(BroadcastMessage message) {
+    public static boolean shouldCommit(Message message) {
         for (Map.Entry<Servent, Integer> e : clock.entrySet()) {
             if (message.getClock().get(e.getKey()) > e.getValue()) {
                 return false;
@@ -57,18 +56,16 @@ public class ServentState {
         return true;
     }
 
-    public static void commitMessage(BroadcastMessage message, MessageHandler handler) {
+    public static void commitMessage(Message message, MessageHandler handler) {
         committedMessages.add(message);
 
         incrementClock(message.getSender());
 
-        handler.onCommitted();
+        handler.onCommitted(message);
     }
 
-    public static void addPendingMessage(BroadcastMessage message, MessageHandler handler) {
+    public static void addPendingMessage(Message message) {
         pendingMessages.add(message);
-
-        handler.onPending();
     }
 
     public static void checkPendingMessages(MessageHandler handler) {
@@ -78,10 +75,10 @@ public class ServentState {
             gotWork = false;
 
             synchronized (pendingMessagesLock) {
-                Iterator<BroadcastMessage> i = pendingMessages.iterator();
+                Iterator<Message> i = pendingMessages.iterator();
 
                 while (i.hasNext()) {
-                    BroadcastMessage message = i.next();
+                    Message message = i.next();
 
                     if (shouldCommit(message)) {
                         commitMessage(message, handler);
@@ -92,9 +89,5 @@ public class ServentState {
                 }
             }
         }
-    }
-
-    public static void broadcast(BroadcastMessage message, SnapshotCollector collector) {
-        new MessageHandler(message, collector).run();
     }
 }

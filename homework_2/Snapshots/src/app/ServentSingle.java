@@ -1,7 +1,6 @@
 package app;
 
 import command.CommandParser;
-import message.Message;
 import message.MessageHandler;
 import message.MessageListener;
 import snapshot.SnapshotCollector;

@@ -26,8 +26,7 @@ public class MessageListener implements Runnable {
         while (working) {
             try {
                 Message message = App.read(server.accept());
-                // TODO Allow only broadcast messages
-                MessageHandler.handle((Message) message);
+                MessageHandler.handle(message);
             } catch (SocketTimeoutException timeoutEx) {
                 // Ignore
             } catch (IOException e) {

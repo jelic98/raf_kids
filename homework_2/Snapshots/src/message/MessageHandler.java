@@ -30,12 +30,20 @@ public class MessageHandler implements Runnable {
         instance = this;
     }
 
+    public static void handle(Message message) {
+        try {
+            instance.inbox.put(message);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
     @Override
     public void run() {
-        while(true) {
+        while (true) {
             try {
                 onReceived(inbox.take());
-            }catch(InterruptedException e) {
+            } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 break;
             }
@@ -116,14 +124,6 @@ public class MessageHandler implements Runnable {
                 token = null;
 
                 break;
-        }
-    }
-
-    public static void handle(Message message) {
-        try {
-            instance.inbox.put(message);
-        }catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
         }
     }
 }

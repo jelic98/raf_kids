@@ -1,6 +1,5 @@
-pause 10000
+pause 4000
 broadcast d1
 broadcast d2
 pause 6000
 info
-stop

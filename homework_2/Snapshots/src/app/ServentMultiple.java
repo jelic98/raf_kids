@@ -8,24 +8,24 @@ import java.util.Scanner;
 
 public class ServentMultiple {
 
-    private static final String TEST_NAME = "res/snapshot";
+    private static final String TEST_DIR = "res/broadcast";
     private static final String OUT_DIR = "out/production/Snapshots";
 
     public static void main(String[] args) {
         List<Process> servents = new ArrayList<>();
 
-        Config.load(TEST_NAME + "/servent_list.properties");
+        Config.load(TEST_DIR + "/servent_list.properties");
 
         App.print("Starting multiple servents - Type \"stop\" to exit");
 
         for (int i = 0; i < Config.SERVENT_COUNT; i++) {
             try {
                 ProcessBuilder builder = new ProcessBuilder("java", "-cp", OUT_DIR, "app.ServentSingle",
-                        TEST_NAME + "/servent_list.properties", String.valueOf(i));
+                        TEST_DIR + "/servent_list.properties", String.valueOf(i));
 
-                builder.redirectOutput(new File(TEST_NAME + "/output/servent" + i + "_out.txt"));
-                builder.redirectError(new File(TEST_NAME + "/error/servent" + i + "_err.txt"));
-                builder.redirectInput(new File(TEST_NAME + "/input/servent" + i + "_in.txt"));
+                builder.redirectOutput(new File(TEST_DIR + "/output/servent" + i + "_out.txt"));
+                builder.redirectError(new File(TEST_DIR + "/error/servent" + i + "_err.txt"));
+                builder.redirectInput(new File(TEST_DIR + "/input/servent" + i + "_in.txt"));
 
                 servents.add(builder.start());
             } catch (IOException e) {

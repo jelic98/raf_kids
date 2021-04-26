@@ -1,6 +1,5 @@
-pause 4000
+pause 2000
 broadcast b1
 broadcast b2
-pause 12000
+pause 8000
 info
-stop

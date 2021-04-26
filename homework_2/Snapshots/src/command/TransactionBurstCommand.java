@@ -9,7 +9,7 @@ import message.TransactionMessage;
 
 public class TransactionBurstCommand implements Command {
 
-    private static final int TRANSACTION_COUNT = 2;
+    private static final int TRANSACTION_COUNT = 5;
     private static final int TRANSACTION_AMOUNT = 10;
 
     @Override

@@ -1,6 +1,5 @@
-pause 7000
+pause 3000
 broadcast c1
 broadcast c2
-pause 9000
+pause 7000
 info
-stop

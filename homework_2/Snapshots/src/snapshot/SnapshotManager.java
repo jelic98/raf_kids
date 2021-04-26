@@ -2,6 +2,7 @@ package snapshot;
 
 import app.Config;
 import app.Servent;
+import app.ServentState;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,6 +31,13 @@ public class SnapshotManager {
     }
 
     public Snapshot getSnapshot() {
-        return new Snapshot(plusHistory, minusHistory);
+        switch (Config.SNAPSHOT_TYPE) {
+            case AB:
+                return new Snapshot(Config.LOCAL_SERVENT, plusHistory, minusHistory);
+            case AV:
+                return new Snapshot(Config.LOCAL_SERVENT, ServentState.getCommittedMessages());
+            default:
+                return null;
+        }
     }
 }

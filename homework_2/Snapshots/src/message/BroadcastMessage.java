@@ -15,7 +15,7 @@ public class BroadcastMessage extends Message {
     public BroadcastMessage(Message.Type type, String text, Servent sender, Servent receiver) {
         super(type, text, sender, receiver);
 
-        clock = ServentState.getClockReceived();
+        clock = ServentState.getClock();
     }
 
     public BroadcastMessage(String text) {
@@ -40,5 +40,11 @@ public class BroadcastMessage extends Message {
 
     public Map<Servent, Integer> getClock() {
         return clock;
+    }
+
+    public boolean precedes(BroadcastMessage message) {
+        Servent sender = message.getSender();
+
+        return clock.get(sender) <= message.clock.get(sender);
     }
 }

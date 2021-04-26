@@ -113,6 +113,7 @@ public abstract class Message implements Serializable {
         TRANSACTION,
         ASK,
         TELL,
+        TERMINATE,
         STOP
     }
 }

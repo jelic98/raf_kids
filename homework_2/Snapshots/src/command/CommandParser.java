@@ -15,18 +15,18 @@ public class CommandParser implements Runnable {
     public CommandParser(SnapshotCollector collector) {
         commandList = new ArrayList<>();
         commandList.add(new SnapshotCommand(collector));
-        commandList.add(new BroadcastCommand());
+        commandList.add(new BroadcastCommand(collector));
         commandList.add(new InfoCommand());
         commandList.add(new PauseCommand());
-        commandList.add(new StopCommand());
-        commandList.add(new TransactionBurstCommand());
+        commandList.add(new StopCommand(collector));
+        commandList.add(new TransactionBurstCommand(collector));
     }
 
     @Override
     public void run() {
         Scanner sc = new Scanner(System.in);
 
-        while (working) {
+        while (working && sc.hasNextLine()) {
             String commandLine = sc.nextLine();
 
             if (commandLine.startsWith("#")) {

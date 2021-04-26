@@ -31,7 +31,7 @@ public class InfoCommand implements Command {
         printMessages(ServentState.getPendingMessages(), "PENDING");
         printMessages(ServentState.getCommittedMessages(), "COMMITTED");
 
-        App.print("Clock (received): " + ServentState.getClockReceived());
+        App.print("Clock (received): " + ServentState.getClock());
     }
 
     private void printMessages(List<BroadcastMessage> messages, String type) {

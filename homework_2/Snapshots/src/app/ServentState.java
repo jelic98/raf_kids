@@ -1,6 +1,8 @@
 package app;
 
 import message.BroadcastMessage;
+import message.MessageHandler;
+import snapshot.SnapshotCollector;
 import snapshot.SnapshotManager;
 
 import java.util.Iterator;
@@ -13,14 +15,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ServentState {
 
-    private static final Map<Servent, Integer> clockReceived = new ConcurrentHashMap<>();
+    private static final Map<Servent, Integer> clock = new ConcurrentHashMap<>();
     private static final List<BroadcastMessage> committedMessages = new CopyOnWriteArrayList<>();
     private static final Queue<BroadcastMessage> pendingMessages = new ConcurrentLinkedQueue<>();
     private static final SnapshotManager snapshotManager = new SnapshotManager();
     private static final Object pendingMessagesLock = new Object();
 
-    public static Map<Servent, Integer> getClockReceived() {
-        return new ConcurrentHashMap<>(clockReceived);
+    public static Map<Servent, Integer> getClock() {
+        return new ConcurrentHashMap<>(clock);
     }
 
     public static List<BroadcastMessage> getCommittedMessages() {
@@ -37,31 +39,17 @@ public class ServentState {
 
     public static void initializeVectorClock() {
         for (Servent servent : Config.SERVENTS) {
-            clockReceived.put(servent, 0);
+            clock.put(servent, 0);
         }
     }
 
-    public static void incrementClockReceived(Servent servent) {
-        clockReceived.computeIfPresent(servent, (k, v) -> v + 1);
+    public static void incrementClock(Servent servent) {
+        clock.computeIfPresent(servent, (k, v) -> v + 1);
     }
 
-    public static void commitMessage(BroadcastMessage message, boolean checkPending) {
-        committedMessages.add(message);
-
-        incrementClockReceived(message.getSender());
-
-        if (checkPending) {
-            checkPendingMessages();
-        }
-    }
-
-    public static void addPendingMessage(BroadcastMessage msg) {
-        pendingMessages.add(msg);
-    }
-
-    private static boolean shouldCommit(BroadcastMessage message) {
-        for (Servent servent : clockReceived.keySet()) {
-            if (message.getClock().get(servent) > clockReceived.get(servent)) {
+    public static boolean shouldCommit(BroadcastMessage message) {
+        for (Map.Entry<Servent, Integer> e : clock.entrySet()) {
+            if (message.getClock().get(e.getKey()) > e.getValue()) {
                 return false;
             }
         }
@@ -69,7 +57,21 @@ public class ServentState {
         return true;
     }
 
-    public static void checkPendingMessages() {
+    public static void commitMessage(BroadcastMessage message, MessageHandler handler) {
+        committedMessages.add(message);
+
+        incrementClock(message.getSender());
+
+        handler.onCommitted();
+    }
+
+    public static void addPendingMessage(BroadcastMessage message, MessageHandler handler) {
+        pendingMessages.add(message);
+
+        handler.onPending();
+    }
+
+    public static void checkPendingMessages(MessageHandler handler) {
         boolean gotWork = true;
 
         while (gotWork) {
@@ -82,12 +84,9 @@ public class ServentState {
                     BroadcastMessage message = i.next();
 
                     if (shouldCommit(message)) {
-                        commitMessage(message, false);
-
-                        i.remove();
-
+                        commitMessage(message, handler);
                         gotWork = true;
-
+                        i.remove();
                         break;
                     }
                 }
@@ -95,13 +94,7 @@ public class ServentState {
         }
     }
 
-    public static void broadcast(BroadcastMessage message) {
-        commitMessage(message, true);
-
-        App.print("Broadcasting: " + message);
-
-        for (Servent neighbor : Config.LOCAL_SERVENT.getNeighbors()) {
-            App.send(message.setReceiver(neighbor));
-        }
+    public static void broadcast(BroadcastMessage message, SnapshotCollector collector) {
+        new MessageHandler(message, collector).run();
     }
 }

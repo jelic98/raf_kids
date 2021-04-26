@@ -5,6 +5,7 @@ import app.Config;
 import app.Servent;
 import app.ServentState;
 import message.AskMessage;
+import message.TerminateMessage;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,15 +29,20 @@ public class SnapshotCollector implements Runnable {
                 continue;
             }
 
-            sendAskMessages();
+            sendAskMessage();
             receiveTellMessages();
+
+            if (Config.SNAPSHOT_TYPE == SnapshotType.AV) {
+                sendTerminateMessage();
+            }
+
             calculateResult();
+            stopSnapshot();
         }
     }
 
     public void addSnapshot(Servent servent, Snapshot snapshot) {
         if (collecting.get()) {
-            App.print(String.format("Servent %s received %s and gave %s", servent, snapshot.getPlusHistory(), snapshot.getMinusHistory()));
             results.put(servent, snapshot);
         }
     }
@@ -51,10 +57,13 @@ public class SnapshotCollector implements Runnable {
         working = false;
     }
 
-    private void sendAskMessages() {
-        ServentState.broadcast(new AskMessage());
+    private void sendAskMessage() {
+        // TODO ASK messages get committed twice
+        ServentState.broadcast(new AskMessage(), this);
+    }
 
-        addSnapshot(Config.LOCAL_SERVENT, ServentState.getSnapshotManager().getSnapshot());
+    private void sendTerminateMessage() {
+        ServentState.broadcast(new TerminateMessage(), this);
     }
 
     private void receiveTellMessages() {
@@ -80,26 +89,30 @@ public class SnapshotCollector implements Runnable {
             App.print(String.format("Servent %s has %d bitcakes", e.getKey(), balance));
         }
 
-        for (int i = 0; i < Config.SERVENT_COUNT; i++) {
-            for (int j = 0; j < Config.SERVENT_COUNT; j++) {
-                if (i == j) {
-                    continue;
-                }
+        if (Config.SNAPSHOT_TYPE == SnapshotType.AB) {
+            for (int i = 0; i < Config.SERVENT_COUNT; i++) {
+                for (int j = 0; j < Config.SERVENT_COUNT; j++) {
+                    if (i == j) {
+                        continue;
+                    }
 
-                Servent si = Config.SERVENTS.get(i);
-                Servent sj = Config.SERVENTS.get(j);
+                    Servent from = Config.SERVENTS.get(i);
+                    Servent to = Config.SERVENTS.get(j);
 
-                int diff = results.get(si).getMinusHistory().get(sj) - results.get(sj).getPlusHistory().get(si);
+                    int diff = results.get(from).getMinusHistory().get(to) - results.get(to).getPlusHistory().get(from);
 
-                if (diff > 0) {
-                    App.print(String.format("Servent %s has %d unreceived bitcakes from %s", sj, diff, si));
-                    sum += diff;
+                    if (diff > 0) {
+                        App.print(String.format("Servent %s has %d unreceived bitcakes from %s", to, diff, from));
+                        sum += diff;
+                    }
                 }
             }
         }
 
         App.print("Total bitcakes: " + sum);
+    }
 
+    private void stopSnapshot() {
         results.clear();
         collecting.set(false);
     }

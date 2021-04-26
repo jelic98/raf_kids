@@ -12,12 +12,14 @@ import java.util.concurrent.Executors;
 
 public class MessageListener implements Runnable {
 
-    private final ExecutorService threadPool = Executors.newWorkStealingPool();
-    private SnapshotCollector collector;
+    private final SnapshotCollector collector;
+    private final ExecutorService threadPool;
     private volatile boolean working = true;
 
     public MessageListener(SnapshotCollector collector) {
         this.collector = collector;
+
+        threadPool = Executors.newWorkStealingPool();
     }
 
     @Override

@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class ServentMultiple {
 
-    private static final String TEST_DIR = "res/broadcast";
+    private static final String TEST_DIR = "res/snapshot";
     private static final String OUT_DIR = "out/production/Snapshots";
 
     public static void main(String[] args) {

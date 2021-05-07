@@ -8,5 +8,7 @@ Homework 1: [statement](https://github.com/jelic98/raf_kids/blob/master/homework
 
 Homework 2: [statement](https://github.com/jelic98/raf_kids/blob/master/homework_2/homework_2.pdf), [implementation](https://github.com/jelic98/raf_kids/tree/master/homework_2)
 
-NOTE: The second homework is done using a framework written by [Branislav Milojković](mailto:bmilojkovic@raf.rs)
+Project: [statement](https://github.com/jelic98/raf_kids/blob/master/project/project.pdf), [implementation](https://github.com/jelic98/raf_kids/tree/master/project)
+
+NOTE: The second homework and the project are done using a framework written by [Branislav Milojković](mailto:bmilojkovic@raf.rs)
 

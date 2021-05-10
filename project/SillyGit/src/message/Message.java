@@ -115,22 +115,12 @@ public class Message implements Serializable {
         return clock;
     }
 
-    public boolean precedes(Message message) {
-        Servent sender = message.getSender();
-
-        return clock.get(sender) <= message.clock.get(sender);
-    }
-
     protected Message copy() {
         return new Message(this);
     }
 
     public enum Type {
         BROADCAST,
-        TRANSACTION,
-        ASK,
-        TELL,
-        TERMINATE,
         STOP
     }
 }

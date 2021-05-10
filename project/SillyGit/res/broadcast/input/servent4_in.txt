@@ -1,0 +1,6 @@
+pause 5000
+broadcast e1
+broadcast e2
+pause 5000
+info
+stop

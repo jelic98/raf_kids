@@ -1,0 +1,5 @@
+pause 500
+snapshot
+pause 11500
+info
+stop

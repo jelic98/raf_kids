@@ -1,4 +1,0 @@
-pause 500
-transaction_burst
-pause 9500
-info

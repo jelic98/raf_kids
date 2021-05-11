@@ -2,14 +2,18 @@ package app;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class ServentMultiple {
 
-    private static final String TEST_DIR = "res/snapshot";
-    private static final String OUT_DIR = "out/production/Snapshots";
+    private static final String TEST_DIR = "res/test";
+    private static final String OUT_DIR = "out/production/SillyGit";
 
     public static void main(String[] args) {
         List<Process> servents = new ArrayList<>();
@@ -33,9 +37,6 @@ public class ServentMultiple {
             }
         }
 
-        ServentStarter starter = new ServentStarter(servents);
-        new Thread(starter).start();
-
         for (Process process : servents) {
             try {
                 process.waitFor();
@@ -45,39 +46,5 @@ public class ServentMultiple {
         }
 
         App.print("All servents stopped");
-
-        starter.stop();
-    }
-
-    private static class ServentStarter implements Runnable {
-
-        private volatile boolean working = true;
-
-        private List<Process> servents;
-
-        private ServentStarter(List<Process> servents) {
-            this.servents = servents;
-        }
-
-        @Override
-        public void run() {
-            try (Scanner sc = new Scanner(System.in)) {
-                while (working) {
-                    if (System.in.available() > 0 && sc.nextLine().equals("stop")) {
-                        throw new InterruptedException("Stopping servents");
-                    }
-                }
-            } catch (Exception e) {
-                App.error(e.getMessage());
-            } finally {
-                for (Process process : servents) {
-                    process.destroy();
-                }
-            }
-        }
-
-        public void stop() {
-            working = false;
-        }
     }
 }

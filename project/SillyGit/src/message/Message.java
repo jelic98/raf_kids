@@ -3,16 +3,14 @@ package message;
 import app.App;
 import app.Config;
 import app.Servent;
-import app.ServentState;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Message implements Serializable {
+public abstract class Message implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private static final AtomicInteger messageCounter = new AtomicInteger(0);
@@ -23,30 +21,30 @@ public class Message implements Serializable {
     private Servent sender;
     private Servent receiver;
     private List<Servent> route;
-    private Map<Servent, Integer> clock;
 
-    public Message(int id, Type type, String text, Servent sender, Servent receiver, Map<Servent, Integer> clock) {
+    public Message(int id, Type type, String text, Servent sender, Servent receiver) {
         this.id = id;
         this.type = type;
         this.text = text;
         this.sender = sender;
         this.receiver = receiver;
-        this.clock = clock;
 
-        route = new ArrayList<>();
-        route.add(sender);
+        if (sender instanceof Servent) {
+            route = new ArrayList<>();
+            route.add((Servent) sender);
+        }
+    }
+
+    public Message(Type type, String text, Servent sender, Servent receiver) {
+        this(messageCounter.getAndIncrement(), type, text, sender, receiver);
     }
 
     public Message(Type type, String text) {
-        this(messageCounter.getAndIncrement(), type, text, Config.LOCAL_SERVENT, Config.LOCAL_SERVENT, ServentState.incrementClock(Config.LOCAL_SERVENT));
-    }
-
-    public Message(Type type) {
-        this(type, null);
+        this(type, text, Config.LOCAL_SERVENT, Config.LOCAL_SERVENT);
     }
 
     public Message(Message m) {
-        this(m.id, m.type, m.text, m.sender, m.receiver, m.clock);
+        this(m.id, m.type, m.text, m.sender, m.receiver);
 
         route.addAll(m.route);
     }
@@ -79,16 +77,24 @@ public class Message implements Serializable {
     }
 
     public Message setReceiver(Servent receiver) {
-        if (Config.LOCAL_SERVENT.isNeighbor(receiver) || receiver.equals(Config.LOCAL_SERVENT)) {
-            Message message = copy();
-            message.receiver = receiver;
+        if(receiver instanceof Servent) {
+            if (Config.LOCAL_SERVENT.isNeighbor((Servent) receiver) || receiver.equals(Config.LOCAL_SERVENT)) {
+                return redirect(receiver);
+            } else {
+                App.error("Servent " + receiver + " is not a neighbor");
 
-            return message;
-        } else {
-            App.error("Servent " + receiver + " is not a neighbor");
-
-            return null;
+                return null;
+            }
+        }else {
+            return redirect(receiver);
         }
+    }
+
+    private Message redirect(Servent receiver) {
+        Message message = copy();
+        message.receiver = receiver;
+
+        return message;
     }
 
     @Override
@@ -108,19 +114,24 @@ public class Message implements Serializable {
 
     @Override
     public String toString() {
-        return type + " " + text + " with clock " + clock;
+        return type + " " + text;
     }
 
-    public Map<Servent, Integer> getClock() {
-        return clock;
-    }
-
-    protected Message copy() {
-        return new Message(this);
-    }
+    protected abstract Message copy();
+    protected abstract void handle(MessageHandler handler);
 
     public enum Type {
         BROADCAST,
+        HAIL_ASK,
+        HAIL_TELL,
+        REGISTER,
+        WELCOME_ASK,
+        WELCOME_TELL,
+        SORRY,
+        UPDATE,
+        PULL_ASK,
+        PULL_TELL,
+        PUSH,
         STOP
     }
 }

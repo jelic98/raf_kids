@@ -1,6 +1,6 @@
 package command;
 
-import message.Message;
+import message.BroadcastMessage;
 import message.MessageHandler;
 
 public class BroadcastCommand implements Command {
@@ -12,6 +12,6 @@ public class BroadcastCommand implements Command {
 
     @Override
     public void execute(String args) {
-        MessageHandler.handle(new Message(Message.Type.BROADCAST, args));
+        MessageHandler.handle(new BroadcastMessage(args));
     }
 }

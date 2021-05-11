@@ -5,6 +5,7 @@ import app.Config;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.SocketTimeoutException;
 
 public class MessageListener implements Runnable {
@@ -25,8 +26,10 @@ public class MessageListener implements Runnable {
 
         while (working) {
             try {
-                Message message = App.read(server.accept());
+                Socket socket = server.accept();
+                Message message = App.read(socket);
                 MessageHandler.handle(message);
+                socket.close();
             } catch (SocketTimeoutException timeoutEx) {
                 // Ignore
             } catch (IOException e) {

@@ -51,7 +51,7 @@ public class App {
             }
 
             try {
-                Socket sendSocket = new Socket(receiver.getIp(), receiver.getPort());
+                Socket sendSocket = new Socket(receiver.getHost(), receiver.getPort());
 
                 ObjectOutputStream oos = new ObjectOutputStream(sendSocket.getOutputStream());
                 oos.writeObject(message);

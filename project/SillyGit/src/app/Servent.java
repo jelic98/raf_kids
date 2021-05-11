@@ -10,24 +10,34 @@ public class Servent implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private final int id;
-    private final String ip;
+    private final String host;
     private final int port;
+    private final int chordId;
     private final List<Servent> neighbors;
 
-    public Servent(int id, String ip, int port) {
+    public Servent(int id, String host, int port) {
         this.id = id;
-        this.ip = ip;
+        this.host = host;
         this.port = port;
 
+        chordId = ChordState.chordHash(port);
         neighbors = new ArrayList<>();
     }
 
-    public String getIp() {
-        return ip;
+    public Servent(int port) {
+        this(-1, "localhost", port);
+    }
+
+    public String getHost() {
+        return host;
     }
 
     public int getPort() {
         return port;
+    }
+
+    public int getChordId() {
+        return chordId;
     }
 
     public List<Servent> getNeighbors() {

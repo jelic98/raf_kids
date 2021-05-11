@@ -1,6 +1,7 @@
 package app;
 
 import command.CommandParser;
+import message.HailAskMessage;
 import message.MessageListener;
 
 public class ServentSingle {
@@ -13,12 +14,14 @@ public class ServentSingle {
 
         App.print("Starting servent " + Config.LOCAL_SERVENT);
 
+        Servent bootstrap = new Servent(Config.BOOTSTRAP_PORT);
+        App.send(new HailAskMessage(bootstrap, Config.LOCAL_SERVENT.getPort()));
+
         listener = new MessageListener();
         new Thread(listener).start();
 
         parser = new CommandParser();
         new Thread(parser).start();
-
     }
 
     public static void stop() {

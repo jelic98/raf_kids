@@ -1,11 +1,11 @@
 package message;
 
-public class StopMessage extends Message {
+public class StopMessage extends BroadcastMessage {
 
     private static final long serialVersionUID = 1L;
 
     public StopMessage() {
-        super(Type.STOP);
+        super(Type.STOP, null);
     }
 
     public StopMessage(StopMessage m) {

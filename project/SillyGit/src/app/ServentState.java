@@ -1,5 +1,6 @@
 package app;
 
+import message.BroadcastMessage;
 import message.Message;
 import message.MessageHandler;
 
@@ -14,19 +15,19 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class ServentState {
 
     private static final Map<Servent, Integer> clock = new ConcurrentHashMap<>();
-    private static final List<Message> committedMessages = new CopyOnWriteArrayList<>();
-    private static final Queue<Message> pendingMessages = new ConcurrentLinkedQueue<>();
+    private static final List<BroadcastMessage> committedMessages = new CopyOnWriteArrayList<>();
+    private static final Queue<BroadcastMessage> pendingMessages = new ConcurrentLinkedQueue<>();
     private static final Object pendingMessagesLock = new Object();
 
     public static Map<Servent, Integer> getClock() {
         return new ConcurrentHashMap<>(clock);
     }
 
-    public static List<Message> getCommittedMessages() {
+    public static List<BroadcastMessage> getCommittedMessages() {
         return new CopyOnWriteArrayList<>(committedMessages);
     }
 
-    public static List<Message> getPendingMessages() {
+    public static List<BroadcastMessage> getPendingMessages() {
         return new CopyOnWriteArrayList<>(pendingMessages);
     }
 
@@ -36,15 +37,15 @@ public class ServentState {
         }
     }
 
-    public static Map<Servent, Integer> incrementClock(Servent servent) {
+    public static Map<Servent, Integer> incrementClock(Servent Servent) {
         Map<Servent, Integer> clock = getClock();
 
-        ServentState.clock.computeIfPresent(servent, (k, v) -> v + 1);
+        ServentState.clock.computeIfPresent(Servent, (k, v) -> v + 1);
 
         return clock;
     }
 
-    private static boolean missedBroadcast(Message message) {
+    private static boolean missedBroadcast(BroadcastMessage message) {
         for (Map.Entry<Servent, Integer> e : clock.entrySet()) {
             if (message.getClock().get(e.getKey()) > e.getValue()) {
                 return true;
@@ -54,7 +55,7 @@ public class ServentState {
         return false;
     }
 
-    public static void commitMessage(Message message, MessageHandler handler) {
+    public static void commitMessage(BroadcastMessage message, MessageHandler handler) {
         committedMessages.add(message);
 
         if (!message.getSender().equals(Config.LOCAL_SERVENT)) {
@@ -62,7 +63,7 @@ public class ServentState {
         }
     }
 
-    public static void addPendingMessage(Message message) {
+    public static void addPendingMessage(BroadcastMessage message) {
         pendingMessages.add(message);
     }
 
@@ -73,10 +74,10 @@ public class ServentState {
             gotWork = false;
 
             synchronized (pendingMessagesLock) {
-                Iterator<Message> i = pendingMessages.iterator();
+                Iterator<BroadcastMessage> i = pendingMessages.iterator();
 
                 while (i.hasNext()) {
-                    Message message = i.next();
+                    BroadcastMessage message = i.next();
 
                     if (!missedBroadcast(message)) {
                         commitMessage(message, handler);

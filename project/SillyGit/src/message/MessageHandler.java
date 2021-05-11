@@ -1,12 +1,7 @@
 package message;
 
-import app.*;
-
-import java.util.Collections;
-import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class MessageHandler implements Runnable {
 
@@ -15,11 +10,10 @@ public class MessageHandler implements Runnable {
     private static MessageHandler instance;
 
     private final BlockingQueue<Message> inbox;
-    private final Set<Message> history;
+    private volatile boolean working = true;
 
     public MessageHandler() {
         inbox = new ArrayBlockingQueue<>(INBOX_SIZE);
-        history = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
         instance = this;
     }
@@ -34,9 +28,9 @@ public class MessageHandler implements Runnable {
 
     @Override
     public void run() {
-        while (true) {
+        while (working) {
             try {
-                onReceived(inbox.take());
+                inbox.take().handle(this);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 break;
@@ -44,24 +38,7 @@ public class MessageHandler implements Runnable {
         }
     }
 
-    private void onReceived(Message message) throws InterruptedException {
-        if (history.add(message)) {
-            App.print(String.format("Received via %s: %s", message.getLastSender(), message));
-
-            ServentState.addPendingMessage(message);
-            ServentState.checkPendingMessages(this);
-
-            for (Servent neighbor : Config.LOCAL_SERVENT.getNeighbors()) {
-                if (!message.containsSender(neighbor)) {
-                    App.print(String.format("Redirecting %s from %s to %s", message.getType(), message.getSender(), neighbor));
-                    App.send(message.setReceiver(neighbor).setSender());
-                }
-            }
-
-            if (message.getType() == Message.Type.STOP) {
-                ServentSingle.stop();
-                throw new InterruptedException();
-            }
-        }
+    public void stop() {
+        working = false;
     }
 }

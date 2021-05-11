@@ -24,35 +24,32 @@ public class CommandParser implements Runnable {
         Scanner sc = new Scanner(System.in);
 
         while (working && sc.hasNextLine()) {
-            String commandLine = sc.nextLine();
+            String line = sc.nextLine();
 
-            if (commandLine.startsWith("#")) {
+            if (line.startsWith("#")) {
                 continue;
             }
 
-            int spacePos = commandLine.indexOf(" ");
+            String[] tokens = line.split(" ");
+            String name = tokens[0];
+            String args = null;
 
-            String commandName;
-            String commandArgs = null;
-            if (spacePos != -1) {
-                commandName = commandLine.substring(0, spacePos);
-                commandArgs = commandLine.substring(spacePos + 1);
-            } else {
-                commandName = commandLine;
+            if(tokens.length > 1) {
+                args = line.substring(name.length() + 1);
             }
 
             boolean found = false;
 
             for (Command command : commandList) {
-                if (command.getName().equals(commandName)) {
-                    command.execute(commandArgs);
+                if (command.getName().equals(name)) {
+                    command.execute(args);
                     found = true;
                     break;
                 }
             }
 
             if (!found) {
-                App.error("Unknown command: " + commandName);
+                App.error("Unknown command: " + name);
             }
         }
 

@@ -9,6 +9,10 @@ import java.util.Properties;
 
 public class Config {
 
+    public static final int BOOTSTRAP_PORT = 999;
+    public static final List<Servent> BOOTSTRAP_SERVENTS = new ArrayList<>();
+
+    public static ChordState CHORD;
     public static List<Servent> SERVENTS;
     public static Servent LOCAL_SERVENT;
     public static int SERVENT_COUNT;
@@ -28,8 +32,10 @@ public class Config {
         return properties;
     }
 
-    public static void load(String path, int localServent) {
+    public static void load(String path, int servent) {
         Properties properties = load(path);
+
+        CHORD = new ChordState();
 
         SERVENTS = new ArrayList<>();
         List<List<Integer>> globalNeighbors = new ArrayList<>();
@@ -57,7 +63,7 @@ public class Config {
             }
         }
 
-        LOCAL_SERVENT = SERVENTS.get(localServent);
+        LOCAL_SERVENT = SERVENTS.get(servent);
 
         ServentState.initializeVectorClock();
     }

@@ -4,6 +4,7 @@ import app.App;
 import app.Config;
 import app.Servent;
 import app.ServentState;
+import message.BroadcastMessage;
 import message.Message;
 
 import java.util.List;
@@ -17,16 +18,8 @@ public class InfoCommand implements Command {
 
     @Override
     public void execute(String args) {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("Neighbors:");
-
-        for (Servent neighbor : Config.LOCAL_SERVENT.getNeighbors()) {
-            sb.append(" ");
-            sb.append(neighbor);
-        }
-
-        App.print(sb.toString());
+        printServents(Config.LOCAL_SERVENT.getNeighbors(), "Neighbors");
+        printServents(Config.CHORD.getSuccessors(), "Successors");
 
         printMessages(ServentState.getPendingMessages(), "PENDING");
         printMessages(ServentState.getCommittedMessages(), "COMMITTED");
@@ -34,7 +27,21 @@ public class InfoCommand implements Command {
         App.print("Clock: " + ServentState.getClock());
     }
 
-    private void printMessages(List<Message> messages, String type) {
+    private void printServents(List<Servent> servents, String type) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(type);
+        sb.append(":");
+
+        for (Servent s : servents) {
+            sb.append(" ");
+            sb.append(s);
+        }
+
+        App.print(sb.toString());
+    }
+
+    private void printMessages(List<BroadcastMessage> messages, String type) {
         if (messages.isEmpty()) {
             App.print("No " + type + " messages");
             return;

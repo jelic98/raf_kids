@@ -12,7 +12,7 @@ public class BroadcastMessage extends Message {
     private static final long serialVersionUID = 1L;
     private static final Set<BroadcastMessage> history = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
-    private Map<Servent, Integer> clock;
+    private final Map<Servent, Integer> clock;
 
     public BroadcastMessage(Type type, String text) {
         super(type, text);

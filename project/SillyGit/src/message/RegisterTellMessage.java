@@ -1,6 +1,8 @@
 package message;
 
-import app.*;
+import app.App;
+import app.Config;
+import app.Servent;
 import data.Key;
 import data.Value;
 
@@ -10,7 +12,7 @@ public class RegisterTellMessage extends Message {
 
     private static final long serialVersionUID = 1L;
 
-    private Map<Key, Value> chunk;
+    private final Map<Key, Value> chunk;
 
     public RegisterTellMessage(Servent receiver, Map<Key, Value> chunk) {
         super(Type.REGISTER_TELL, null, Config.LOCAL_SERVENT, receiver);

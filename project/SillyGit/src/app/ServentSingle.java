@@ -17,9 +17,9 @@ public class ServentSingle {
 
         Servent bootstrap = new Servent(Config.BOOTSTRAP_HOST, Config.BOOTSTRAP_PORT);
 
-        if(servent > 0) {
+        if (servent > 0) {
             App.print("Starting servent " + Config.LOCAL_SERVENT);
-        }else {
+        } else {
             Config.LOCAL_SERVENT = bootstrap;
 
             App.print("Starting bootstrap server " + Config.LOCAL_SERVENT);
@@ -30,7 +30,7 @@ public class ServentSingle {
         listener = new MessageListener();
         new Thread(listener).start();
 
-        if(servent > 0) {
+        if (servent > 0) {
             parser = new CommandParser();
             new Thread(parser).start();
 

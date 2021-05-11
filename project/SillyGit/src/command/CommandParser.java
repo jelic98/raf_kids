@@ -36,7 +36,7 @@ public class CommandParser implements Runnable {
             String name = tokens[0];
             String args = null;
 
-            if(tokens.length > 1) {
+            if (tokens.length > 1) {
                 args = line.substring(name.length() + 1);
             }
 

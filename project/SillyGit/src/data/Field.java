@@ -7,7 +7,7 @@ class Field<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private T field;
+    private final T field;
 
     public Field(T field) {
         this.field = field;

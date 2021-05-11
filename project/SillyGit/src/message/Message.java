@@ -1,6 +1,5 @@
 package message;
 
-import app.App;
 import app.Config;
 import app.Servent;
 
@@ -15,12 +14,12 @@ public abstract class Message implements Serializable {
     private static final long serialVersionUID = 1L;
     private static final AtomicInteger messageCounter = new AtomicInteger(0);
 
-    private int id;
-    private Type type;
-    private String text;
-    private Servent sender;
+    private final int id;
+    private final Type type;
+    private final String text;
+    private final Servent sender;
     private Servent receiver;
-    private List<Servent> route;
+    private final List<Servent> route;
 
     public Message(int id, Type type, String text, Servent sender, Servent receiver) {
         this.id = id;
@@ -102,6 +101,7 @@ public abstract class Message implements Serializable {
     }
 
     protected abstract Message copy();
+
     protected abstract void handle(MessageHandler handler);
 
     public enum Type {

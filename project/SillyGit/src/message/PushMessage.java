@@ -1,14 +1,14 @@
 package message;
 
 import app.Config;
-import data.Data;
 import app.Servent;
+import data.Data;
 
 public class PushMessage extends Message {
 
     private static final long serialVersionUID = 1L;
 
-    private Data data;
+    private final Data data;
 
     public PushMessage(Servent receiver, Data data) {
         super(Type.PUSH, null, Config.LOCAL_SERVENT, receiver);

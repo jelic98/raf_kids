@@ -3,16 +3,18 @@ package app;
 import data.Data;
 import data.Key;
 import data.Value;
-import message.*;
+import message.PullAskMessage;
+import message.PushMessage;
+
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ChordState {
 
-    private int level;
-    private Set<Servent> servents;
+    private final int level;
+    private final Set<Servent> servents;
     private Servent predecessor;
-    private Servent[] successors;
+    private final Servent[] successors;
     private Map<Key, Value> chunk;
 
     public ChordState() {

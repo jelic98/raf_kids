@@ -7,8 +7,8 @@ public class Data implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private Key key;
-    private Value value;
+    private final Key key;
+    private final Value value;
 
     public Data(Key key, Value value) {
         this.key = key;

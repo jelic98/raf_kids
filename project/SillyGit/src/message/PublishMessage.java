@@ -8,7 +8,7 @@ public class PublishMessage extends Message {
 
     private static final long serialVersionUID = 1L;
 
-    private Address address;
+    private final Address address;
 
     public PublishMessage() {
         super(Type.PUBLISH, null, Config.LOCAL_SERVENT, new Servent(Config.BOOTSTRAP_HOST, Config.BOOTSTRAP_PORT));

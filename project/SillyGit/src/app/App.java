@@ -1,7 +1,6 @@
 package app;
 
 import message.Message;
-import sun.security.krb5.internal.APOptions;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

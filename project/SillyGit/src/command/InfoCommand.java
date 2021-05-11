@@ -18,26 +18,21 @@ public class InfoCommand implements Command {
 
     @Override
     public void execute(String args) {
-        printServents(Config.CHORD.getSuccessors(), "Successors");
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("Successors:");
+
+        for (Servent servent : Config.CHORD.getSuccessors()) {
+            sb.append(" ");
+            sb.append(servent);
+        }
+
+        App.print(sb.toString());
 
         printMessages(ServentState.getPendingMessages(), "PENDING");
         printMessages(ServentState.getCommittedMessages(), "COMMITTED");
 
         App.print("Clock: " + ServentState.getClock());
-    }
-
-    private void printServents(Servent[] servents, String type) {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append(type);
-        sb.append(":");
-
-        for (Servent s : servents) {
-            sb.append(" ");
-            sb.append(s);
-        }
-
-        App.print(sb.toString());
     }
 
     private void printMessages(List<BroadcastMessage> messages, String type) {

@@ -5,13 +5,16 @@ import app.App;
 import app.Config;
 import app.Servent;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class UpdateMessage extends Message {
 
     private static final long serialVersionUID = 1L;
 
-    private Set<Address> addresses;
+    private final Set<Address> addresses;
 
     public UpdateMessage(Servent receiver, Set<Address> addresses) {
         super(Type.UPDATE, null, Config.LOCAL_SERVENT, receiver);
@@ -45,7 +48,7 @@ public class UpdateMessage extends Message {
         } else {
             servents.add(getSender());
 
-            if(addresses.add(Config.LOCAL_SERVENT.getAddress())) {
+            if (addresses.add(Config.LOCAL_SERVENT.getAddress())) {
                 App.send(setReceiver(Config.CHORD.getNextServent()).setSender());
             }
         }

@@ -1,7 +1,6 @@
 package app;
 
 import message.BroadcastMessage;
-import message.Message;
 import message.MessageHandler;
 
 import java.util.Iterator;

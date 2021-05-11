@@ -1,7 +1,6 @@
 package app;
 
 import java.io.Serializable;
-import java.util.Comparator;
 
 public class Servent implements Serializable, Comparable<Servent> {
 

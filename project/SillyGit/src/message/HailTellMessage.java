@@ -8,7 +8,7 @@ public class HailTellMessage extends Message {
 
     private static final long serialVersionUID = 1L;
 
-    private Servent servent;
+    private final Servent servent;
 
     public HailTellMessage(Servent receiver, Servent servent) {
         super(Type.HAIL_TELL, null, Config.LOCAL_SERVENT, receiver);
@@ -35,7 +35,7 @@ public class HailTellMessage extends Message {
             Config.CHORD.initialize(Config.LOCAL_SERVENT, null);
 
             App.send(new PublishMessage());
-        }else {
+        } else {
             App.send(new RegisterAskMessage(servent));
         }
     }

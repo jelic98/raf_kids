@@ -1,6 +1,7 @@
 package command;
 
-import app.*;
+import app.App;
+import app.Config;
 import data.Key;
 import data.Value;
 

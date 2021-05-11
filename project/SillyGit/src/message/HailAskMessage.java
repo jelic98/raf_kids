@@ -13,7 +13,7 @@ public class HailAskMessage extends Message {
     private static final long serialVersionUID = 1L;
     private static final Random random = new Random(System.currentTimeMillis());
 
-    private Address address;
+    private final Address address;
 
     public HailAskMessage(Servent receiver, Address address) {
         super(Type.HAIL_ASK, null, Config.LOCAL_SERVENT, receiver);

@@ -2,14 +2,14 @@ package message;
 
 import app.App;
 import app.Config;
-import data.Data;
 import app.Servent;
+import data.Data;
 
 public class PullTellMessage extends Message {
 
     private static final long serialVersionUID = 1L;
 
-    private Data data;
+    private final Data data;
 
     public PullTellMessage(Servent receiver, Data data) {
         super(Type.PULL_TELL, null, Config.LOCAL_SERVENT, receiver);

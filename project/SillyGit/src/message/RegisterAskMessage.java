@@ -1,6 +1,8 @@
 package message;
 
-import app.*;
+import app.App;
+import app.Config;
+import app.Servent;
 import data.Key;
 import data.Value;
 
@@ -75,7 +77,7 @@ public class RegisterAskMessage extends Message {
                         to.put(valueEntry.getKey(), valueEntry.getValue());
                     }
                 }
-            }else if (hisPredId < myId) {
+            } else if (hisPredId < myId) {
                 if (key <= newNodeId) {
                     to.put(valueEntry.getKey(), valueEntry.getValue());
                 }

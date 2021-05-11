@@ -1,6 +1,8 @@
 package message;
 
-import app.*;
+import app.App;
+import app.Config;
+import app.Servent;
 import data.Data;
 import data.Key;
 import data.Value;
@@ -11,7 +13,7 @@ public class PullAskMessage extends Message {
 
     private static final long serialVersionUID = 1L;
 
-    private Key key;
+    private final Key key;
 
     public PullAskMessage(Servent receiver, Key key) {
         super(Type.PULL_ASK, null, Config.LOCAL_SERVENT, receiver);
@@ -44,8 +46,7 @@ public class PullAskMessage extends Message {
 
             App.send(new PullTellMessage(getSender(), new Data(key, value)));
         } else {
-            Servent nextNode = Config.CHORD.getServent(key);
-            App.send(new PullAskMessage(nextNode, getKey()));
+            App.send(setReceiver(Config.CHORD.getServent(key)));
         }
     }
 

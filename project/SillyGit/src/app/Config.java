@@ -9,13 +9,14 @@ import java.util.Properties;
 
 public class Config {
 
-    public static final int BOOTSTRAP_PORT = 999;
-    public static final List<Servent> BOOTSTRAP_SERVENTS = new ArrayList<>();
-
-    public static ChordState CHORD;
-    public static List<Servent> SERVENTS;
-    public static Servent LOCAL_SERVENT;
     public static int SERVENT_COUNT;
+    public static int CHORD_SIZE;
+    public static String BOOTSTRAP_HOST;
+    public static int BOOTSTRAP_PORT;
+    public static Servent LOCAL_SERVENT;
+    public static List<Servent> SERVENTS;
+    public static List<Servent> BOOTSTRAP_SERVENTS;
+    public static ChordState CHORD;
 
     public static Properties load(String path) {
         Properties properties = new Properties();
@@ -28,6 +29,9 @@ public class Config {
         }
 
         SERVENT_COUNT = Integer.parseInt(properties.getProperty("servent_count"));
+        CHORD_SIZE = Integer.parseInt(properties.getProperty("chord_size"));
+        BOOTSTRAP_HOST = properties.getProperty("bootstrap.host");
+        BOOTSTRAP_PORT = Integer.parseInt(properties.getProperty("bootstrap.port"));
 
         return properties;
     }
@@ -36,34 +40,18 @@ public class Config {
         Properties properties = load(path);
 
         CHORD = new ChordState();
-
         SERVENTS = new ArrayList<>();
-        List<List<Integer>> globalNeighbors = new ArrayList<>();
 
-        for (int i = 0; i < SERVENT_COUNT; i++) {
-            int serventPort = Integer.parseInt(properties.getProperty("servent" + i + ".port"));
-            String neighbors = properties.getProperty("servent" + i + ".neighbors");
+        for (int i = 1; i <= SERVENT_COUNT; i++) {
+            String host = properties.getProperty("servent" + i + ".host");
+            int port = Integer.parseInt(properties.getProperty("servent" + i + ".port"));
 
-            List<Integer> localNeighbors = new ArrayList<>();
-
-            for (String neighbor : neighbors.split(",")) {
-                localNeighbors.add(Integer.parseInt(neighbor));
-            }
-
-            globalNeighbors.add(localNeighbors);
-
-            SERVENTS.add(new Servent(i, "localhost", serventPort));
+            SERVENTS.add(new Servent(host, port));
         }
 
-        for (int i = 0; i < SERVENT_COUNT; i++) {
-            List<Servent> neighbors = SERVENTS.get(i).getNeighbors();
-
-            for (Integer neighbor : globalNeighbors.get(i)) {
-                neighbors.add(SERVENTS.get(neighbor));
-            }
+        if (servent > 0) {
+            LOCAL_SERVENT = SERVENTS.get(servent - 1);
         }
-
-        LOCAL_SERVENT = SERVENTS.get(servent);
 
         ServentState.initializeVectorClock();
     }

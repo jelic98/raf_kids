@@ -1,6 +1,8 @@
 package command;
 
 import app.Config;
+import data.Key;
+import data.Value;
 
 public class PushCommand implements Command {
 
@@ -13,6 +15,9 @@ public class PushCommand implements Command {
     public void execute(String args) {
         String[] tokens = args.split(" ");
 
-        Config.CHORD.putValue(Integer.parseInt(tokens[0]), Integer.parseInt(tokens[1]));
+        Key key = new Key(Integer.parseInt(tokens[0]));
+        Value value = new Value(Integer.parseInt(tokens[1]));
+
+        Config.CHORD.putValue(key, value);
     }
 }

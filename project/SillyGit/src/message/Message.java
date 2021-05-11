@@ -29,10 +29,8 @@ public abstract class Message implements Serializable {
         this.sender = sender;
         this.receiver = receiver;
 
-        if (sender instanceof Servent) {
-            route = new ArrayList<>();
-            route.add((Servent) sender);
-        }
+        route = new ArrayList<>();
+        route.add(sender);
     }
 
     public Message(Type type, String text, Servent sender, Servent receiver) {
@@ -77,20 +75,6 @@ public abstract class Message implements Serializable {
     }
 
     public Message setReceiver(Servent receiver) {
-        if(receiver instanceof Servent) {
-            if (Config.LOCAL_SERVENT.isNeighbor((Servent) receiver) || receiver.equals(Config.LOCAL_SERVENT)) {
-                return redirect(receiver);
-            } else {
-                App.error("Servent " + receiver + " is not a neighbor");
-
-                return null;
-            }
-        }else {
-            return redirect(receiver);
-        }
-    }
-
-    private Message redirect(Servent receiver) {
         Message message = copy();
         message.receiver = receiver;
 
@@ -124,10 +108,10 @@ public abstract class Message implements Serializable {
         BROADCAST,
         HAIL_ASK,
         HAIL_TELL,
-        REGISTER,
-        WELCOME_ASK,
-        WELCOME_TELL,
+        REGISTER_ASK,
+        REGISTER_TELL,
         SORRY,
+        PUBLISH,
         UPDATE,
         PULL_ASK,
         PULL_TELL,

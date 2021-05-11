@@ -1,5 +1,0 @@
-pause 1000
-broadcast a1
-broadcast a2
-pause 9000
-info

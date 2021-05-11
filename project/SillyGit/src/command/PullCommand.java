@@ -1,7 +1,8 @@
 package command;
 
-import app.App;
-import app.Config;
+import app.*;
+import data.Key;
+import data.Value;
 
 public class PullCommand implements Command {
 
@@ -12,15 +13,15 @@ public class PullCommand implements Command {
 
     @Override
     public void execute(String args) {
-        int key = Integer.parseInt(args);
-        int value = Config.CHORD.getValue(key);
+        Key key = new Key(Integer.parseInt(args));
+        Value value = Config.CHORD.getValue(key);
 
-        if (value == -2) {
-            App.print("Pulling");
-        } else if (value == -1) {
-            App.error("Unknown key: " + key);
+        if (value == null) {
+            App.print("Pulling key: " + key);
+        } else if (value.get() == -1) {
+            App.print("Unknown key: " + key);
         } else {
-            App.print(key + ": " + value);
+            App.print("Pulled: " + key + "-> " + value);
         }
     }
 }

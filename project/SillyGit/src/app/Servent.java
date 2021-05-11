@@ -1,70 +1,47 @@
 package app;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.Comparator;
 
-public class Servent implements Serializable {
+public class Servent implements Serializable, Comparable<Servent> {
 
     private static final long serialVersionUID = 1L;
 
-    private final int id;
-    private final String host;
-    private final int port;
-    private final int chordId;
-    private final List<Servent> neighbors;
+    private final Address address;
 
-    public Servent(int id, String host, int port) {
-        this.id = id;
-        this.host = host;
-        this.port = port;
-
-        chordId = ChordState.chordHash(port);
-        neighbors = new ArrayList<>();
+    public Servent(Address address) {
+        this.address = address;
     }
 
-    public Servent(int port) {
-        this(-1, "localhost", port);
+    public Servent(String host, int port) {
+        this(new Address(host, port));
     }
 
-    public String getHost() {
-        return host;
-    }
-
-    public int getPort() {
-        return port;
+    public Address getAddress() {
+        return address;
     }
 
     public int getChordId() {
-        return chordId;
-    }
-
-    public List<Servent> getNeighbors() {
-        return neighbors;
-    }
-
-    public boolean isNeighbor(Servent servent) {
-        return neighbors.contains(servent);
+        return 61 * hashCode() % Config.CHORD_SIZE;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Servent) {
-            Servent s = (Servent) obj;
-            return id == s.id;
-        }
-
-        return false;
+        return address.equals(obj);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return address.hashCode();
     }
 
     @Override
     public String toString() {
-        return String.valueOf(id);
+        return address.toString();
+    }
+
+    @Override
+    public int compareTo(Servent s) {
+        return Integer.compare(getChordId(), s.getChordId());
     }
 }

@@ -1,6 +1,7 @@
 package app;
 
 import message.Message;
+import sun.security.krb5.internal.APOptions;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -13,7 +14,7 @@ import java.util.Random;
 
 public class App {
 
-    private static final boolean MESSAGE_UTIL_PRINTING = false;
+    private static final boolean MESSAGE_UTIL_PRINTING = true;
     private static final Random random = new Random();
 
     public static Message read(Socket socket) {
@@ -26,7 +27,7 @@ public class App {
 
             socket.close();
         } catch (Exception e) {
-            error("Error while reading socket on " + socket.getInetAddress() + ":" + socket.getPort());
+            error(String.format("Error while reading socket on %s:%d (%s)" + socket.getInetAddress(), socket.getPort(), e.getMessage()));
         }
 
         if (MESSAGE_UTIL_PRINTING) {
@@ -51,7 +52,8 @@ public class App {
             }
 
             try {
-                Socket sendSocket = new Socket(receiver.getHost(), receiver.getPort());
+                Address address = receiver.getAddress();
+                Socket sendSocket = new Socket(address.getHost(), address.getPort());
 
                 ObjectOutputStream oos = new ObjectOutputStream(sendSocket.getOutputStream());
                 oos.writeObject(message);

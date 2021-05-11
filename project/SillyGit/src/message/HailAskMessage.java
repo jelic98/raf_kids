@@ -1,5 +1,6 @@
 package message;
 
+import app.Address;
 import app.App;
 import app.Config;
 import app.Servent;
@@ -10,19 +11,20 @@ import java.util.Random;
 public class HailAskMessage extends Message {
 
     private static final long serialVersionUID = 1L;
+    private static final Random random = new Random(System.currentTimeMillis());
 
-    private int port;
+    private Address address;
 
-    public HailAskMessage(Servent receiver, int port) {
+    public HailAskMessage(Servent receiver, Address address) {
         super(Type.HAIL_ASK, null, Config.LOCAL_SERVENT, receiver);
 
-        this.port = port;
+        this.address = address;
     }
 
     public HailAskMessage(HailAskMessage m) {
         super(m);
 
-        port = m.port;
+        address = m.address;
     }
 
     @Override
@@ -34,10 +36,10 @@ public class HailAskMessage extends Message {
     protected void handle(MessageHandler handler) {
         Servent servent = null;
 
-        if (Config.BOOTSTRAP_SERVENTS.isEmpty()) {
-            Config.BOOTSTRAP_SERVENTS.add(new Servent(getPort()));
+        if (Config.BOOTSTRAP_SERVENTS == null) {
+            Config.BOOTSTRAP_SERVENTS = new ArrayList<>();
+            Config.BOOTSTRAP_SERVENTS.add(getSender());
         } else {
-            Random random = new Random(System.currentTimeMillis());
             int index = random.nextInt(Config.BOOTSTRAP_SERVENTS.size());
             servent = Config.BOOTSTRAP_SERVENTS.get(index);
         }
@@ -47,11 +49,11 @@ public class HailAskMessage extends Message {
 
     @Override
     public String toString() {
-        return getType() + " with port " + getPort();
+        return getType() + " with address " + getAddress();
     }
 
-    public int getPort() {
-        return port;
+    public Address getAddress() {
+        return address;
     }
 }
 

@@ -32,18 +32,17 @@ public class HailTellMessage extends Message {
         Servent servent = getServent();
 
         if (servent == null) {
-            App.error("Error in contacting bootstrap");
-            System.exit(0);
-        } else if (servent.getPort() == -1) {
-            App.error("First node in Chord system");
-        } else {
-            App.send(new RegisterMessage(servent));
+            Config.CHORD.initialize(Config.LOCAL_SERVENT, null);
+
+            App.send(new PublishMessage());
+        }else {
+            App.send(new RegisterAskMessage(servent));
         }
     }
 
     @Override
     public String toString() {
-        return getType() + " " + getServent();
+        return getType() + " with servent " + getServent();
     }
 
     public Servent getServent() {

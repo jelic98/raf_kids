@@ -1,5 +1,1 @@
-pause 4000
-broadcast d1
-broadcast d2
-pause 6000
-info
+pause 40000

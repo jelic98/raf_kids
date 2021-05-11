@@ -43,10 +43,10 @@ public class BroadcastMessage extends Message {
             ServentState.addPendingMessage(this);
             ServentState.checkPendingMessages(handler);
 
-            for (Servent neighbor : Config.LOCAL_SERVENT.getNeighbors()) {
-                if (!containsSender(neighbor)) {
-                    App.print(String.format("Redirecting %s from %s to %s", getType(), getSender(), neighbor));
-                    App.send(setReceiver(neighbor).setSender());
+            for (Servent successor : Config.CHORD.getSuccessors()) {
+                if (successor != null && !containsSender(successor)) {
+                    App.print(String.format("Redirecting %s from %s to %s", getType(), getSender(), successor));
+                    App.send(setReceiver(successor).setSender());
                 }
             }
 

@@ -1,0 +1,4 @@
+pause 10000
+push 25 3
+pause 4000
+pull 25

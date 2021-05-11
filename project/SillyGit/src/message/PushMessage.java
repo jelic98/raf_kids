@@ -1,27 +1,25 @@
 package message;
 
 import app.Config;
+import data.Data;
 import app.Servent;
 
 public class PushMessage extends Message {
 
     private static final long serialVersionUID = 1L;
 
-    private int key;
-    private int value;
+    private Data data;
 
-    public PushMessage(Servent receiver, int key, int value) {
+    public PushMessage(Servent receiver, Data data) {
         super(Type.PUSH, null, Config.LOCAL_SERVENT, receiver);
 
-        this.key = key;
-        this.value = value;
+        this.data = data;
     }
 
     public PushMessage(PushMessage m) {
         super(m);
 
-        key = m.key;
-        value = m.value;
+        data = m.data;
     }
 
     @Override
@@ -31,19 +29,15 @@ public class PushMessage extends Message {
 
     @Override
     protected void handle(MessageHandler handler) {
-        Config.CHORD.putValue(getKey(), getValue());
+        Config.CHORD.putValue(getData().getKey(), getData().getValue());
     }
 
     @Override
     public String toString() {
-        return getType() + " " + getKey() + ":" + getValue();
+        return getType() + " with data " + getData();
     }
 
-    public int getKey() {
-        return key;
-    }
-
-    public int getValue() {
-        return value;
+    public Data getData() {
+        return data;
     }
 }

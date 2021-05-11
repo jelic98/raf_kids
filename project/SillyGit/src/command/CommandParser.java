@@ -16,6 +16,8 @@ public class CommandParser implements Runnable {
         commandList.add(new BroadcastCommand());
         commandList.add(new InfoCommand());
         commandList.add(new PauseCommand());
+        commandList.add(new PullCommand());
+        commandList.add(new PushCommand());
         commandList.add(new StopCommand());
     }
 

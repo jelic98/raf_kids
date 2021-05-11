@@ -14,13 +14,15 @@ public class MessageListener implements Runnable {
 
     @Override
     public void run() {
+        int port = Config.LOCAL_SERVENT.getAddress().getPort();
+
         ServerSocket server = null;
 
         try {
-            server = new ServerSocket(Config.LOCAL_SERVENT.getPort());
+            server = new ServerSocket(port);
             server.setSoTimeout(1000);
         } catch (IOException e) {
-            App.error("Cannot open listener socket on port " + Config.LOCAL_SERVENT.getPort());
+            App.error(String.format("Cannot open listener socket on port %s (%s)", port, e.getMessage()));
             System.exit(0);
         }
 

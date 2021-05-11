@@ -1,32 +1,32 @@
 package message;
 
+import app.Address;
 import app.App;
 import app.Config;
 import app.Servent;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class UpdateMessage extends Message {
 
     private static final long serialVersionUID = 1L;
 
-    private List<Integer> ports;
+    private Set<Address> addresses;
 
-    public UpdateMessage(Servent receiver, List<Integer> ports) {
+    public UpdateMessage(Servent receiver, Set<Address> addresses) {
         super(Type.UPDATE, null, Config.LOCAL_SERVENT, receiver);
 
-        this.ports = ports;
+        this.addresses = addresses;
     }
 
     public UpdateMessage(Servent receiver) {
-        this(receiver, new ArrayList<>());
+        this(receiver, new HashSet<>());
     }
 
     public UpdateMessage(UpdateMessage m) {
         super(m);
 
-        ports = m.ports;
+        addresses = m.addresses;
     }
 
     @Override
@@ -38,16 +38,15 @@ public class UpdateMessage extends Message {
     protected void handle(MessageHandler handler) {
         List<Servent> servents = new ArrayList<>();
 
-        if (getSender().getPort() != Config.LOCAL_SERVENT.getPort()) {
-            servents.add(new Servent(getSender().getPort()));
-
-            List<Integer> ports = new ArrayList<>(getPorts());
-            ports.add(Config.LOCAL_SERVENT.getPort());
-
-            App.send(new UpdateMessage(Config.CHORD.getNextServent(), ports));
+        if (getSender().equals(Config.LOCAL_SERVENT)) {
+            for (Address address : getAddresses()) {
+                servents.add(new Servent(address));
+            }
         } else {
-            for (Integer port : getPorts()) {
-                servents.add(new Servent(port));
+            servents.add(getSender());
+
+            if(addresses.add(Config.LOCAL_SERVENT.getAddress())) {
+                App.send(setReceiver(Config.CHORD.getNextServent()).setSender());
             }
         }
 
@@ -56,10 +55,10 @@ public class UpdateMessage extends Message {
 
     @Override
     public String toString() {
-        return getType() + " with ports " + getPorts();
+        return getType() + " with addresses " + getAddresses();
     }
 
-    public List<Integer> getPorts() {
-        return ports;
+    public Set<Address> getAddresses() {
+        return addresses;
     }
 }

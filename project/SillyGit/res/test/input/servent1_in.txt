@@ -1,5 +1,2 @@
-pause 2000
-broadcast b1
-broadcast b2
-pause 8000
-info
+pause 50000
+push 2 5

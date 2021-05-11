@@ -1,8 +1,9 @@
 package message;
 
-import app.App;
-import app.Config;
-import app.Servent;
+import app.*;
+import data.Data;
+import data.Key;
+import data.Value;
 
 import java.util.Map;
 
@@ -10,9 +11,9 @@ public class PullAskMessage extends Message {
 
     private static final long serialVersionUID = 1L;
 
-    private int key;
+    private Key key;
 
-    public PullAskMessage(Servent receiver, int key) {
+    public PullAskMessage(Servent receiver, Key key) {
         super(Type.PULL_ASK, null, Config.LOCAL_SERVENT, receiver);
 
         this.key = key;
@@ -31,17 +32,17 @@ public class PullAskMessage extends Message {
 
     @Override
     protected void handle(MessageHandler handler) {
-        int key = getKey();
+        Key key = getKey();
 
-        if (Config.CHORD.isKeyMine(key)) {
-            Map<Integer, Integer> valueMap = Config.CHORD.getValueMap();
-            int value = -1;
+        if (Config.CHORD.containsKey(key)) {
+            Map<Key, Value> chunk = Config.CHORD.getChunk();
+            Value value = null;
 
-            if (valueMap.containsKey(key)) {
-                value = valueMap.get(key);
+            if (chunk.containsKey(key)) {
+                value = chunk.get(key);
             }
 
-            App.send(new PullTellMessage(getSender(), key, value));
+            App.send(new PullTellMessage(getSender(), new Data(key, value)));
         } else {
             Servent nextNode = Config.CHORD.getServent(key);
             App.send(new PullAskMessage(nextNode, getKey()));
@@ -50,10 +51,10 @@ public class PullAskMessage extends Message {
 
     @Override
     public String toString() {
-        return getType() + " " + getKey();
+        return getType() + " with key " + getKey();
     }
 
-    public int getKey() {
+    public Key getKey() {
         return key;
     }
 }

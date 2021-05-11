@@ -1,40 +1,33 @@
 package app;
 
+import data.Data;
+import data.Key;
+import data.Value;
 import message.*;
-
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
-// TODO Cleanup
 public class ChordState {
 
-    public static int CHORD_SIZE;
-
-    private int chordLevel;
+    private int level;
+    private Set<Servent> servents;
+    private Servent predecessor;
     private Servent[] successors;
-    private Servent predecessorInfo;
-    private List<Servent> allNodeInfo;
-    private Map<Integer, Integer> valueMap;
+    private Map<Key, Value> chunk;
 
     public ChordState() {
-        chordLevel = (int) Math.log(CHORD_SIZE);
-        successors = new Servent[chordLevel];
+        level = (int) Math.log(Config.CHORD_SIZE);
+        successors = new Servent[level];
+        servents = new TreeSet<>();
+        chunk = new HashMap<>();
+    }
 
-        for (int i = 0; i < chordLevel; i++) {
-            successors[i] = null;
+    public void initialize(Servent successor, Map<Key, Value> chunk) {
+        successors[0] = successor;
+
+        if (chunk != null) {
+            this.chunk.putAll(chunk);
         }
-
-        predecessorInfo = null;
-        valueMap = new HashMap<>();
-        allNodeInfo = new ArrayList<>();
-    }
-
-    public static int chordHash(int value) {
-        return 61 * value % CHORD_SIZE;
-    }
-
-    public void init(WelcomeAskMessage welcomeMsg) {
-        successors[0] = welcomeMsg.getSender();
-        valueMap = welcomeMsg.getValues();
     }
 
     public boolean isCollision(int chordId) {
@@ -42,7 +35,7 @@ public class ChordState {
             return true;
         }
 
-        for (Servent servent : allNodeInfo) {
+        for (Servent servent : servents) {
             if (servent.getChordId() == chordId) {
                 return true;
             }
@@ -51,181 +44,151 @@ public class ChordState {
         return false;
     }
 
-    public boolean isKeyMine(int key) {
-        if (predecessorInfo == null) {
+    public boolean containsKey(Key key) {
+        if (predecessor == null) {
             return true;
         }
 
-        int predecessorChordId = predecessorInfo.getChordId();
-        int myChordId = Config.LOCAL_SERVENT.getChordId();
+        int local = Config.LOCAL_SERVENT.getChordId();
+        int predecessor = this.predecessor.getChordId();
+        int id = key.get();
 
-        if (predecessorChordId < myChordId) {
-            return key <= myChordId && key > predecessorChordId;
-        }
-
-        return key <= myChordId || key > predecessorChordId;
+        return id <= local && id > predecessor || (local <= predecessor && (id <= local || id > predecessor));
     }
 
-    public Servent getServent(int key) {
-        if (isKeyMine(key)) {
+    public Servent getServent(Key key) {
+        if (containsKey(key)) {
             return Config.LOCAL_SERVENT;
         }
 
-        int startInd = 0;
+        int index = 0;
 
-        if (key < Config.LOCAL_SERVENT.getChordId()) {
+        if (key.get() < Config.LOCAL_SERVENT.getChordId()) {
             int skip = 1;
-            while (successors[skip].getChordId() > successors[startInd].getChordId()) {
-                startInd++;
+
+            while (successors[skip].getChordId() > successors[index].getChordId()) {
+                index++;
                 skip++;
             }
         }
 
-        int previousId = successors[startInd].getChordId();
+        int previous = successors[index].getChordId();
 
-        for (int i = startInd + 1; i < successors.length; i++) {
-            if (successors[i] == null) {
-                App.error("Couldn't find successor for " + key);
-                break;
-            }
+        for (int i = index + 1; i < successors.length; i++) {
+            int current = successors[i].getChordId();
 
-            int successorId = successors[i].getChordId();
-
-            if (successorId >= key) {
+            if (current >= key.get() || current < previous && previous < key.get()) {
                 return successors[i - 1];
             }
 
-            if (key > previousId && successorId < previousId) { //overflow
-                return successors[i - 1];
-            }
-
-            previousId = successorId;
+            previous = current;
         }
 
         return successors[0];
     }
 
-    private void updateSuccessorTable() {
-        int currentNodeIndex = 0;
-        Servent currentNode = allNodeInfo.get(currentNodeIndex);
-        successors[0] = currentNode;
+    private void updateSuccessors() {
+        int index = 0;
 
-        int currentIncrement = 2;
+        List<Servent> servents = new ArrayList<>(this.servents);
 
-        Servent previousNode = Config.LOCAL_SERVENT;
+        Servent currServent = servents.get(index);
+        Servent prevServent = Config.LOCAL_SERVENT;
 
-        for (int i = 1; i < chordLevel; i++, currentIncrement *= 2) {
-            int currentValue = (Config.LOCAL_SERVENT.getChordId() + currentIncrement) % CHORD_SIZE;
+        successors[index] = currServent;
 
-            int currentId = currentNode.getChordId();
-            int previousId = previousNode.getChordId();
+        for (int i = 1; i < level; i++) {
+            int currentValue = (Config.LOCAL_SERVENT.getChordId() + (int) Math.pow(2, i)) % Config.CHORD_SIZE;
+
+            int currId = currServent.getChordId();
+            int prevId = prevServent.getChordId();
 
             while (true) {
-                if (currentValue > currentId) {
-                    if (currentId > previousId || currentValue < previousId) {
-                        previousId = currentId;
-                        currentNodeIndex = (currentNodeIndex + 1) % allNodeInfo.size();
-                        currentNode = allNodeInfo.get(currentNodeIndex);
-                        currentId = currentNode.getChordId();
-                    } else {
-                        successors[i] = currentNode;
-                        break;
-                    }
+                Servent nextServent = servents.get((index + 1) % servents.size());
+                int nextId = nextServent.getChordId();
+
+                if ((currentValue > currId && currId > prevId || currentValue < prevId)
+                        || (nextId < currId && currentValue <= nextId)) {
+                    prevId = currId;
+                    index = (index + 1) % servents.size();
+                    currServent = servents.get(index);
+                    currId = currServent.getChordId();
                 } else {
-                    Servent nextNode = allNodeInfo.get((currentNodeIndex + 1) % allNodeInfo.size());
-                    int nextNodeId = nextNode.getChordId();
-                    if (nextNodeId < currentId && currentValue <= nextNodeId) {
-                        previousId = currentId;
-                        currentNodeIndex = (currentNodeIndex + 1) % allNodeInfo.size();
-                        currentNode = allNodeInfo.get(currentNodeIndex);
-                        currentId = currentNode.getChordId();
-                    } else {
-                        successors[i] = currentNode;
-                        break;
-                    }
+                    successors[i] = currServent;
+                    break;
                 }
             }
         }
     }
 
     public void addServents(List<Servent> newNodes) {
-        allNodeInfo.addAll(newNodes);
-        allNodeInfo.sort(new Comparator<Servent>() {
-            @Override
-            public int compare(Servent s1, Servent s2) {
-                return s1.getChordId() - s2.getChordId();
-            }
-        });
+        servents.addAll(newNodes);
 
-        List<Servent> newList = new ArrayList<>();
-        List<Servent> newList2 = new ArrayList<>();
+        List<Servent> after = new ArrayList<>();
+        List<Servent> before = new ArrayList<>();
 
-        int myId = Config.LOCAL_SERVENT.getChordId();
+        int local = Config.LOCAL_SERVENT.getChordId();
 
-        for (Servent serventInfo : allNodeInfo) {
-            if (serventInfo.getChordId() < myId) {
-                newList2.add(serventInfo);
+        for (Servent servent : servents) {
+            if (servent.getChordId() < local) {
+                before.add(servent);
             } else {
-                newList.add(serventInfo);
+                after.add(servent);
             }
         }
 
-        allNodeInfo.clear();
-        allNodeInfo.addAll(newList);
-        allNodeInfo.addAll(newList2);
+        servents.clear();
+        servents.addAll(after);
+        servents.addAll(before);
 
-        if (newList2.size() > 0) {
-            predecessorInfo = newList2.get(newList2.size() - 1);
+        if (before.isEmpty()) {
+            setPredecessor(after.get(after.size() - 1));
         } else {
-            predecessorInfo = newList.get(newList.size() - 1);
+            setPredecessor(before.get(before.size() - 1));
         }
 
-        updateSuccessorTable();
+        updateSuccessors();
     }
 
-    public void putValue(int key, int value) {
-        if (isKeyMine(key)) {
-            valueMap.put(key, value);
-        } else {
-            App.send(new PushMessage(getServent(key), key, value));
-        }
-    }
-
-    public int getValue(int key) {
-        if (isKeyMine(key)) {
-            return valueMap.getOrDefault(key, -1);
+    public Value getValue(Key key) {
+        if (containsKey(key)) {
+            return chunk.getOrDefault(key, new Value(-1));
         }
 
         App.send(new PullAskMessage(getServent(key), key));
 
-        return -2;
+        return null;
     }
 
-    public int getChordLevel() {
-        return chordLevel;
+    public void putValue(Key key, Value value) {
+        if (containsKey(key)) {
+            chunk.put(key, value);
+        } else {
+            App.send(new PushMessage(getServent(key), new Data(key, value)));
+        }
     }
 
-    public List<Servent> getSuccessors() {
-        return Arrays.asList(successors);
+    public Servent getPredecessor() {
+        return predecessor;
+    }
+
+    public void setPredecessor(Servent predecessor) {
+        this.predecessor = predecessor;
+    }
+
+    public Servent[] getSuccessors() {
+        return successors;
     }
 
     public Servent getNextServent() {
         return successors[0];
     }
 
-    public Servent getPredecessor() {
-        return predecessorInfo;
+    public Map<Key, Value> getChunk() {
+        return new ConcurrentHashMap<>(chunk);
     }
 
-    public void setPredecessor(Servent newNodeInfo) {
-        this.predecessorInfo = newNodeInfo;
-    }
-
-    public Map<Integer, Integer> getValueMap() {
-        return valueMap;
-    }
-
-    public void setValueMap(Map<Integer, Integer> valueMap) {
-        this.valueMap = valueMap;
+    public void setChunk(Map<Key, Value> chunk) {
+        this.chunk = new ConcurrentHashMap<>(chunk);
     }
 }

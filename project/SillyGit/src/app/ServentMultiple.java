@@ -18,22 +18,41 @@ public class ServentMultiple {
     public static void main(String[] args) {
         List<Process> servents = new ArrayList<>();
 
-        Config.load(TEST_DIR + "/servent_list.properties");
+        Config.load(TEST_DIR + "/app.properties");
 
         App.print("Starting multiple servents - Type \"stop\" to exit");
 
-        for (int i = 0; i < Config.SERVENT_COUNT; i++) {
+        for (int i = 0; i <= Config.SERVENT_COUNT; i++) {
             try {
-                ProcessBuilder builder = new ProcessBuilder("java", "-cp", OUT_DIR, "app.ServentSingle",
-                        TEST_DIR + "/servent_list.properties", String.valueOf(i));
+                String dir = "servent" + i;
 
-                builder.redirectOutput(new File(TEST_DIR + "/output/servent" + i + "_out.txt"));
-                builder.redirectError(new File(TEST_DIR + "/error/servent" + i + "_err.txt"));
-                builder.redirectInput(new File(TEST_DIR + "/input/servent" + i + "_in.txt"));
+                if (i == 0) {
+                    dir = "bootstrap";
+                }
+
+                ProcessBuilder builder = new ProcessBuilder("java", "-cp", OUT_DIR, "app.ServentSingle",
+                        TEST_DIR + "/app.properties", String.valueOf(i));
+
+                builder.redirectOutput(new File(TEST_DIR + "/output/" + dir + "_out.txt"));
+                builder.redirectError(new File(TEST_DIR + "/error/" + dir + "_err.txt"));
+
+                if (dir.contains("servent")) {
+                    builder.redirectInput(new File(TEST_DIR + "/input/" + dir + "_in.txt"));
+                }
 
                 servents.add(builder.start());
+
+                if (i > 0) {
+                    App.print(String.format("Started servent %d/%d", i, Config.SERVENT_COUNT));
+
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
             } catch (IOException e) {
-                App.error("Error while starting servents");
+                App.error(String.format("Error while starting servents (%s)", e.getMessage()));
             }
         }
 

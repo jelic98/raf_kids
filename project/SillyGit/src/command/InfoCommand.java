@@ -18,7 +18,6 @@ public class InfoCommand implements Command {
 
     @Override
     public void execute(String args) {
-        printServents(Config.LOCAL_SERVENT.getNeighbors(), "Neighbors");
         printServents(Config.CHORD.getSuccessors(), "Successors");
 
         printMessages(ServentState.getPendingMessages(), "PENDING");
@@ -27,7 +26,7 @@ public class InfoCommand implements Command {
         App.print("Clock: " + ServentState.getClock());
     }
 
-    private void printServents(List<Servent> servents, String type) {
+    private void printServents(Servent[] servents, String type) {
         StringBuilder sb = new StringBuilder();
 
         sb.append(type);

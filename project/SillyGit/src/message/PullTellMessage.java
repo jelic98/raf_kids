@@ -2,27 +2,25 @@ package message;
 
 import app.App;
 import app.Config;
+import data.Data;
 import app.Servent;
 
 public class PullTellMessage extends Message {
 
     private static final long serialVersionUID = 1L;
 
-    private int key;
-    private int value;
+    private Data data;
 
-    public PullTellMessage(Servent receiver, int key, int value) {
+    public PullTellMessage(Servent receiver, Data data) {
         super(Type.PULL_TELL, null, Config.LOCAL_SERVENT, receiver);
 
-        this.key = key;
-        this.value = value;
+        this.data = data;
     }
 
     public PullTellMessage(PullTellMessage m) {
         super(m);
 
-        key = m.key;
-        value = m.value;
+        data = m.data;
     }
 
     @Override
@@ -32,21 +30,17 @@ public class PullTellMessage extends Message {
 
     @Override
     protected void handle(MessageHandler handler) {
-        if (getValue() == -1) {
-            App.print("No such key: " + getKey());
+        if (getData().getValue() != null) {
+            App.print("No such key: " + getData().getKey());
         }
     }
 
     @Override
     public String toString() {
-        return getType() + " " + getKey() + ":" + getValue();
+        return getType() + " with data " + getData();
     }
 
-    public int getKey() {
-        return key;
-    }
-
-    public int getValue() {
-        return value;
+    public Data getData() {
+        return data;
     }
 }

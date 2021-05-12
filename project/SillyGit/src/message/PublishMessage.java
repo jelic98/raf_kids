@@ -28,7 +28,7 @@ public class PublishMessage extends Message {
     }
 
     @Override
-    protected void handle(MessageHandler handler) {
+    protected void handle() {
         Config.ACTIVE_SERVENTS.add(new Servent(getAddress()));
     }
 

@@ -34,7 +34,7 @@ public class UpdateMessage extends Message {
     }
 
     @Override
-    protected void handle(MessageHandler handler) {
+    protected void handle() {
         List<Servent> servents = new ArrayList<>();
 
         if (getSender().equals(Config.LOCAL)) {

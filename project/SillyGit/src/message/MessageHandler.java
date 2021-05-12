@@ -30,7 +30,7 @@ public class MessageHandler implements Runnable {
     public void run() {
         while (working) {
             try {
-                inbox.take().handle(this);
+                inbox.take().handle();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 break;

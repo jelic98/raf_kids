@@ -32,7 +32,7 @@ public class HailAskMessage extends Message {
     }
 
     @Override
-    protected void handle(MessageHandler handler) {
+    protected void handle() {
         Servent servent = null;
 
         if (!Config.ACTIVE_SERVENTS.isEmpty()) {

@@ -23,14 +23,13 @@ public class StopMessage extends Message {
     }
 
     @Override
-    protected void handle(MessageHandler handler) {
+    protected void handle() {
         if (Config.LOCAL.equals(Config.BOOTSTRAP)) {
             for (Servent servent : Config.ACTIVE_SERVENTS) {
                 App.send(redirect(servent));
             }
         }
 
-        handler.stop();
         ServentSingle.stop();
     }
 }

@@ -7,6 +7,7 @@ import message.MessageListener;
 
 public class ServentSingle {
 
+    private static MessageHandler handler;
     private static MessageListener listener;
     private static CommandParser parser;
     private static boolean isServent;
@@ -26,7 +27,8 @@ public class ServentSingle {
             App.print("Starting bootstrap server " + Config.LOCAL);
         }
 
-        new Thread(new MessageHandler()).start();
+        handler = new MessageHandler();
+        new Thread(handler).start();
 
         listener = new MessageListener();
         new Thread(listener).start();
@@ -42,10 +44,11 @@ public class ServentSingle {
     public static void stop() {
         App.print("Stopping");
 
-        listener.stop();
-
         if (isServent) {
             parser.stop();
         }
+
+        listener.stop();
+        handler.stop();
     }
 }

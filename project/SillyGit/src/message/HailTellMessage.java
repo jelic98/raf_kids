@@ -28,7 +28,7 @@ public class HailTellMessage extends Message {
     }
 
     @Override
-    protected void handle(MessageHandler handler) {
+    protected void handle() {
         Servent servent = getServent();
 
         if (servent == null) {

@@ -23,7 +23,7 @@ public class SorryMessage extends Message {
     }
 
     @Override
-    protected void handle(MessageHandler handler) {
+    protected void handle() {
         App.error("Cannot enter system");
         ServentSingle.stop();
         System.exit(0);

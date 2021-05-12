@@ -27,7 +27,7 @@ public class RegisterAskMessage extends Message {
     }
 
     @Override
-    protected void handle(MessageHandler handler) {
+    protected void handle() {
         Servent sender = getSender();
 
         if (Config.CHORD.isCollision(sender.getChordId())) {

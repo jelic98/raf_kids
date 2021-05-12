@@ -96,5 +96,5 @@ public abstract class Message implements Serializable {
 
     protected abstract Message copy();
 
-    protected abstract void handle(MessageHandler handler);
+    protected abstract void handle();
 }

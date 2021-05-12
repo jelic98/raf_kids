@@ -28,7 +28,7 @@ public class PushMessage extends Message {
     }
 
     @Override
-    protected void handle(MessageHandler handler) {
+    protected void handle() {
         Config.CHORD.putValue(getData().getKey(), getData().getValue());
     }
 

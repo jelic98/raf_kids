@@ -31,7 +31,7 @@ public class PullTellMessage extends Message {
     }
 
     @Override
-    protected void handle(MessageHandler handler) {
+    protected void handle() {
         Key key = getData().getKey();
         Value value = getData().getValue();
 

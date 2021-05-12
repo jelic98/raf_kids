@@ -32,7 +32,7 @@ public class RegisterTellMessage extends Message {
     }
 
     @Override
-    protected void handle(MessageHandler handler) {
+    protected void handle() {
         Config.CHORD.initialize(getSender(), getChunk());
 
         App.send(new PublishMessage());

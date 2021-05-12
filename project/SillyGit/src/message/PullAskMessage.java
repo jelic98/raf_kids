@@ -32,7 +32,7 @@ public class PullAskMessage extends Message {
     }
 
     @Override
-    protected void handle(MessageHandler handler) {
+    protected void handle() {
         Key key = getKey();
 
         if (Config.CHORD.containsKey(key)) {

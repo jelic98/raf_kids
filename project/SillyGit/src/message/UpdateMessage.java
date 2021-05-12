@@ -16,14 +16,10 @@ public class UpdateMessage extends Message {
 
     private final Set<Address> addresses;
 
-    public UpdateMessage(Servent receiver, Set<Address> addresses) {
-        super(null, Config.LOCAL_SERVENT, receiver);
+    public UpdateMessage() {
+        super(null, Config.LOCAL, Config.CHORD.getNextServent());
 
-        this.addresses = addresses;
-    }
-
-    public UpdateMessage(Servent receiver) {
-        this(receiver, new HashSet<>());
+        addresses = new HashSet<>();
     }
 
     public UpdateMessage(UpdateMessage m) {
@@ -41,14 +37,14 @@ public class UpdateMessage extends Message {
     protected void handle(MessageHandler handler) {
         List<Servent> servents = new ArrayList<>();
 
-        if (getSender().equals(Config.LOCAL_SERVENT)) {
+        if (getSender().equals(Config.LOCAL)) {
             for (Address address : getAddresses()) {
                 servents.add(new Servent(address));
             }
         } else {
             servents.add(getSender());
 
-            if (addresses.add(Config.LOCAL_SERVENT.getAddress())) {
+            if (addresses.add(Config.LOCAL.getAddress())) {
                 App.send(redirect(Config.CHORD.getNextServent()));
             }
         }

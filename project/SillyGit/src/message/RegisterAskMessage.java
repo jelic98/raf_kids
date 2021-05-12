@@ -14,7 +14,7 @@ public class RegisterAskMessage extends Message {
     private static final long serialVersionUID = 1L;
 
     public RegisterAskMessage(Servent receiver) {
-        super(null, Config.LOCAL_SERVENT, receiver);
+        super(null, Config.LOCAL, receiver);
     }
 
     public RegisterAskMessage(RegisterAskMessage m) {
@@ -50,12 +50,12 @@ public class RegisterAskMessage extends Message {
         Servent predecessor = Config.CHORD.getPredecessor();
 
         if (predecessor == null) {
-            predecessor = Config.LOCAL_SERVENT;
+            predecessor = Config.LOCAL;
         }
 
         Config.CHORD.setPredecessor(sender);
 
-        int myId = Config.LOCAL_SERVENT.getChordId();
+        int myId = Config.LOCAL.getChordId();
         int hisPredId = predecessor.getChordId();
         int newNodeId = sender.getChordId();
 

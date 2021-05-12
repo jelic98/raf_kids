@@ -15,7 +15,7 @@ public class RegisterTellMessage extends Message {
     private final Map<Key, Value> chunk;
 
     public RegisterTellMessage(Servent receiver, Map<Key, Value> chunk) {
-        super(null, Config.LOCAL_SERVENT, receiver);
+        super(null, Config.LOCAL, receiver);
 
         this.chunk = chunk;
     }
@@ -36,7 +36,7 @@ public class RegisterTellMessage extends Message {
         Config.CHORD.initialize(getSender(), getChunk());
 
         App.send(new PublishMessage());
-        App.send(new UpdateMessage(Config.CHORD.getNextServent()));
+        App.send(new UpdateMessage());
     }
 
     @Override

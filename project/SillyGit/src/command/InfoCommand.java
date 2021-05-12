@@ -13,7 +13,7 @@ public class InfoCommand implements Command {
 
     @Override
     public void execute(String args) {
-        App.print("Hash: " + Config.LOCAL_SERVENT.getChordId() + "/" + Config.CHORD_SIZE);
+        App.print("Hash: " + Config.LOCAL.getChordId() + "/" + Config.CHORD_SIZE);
 
         StringBuilder sb = new StringBuilder();
 

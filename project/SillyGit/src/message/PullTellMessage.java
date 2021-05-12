@@ -14,7 +14,7 @@ public class PullTellMessage extends Message {
     private final Data data;
 
     public PullTellMessage(Servent receiver, Data data) {
-        super(null, Config.LOCAL_SERVENT, receiver);
+        super(null, Config.LOCAL, receiver);
 
         this.data = data;
     }

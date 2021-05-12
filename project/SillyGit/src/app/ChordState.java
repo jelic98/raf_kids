@@ -3,7 +3,6 @@ package app;
 import data.Data;
 import data.Key;
 import data.Value;
-import message.Message;
 import message.PushMessage;
 
 import java.util.*;
@@ -33,7 +32,7 @@ public class ChordState {
     }
 
     public boolean isCollision(int chordId) {
-        if (chordId == Config.LOCAL_SERVENT.getChordId()) {
+        if (chordId == Config.LOCAL.getChordId()) {
             return true;
         }
 
@@ -51,7 +50,7 @@ public class ChordState {
             return true;
         }
 
-        int local = Config.LOCAL_SERVENT.getChordId();
+        int local = Config.LOCAL.getChordId();
         int predecessor = this.predecessor.getChordId();
         int id = key.get();
 
@@ -60,12 +59,12 @@ public class ChordState {
 
     public Servent getServent(Key key) {
         if (containsKey(key)) {
-            return Config.LOCAL_SERVENT;
+            return Config.LOCAL;
         }
 
         int index = 0;
 
-        if (key.get() < Config.LOCAL_SERVENT.getChordId()) {
+        if (key.get() < Config.LOCAL.getChordId()) {
             int skip = 1;
 
             while (successors[skip].getChordId() > successors[index].getChordId()) {
@@ -95,12 +94,12 @@ public class ChordState {
         List<Servent> servents = new ArrayList<>(this.servents);
 
         Servent currServent = servents.get(index);
-        Servent prevServent = Config.LOCAL_SERVENT;
+        Servent prevServent = Config.LOCAL;
 
         successors[index] = currServent;
 
         for (int i = 1; i < level; i++) {
-            int currentValue = (Config.LOCAL_SERVENT.getChordId() + (int) Math.pow(2, i)) % Config.CHORD_SIZE;
+            int currentValue = (Config.LOCAL.getChordId() + (int) Math.pow(2, i)) % Config.CHORD_SIZE;
 
             int currId = currServent.getChordId();
             int prevId = prevServent.getChordId();
@@ -129,7 +128,7 @@ public class ChordState {
         List<Servent> after = new ArrayList<>();
         List<Servent> before = new ArrayList<>();
 
-        int local = Config.LOCAL_SERVENT.getChordId();
+        int local = Config.LOCAL.getChordId();
 
         for (Servent servent : servents) {
             if (servent.getChordId() < local) {
@@ -150,12 +149,6 @@ public class ChordState {
         }
 
         updateSuccessors();
-    }
-
-    public void broadcast(Message message) {
-        for (Servent servent : servents) {
-            App.send(message.redirect(servent));
-        }
     }
 
     public Value getValue(Key key) {

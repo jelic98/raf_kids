@@ -35,7 +35,7 @@ public abstract class Message implements Serializable {
     }
 
     public Message(String text) {
-        this(text, Config.LOCAL_SERVENT, Config.LOCAL_SERVENT);
+        this(text, Config.LOCAL, Config.LOCAL);
     }
 
     public Message(Message m) {
@@ -63,7 +63,7 @@ public abstract class Message implements Serializable {
     public Message redirect(Servent receiver) {
         Message message = copy();
         message.receiver = receiver;
-        message.route.add(Config.LOCAL_SERVENT);
+        message.route.add(Config.LOCAL);
 
         return message;
     }

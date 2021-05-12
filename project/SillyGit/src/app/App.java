@@ -21,9 +21,7 @@ public class App {
 
         try {
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-
             message = (Message) ois.readObject();
-
             socket.close();
         } catch (Exception e) {
             error(String.format("Error while reading socket on %s:%d (%s)" + socket.getInetAddress(), socket.getPort(), e.getMessage()));
@@ -43,18 +41,18 @@ public class App {
     public static void send(Message message) {
         new Thread(() -> {
             try {
-                Thread.sleep(random.nextInt(501) + 500);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
+                Servent receiver = message.getReceiver();
 
-            Servent receiver = message.getReceiver();
+                if (MESSAGE_UTIL_PRINTING) {
+                    print(String.format("Outgoing: %s (%s->%s)", message, message.getSender(), message.getReceiver()));
+                }
 
-            if (MESSAGE_UTIL_PRINTING) {
-                print(String.format("Outgoing: %s (%s->%s)", message, message.getSender(), message.getReceiver()));
-            }
+                try {
+                    Thread.sleep(random.nextInt(501) + 500);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
 
-            try {
                 Address address = receiver.getAddress();
                 Socket sendSocket = new Socket(address.getHost(), address.getPort());
 
@@ -63,7 +61,7 @@ public class App {
                 oos.flush();
 
                 sendSocket.close();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 error(String.format("Cannot send message %s (%s)", message, e.getMessage()));
             }
         }).start();

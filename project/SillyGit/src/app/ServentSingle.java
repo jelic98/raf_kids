@@ -19,11 +19,11 @@ public class ServentSingle {
         isServent = servent > 0;
 
         if (isServent) {
-            App.print("Starting servent " + Config.LOCAL_SERVENT);
+            App.print("Starting servent " + Config.LOCAL);
         } else {
-            Config.LOCAL_SERVENT = Config.BOOTSTRAP_SERVER;
+            Config.LOCAL = Config.BOOTSTRAP;
 
-            App.print("Starting bootstrap server " + Config.LOCAL_SERVENT);
+            App.print("Starting bootstrap server " + Config.LOCAL);
         }
 
         new Thread(new MessageHandler()).start();
@@ -47,7 +47,5 @@ public class ServentSingle {
         if (isServent) {
             parser.stop();
         }
-
-        System.exit(0);
     }
 }

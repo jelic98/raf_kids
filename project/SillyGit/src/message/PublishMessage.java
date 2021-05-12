@@ -11,9 +11,9 @@ public class PublishMessage extends Message {
     private final Address address;
 
     public PublishMessage() {
-        super(null, Config.LOCAL_SERVENT, Config.BOOTSTRAP_SERVER);
+        super(null, Config.LOCAL, Config.BOOTSTRAP);
 
-        this.address = Config.LOCAL_SERVENT.getAddress();
+        address = Config.LOCAL.getAddress();
     }
 
     public PublishMessage(PublishMessage m) {
@@ -29,7 +29,7 @@ public class PublishMessage extends Message {
 
     @Override
     protected void handle(MessageHandler handler) {
-        Config.BOOTSTRAP_SERVENTS.add(new Servent(getAddress()));
+        Config.ACTIVE_SERVENTS.add(new Servent(getAddress()));
     }
 
     @Override

@@ -15,7 +15,7 @@ public class PullAskMessage extends Message {
     private final Key key;
 
     public PullAskMessage(Key key) {
-        super(null, Config.LOCAL_SERVENT, Config.CHORD.getServent(key));
+        super(null, Config.LOCAL, Config.CHORD.getServent(key));
 
         this.key = key;
     }

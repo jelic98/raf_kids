@@ -5,7 +5,6 @@ import app.App;
 import app.Config;
 import app.Servent;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 public class HailAskMessage extends Message {
@@ -16,9 +15,9 @@ public class HailAskMessage extends Message {
     private final Address address;
 
     public HailAskMessage() {
-        super(null, Config.LOCAL_SERVENT, Config.BOOTSTRAP_SERVER);
+        super(null, Config.LOCAL, Config.BOOTSTRAP);
 
-        address = Config.LOCAL_SERVENT.getAddress();
+        address = Config.LOCAL.getAddress();
     }
 
     public HailAskMessage(HailAskMessage m) {
@@ -36,12 +35,9 @@ public class HailAskMessage extends Message {
     protected void handle(MessageHandler handler) {
         Servent servent = null;
 
-        if (Config.BOOTSTRAP_SERVENTS == null) {
-            Config.BOOTSTRAP_SERVENTS = new ArrayList<>();
-            Config.BOOTSTRAP_SERVENTS.add(getSender());
-        } else {
-            int index = random.nextInt(Config.BOOTSTRAP_SERVENTS.size());
-            servent = Config.BOOTSTRAP_SERVENTS.get(index);
+        if (!Config.ACTIVE_SERVENTS.isEmpty()) {
+            int index = random.nextInt(Config.ACTIVE_SERVENTS.size());
+            servent = Config.ACTIVE_SERVENTS.get(index);
         }
 
         App.send(new HailTellMessage(getSender(), servent));

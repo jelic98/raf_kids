@@ -2,6 +2,7 @@ package message;
 
 import app.App;
 import app.Config;
+import app.Servent;
 import app.ServentSingle;
 
 public class StopMessage extends Message {
@@ -9,7 +10,7 @@ public class StopMessage extends Message {
     private static final long serialVersionUID = 1L;
 
     public StopMessage() {
-        super(null, Config.LOCAL_SERVENT, Config.BOOTSTRAP_SERVER);
+        super(null, Config.LOCAL, Config.BOOTSTRAP);
     }
 
     public StopMessage(StopMessage m) {
@@ -23,8 +24,10 @@ public class StopMessage extends Message {
 
     @Override
     protected void handle(MessageHandler handler) {
-        if (Config.LOCAL_SERVENT.equals(Config.BOOTSTRAP_SERVER)) {
-            Config.CHORD.broadcast(this);
+        if (Config.LOCAL.equals(Config.BOOTSTRAP)) {
+            for (Servent servent : Config.ACTIVE_SERVENTS) {
+                App.send(redirect(servent));
+            }
         }
 
         handler.stop();

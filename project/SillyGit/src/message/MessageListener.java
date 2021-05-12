@@ -15,7 +15,7 @@ public class MessageListener implements Runnable {
 
     @Override
     public void run() {
-        int port = Config.LOCAL_SERVENT.getAddress().getPort();
+        int port = Config.LOCAL.getAddress().getPort();
 
         ServerSocket server = null;
 
@@ -25,6 +25,7 @@ public class MessageListener implements Runnable {
         } catch (IOException e) {
             App.error(String.format("Cannot open listener socket on port %s (%s)", port, e.getMessage()));
             ServentSingle.stop();
+            System.exit(0);
         }
 
         while (working) {

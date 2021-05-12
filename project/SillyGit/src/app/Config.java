@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Random;
 
 public class Config {
 
@@ -15,6 +16,7 @@ public class Config {
     public static Servent LOCAL;
     public static List<Servent> ACTIVE_SERVENTS;
     public static ChordState CHORD;
+    public static Random RANDOM = new Random(1);
 
     public static Properties load(String path) {
         Properties properties = new Properties();

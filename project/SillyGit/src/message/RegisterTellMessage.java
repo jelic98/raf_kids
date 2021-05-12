@@ -36,7 +36,7 @@ public class RegisterTellMessage extends Message {
         Config.CHORD.initialize(getSender(), getChunk());
 
         App.send(new PublishMessage());
-        App.send(new UpdateMessage());
+        // TODO App.send(new UpdateMessage());
     }
 
     @Override

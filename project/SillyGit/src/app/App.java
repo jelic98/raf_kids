@@ -14,7 +14,6 @@ import java.util.Random;
 public class App {
 
     private static final boolean MESSAGE_UTIL_PRINTING = true;
-    private static final Random random = new Random();
 
     public static Message read(Socket socket) {
         Message message = null;
@@ -48,7 +47,7 @@ public class App {
                 }
 
                 try {
-                    Thread.sleep(random.nextInt(501) + 500);
+                    Thread.sleep(Config.RANDOM.nextInt(501) + 500);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }

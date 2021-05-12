@@ -122,19 +122,19 @@ public class ChordState {
         }
     }
 
-    public void addServents(List<Servent> newNodes) {
-        servents.addAll(newNodes);
+    public void addServents(Servent servent) {
+        servents.add(servent);
 
         List<Servent> after = new ArrayList<>();
         List<Servent> before = new ArrayList<>();
 
         int local = Config.LOCAL.getChordId();
 
-        for (Servent servent : servents) {
-            if (servent.getChordId() < local) {
-                before.add(servent);
+        for (Servent s : servents) {
+            if (s.getChordId() < local) {
+                before.add(s);
             } else {
-                after.add(servent);
+                after.add(s);
             }
         }
 

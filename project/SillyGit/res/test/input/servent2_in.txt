@@ -1,4 +1,0 @@
-pause 40000
-info
-pause 5000
-pull 2

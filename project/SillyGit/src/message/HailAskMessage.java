@@ -10,7 +10,6 @@ import java.util.Random;
 public class HailAskMessage extends Message {
 
     private static final long serialVersionUID = 1L;
-    private static final Random random = new Random(System.currentTimeMillis());
 
     private final Address address;
 
@@ -36,7 +35,7 @@ public class HailAskMessage extends Message {
         Servent servent = null;
 
         if (!Config.ACTIVE_SERVENTS.isEmpty()) {
-            int index = random.nextInt(Config.ACTIVE_SERVENTS.size());
+            int index = Config.RANDOM.nextInt(Config.ACTIVE_SERVENTS.size());
             servent = Config.ACTIVE_SERVENTS.get(index);
         }
 

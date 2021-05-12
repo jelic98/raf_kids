@@ -1,5 +1,2 @@
-pause 10000
-info
-push 25 3
-pause 5000
-pull 25
+pause 20000
+stop

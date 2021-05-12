@@ -5,10 +5,7 @@ import app.App;
 import app.Config;
 import app.Servent;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class UpdateMessage extends Message {
 
@@ -35,21 +32,15 @@ public class UpdateMessage extends Message {
 
     @Override
     protected void handle() {
-        List<Servent> servents = new ArrayList<>();
-
         if (getSender().equals(Config.LOCAL)) {
             for (Address address : getAddresses()) {
-                servents.add(new Servent(address));
+                Config.CHORD.addServents(new Servent(address));
             }
         } else {
-            servents.add(getSender());
-
-            if (addresses.add(Config.LOCAL.getAddress())) {
-                App.send(redirect(Config.CHORD.getNextServent()));
-            }
+            Config.CHORD.addServents(getSender());
+            getAddresses().add(Config.LOCAL.getAddress());
+            App.send(redirect(Config.CHORD.getNextServent()));
         }
-
-        Config.CHORD.addServents(servents);
     }
 
     @Override

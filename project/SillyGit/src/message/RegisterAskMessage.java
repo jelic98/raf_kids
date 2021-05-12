@@ -42,7 +42,8 @@ public class RegisterAskMessage extends Message {
             transferChunk(Config.CHORD.getChunk(), chunk, sender);
             App.send(new RegisterTellMessage(sender, chunk));
         } else {
-            App.send(redirect(Config.CHORD.getServent(serventId)));
+            Servent a = Config.CHORD.getServent(serventId);
+            App.send(redirect(a));
         }
     }
 

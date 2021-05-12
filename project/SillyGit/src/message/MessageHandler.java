@@ -1,5 +1,7 @@
 package message;
 
+import app.App;
+
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 

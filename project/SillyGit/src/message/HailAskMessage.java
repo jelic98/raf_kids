@@ -1,11 +1,9 @@
 package message;
 
-import app.Address;
+import servent.Address;
 import app.App;
 import app.Config;
-import app.Servent;
-
-import java.util.Random;
+import servent.Servent;
 
 public class HailAskMessage extends Message {
 

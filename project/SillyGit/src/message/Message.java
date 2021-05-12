@@ -1,7 +1,7 @@
 package message;
 
 import app.Config;
-import app.Servent;
+import servent.Servent;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -17,8 +17,8 @@ public abstract class Message implements Serializable {
     private final int id;
     private final String text;
     private final Servent sender;
-    private Servent receiver;
     private final List<Servent> route;
+    private Servent receiver;
 
     public Message(int id, String text, Servent sender, Servent receiver) {
         this.id = id;

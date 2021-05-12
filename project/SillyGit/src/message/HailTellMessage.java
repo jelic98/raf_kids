@@ -2,7 +2,7 @@ package message;
 
 import app.App;
 import app.Config;
-import app.Servent;
+import servent.Servent;
 
 public class HailTellMessage extends Message {
 
@@ -32,8 +32,6 @@ public class HailTellMessage extends Message {
         Servent servent = getServent();
 
         if (servent == null) {
-            Config.CHORD.initialize(Config.LOCAL, null);
-
             App.send(new PublishMessage());
         } else {
             App.send(new RegisterAskMessage(servent));

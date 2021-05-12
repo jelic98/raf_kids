@@ -1,15 +1,15 @@
 package app;
 
 import message.Message;
+import servent.Address;
+import servent.Servent;
 
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Random;
 
 public class App {
 
@@ -27,9 +27,9 @@ public class App {
         }
 
         if (MESSAGE_UTIL_PRINTING) {
-            if(message == null) {
+            if (message == null) {
                 print("Received NULL message");
-            }else {
+            } else {
                 print(String.format("Incoming: %s (%s->%s)", message, message.getSender(), message.getReceiver()));
             }
         }

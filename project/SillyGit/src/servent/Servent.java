@@ -1,4 +1,4 @@
-package app;
+package servent;
 
 import java.io.Serializable;
 
@@ -20,13 +20,9 @@ public class Servent implements Serializable, Comparable<Servent> {
         return address;
     }
 
-    public int getChordId() {
-        return hashCode() % Config.CHORD_SIZE;
-    }
-
     @Override
     public boolean equals(Object obj) {
-        if(obj instanceof Servent) {
+        if (obj instanceof Servent) {
             Servent s = (Servent) obj;
             return getAddress().equals(s.getAddress());
         }
@@ -46,6 +42,6 @@ public class Servent implements Serializable, Comparable<Servent> {
 
     @Override
     public int compareTo(Servent s) {
-        return Integer.compare(getChordId(), s.getChordId());
+        return Integer.compare(hashCode(), s.hashCode());
     }
 }

@@ -1,28 +1,17 @@
 package message;
 
-import app.App;
-
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 public class MessageHandler implements Runnable {
 
     private static final int INBOX_SIZE = 10;
-
-    private static MessageHandler instance;
-
-    private final BlockingQueue<Message> inbox;
-    private volatile boolean working = true;
-
-    public MessageHandler() {
-        inbox = new ArrayBlockingQueue<>(INBOX_SIZE);
-
-        instance = this;
-    }
+    private static final BlockingQueue<Message> inbox = new ArrayBlockingQueue<>(INBOX_SIZE);
+    private static volatile boolean working = true;
 
     public static void handle(Message message) {
         try {
-            instance.inbox.put(message);
+            inbox.put(message);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }

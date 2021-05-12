@@ -19,11 +19,11 @@ public class PullCommand implements Command {
     @Override
     public void execute(String args) {
         Key key = new Key(Integer.parseInt(args));
-        Value value = Config.CHORD.getValue(key);
+        Value value = Config.SYSTEM.getValue(key);
 
         if (value == null) {
             App.send(new PullAskMessage(key));
-        }else {
+        } else {
             MessageHandler.handle(new PullTellMessage(null, new Data(key, value)));
         }
     }

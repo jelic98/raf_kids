@@ -1,7 +1,7 @@
 package message;
 
 import app.Config;
-import app.Servent;
+import servent.Servent;
 import data.Data;
 
 public class PushMessage extends Message {
@@ -29,7 +29,7 @@ public class PushMessage extends Message {
 
     @Override
     protected void handle() {
-        Config.CHORD.putValue(getData().getKey(), getData().getValue());
+        Config.SYSTEM.putValue(getData().getKey(), getData().getValue());
     }
 
     @Override

@@ -1,8 +1,8 @@
 package message;
 
-import app.Address;
+import servent.Address;
 import app.Config;
-import app.Servent;
+import servent.Servent;
 
 public class PublishMessage extends Message {
 

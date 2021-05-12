@@ -2,12 +2,8 @@ package message;
 
 import app.App;
 import app.Config;
-import app.Servent;
+import servent.Servent;
 import data.Key;
-import data.Value;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class RegisterAskMessage extends Message {
 
@@ -29,72 +25,18 @@ public class RegisterAskMessage extends Message {
     @Override
     protected void handle() {
         Servent sender = getSender();
+        Key senderKey = new Key(sender.hashCode());
 
-        if (Config.CHORD.isCollision(sender.getChordId())) {
+        if (Config.SYSTEM.duplicateKey(senderKey)) {
             App.send(new SorryMessage(getSender()));
             return;
         }
 
-        Key serventId = new Key(sender.getChordId());
-
-        if (Config.CHORD.containsKey(serventId)) {
-            Map<Key, Value> chunk = new HashMap<>();
-            transferChunk(Config.CHORD.getChunk(), chunk, sender);
-            App.send(new RegisterTellMessage(sender, chunk));
+        if (Config.SYSTEM.containsKey(senderKey)) {
+            App.send(new RegisterTellMessage(sender, null));
         } else {
-            Servent a = Config.CHORD.getServent(serventId);
-            App.send(redirect(a));
+            App.send(redirect(Config.SYSTEM.getServent(senderKey)));
         }
-    }
-
-    private void transferChunk(Map<Key, Value> from, Map<Key, Value> to, Servent sender) {
-        Servent predecessor = Config.CHORD.getPredecessor();
-
-        if (predecessor == null) {
-            predecessor = Config.LOCAL;
-        }
-
-        Config.CHORD.setPredecessor(sender);
-
-        int myId = Config.LOCAL.getChordId();
-        int hisPredId = predecessor.getChordId();
-        int newNodeId = sender.getChordId();
-
-        for (Map.Entry<Key, Value> valueEntry : from.entrySet()) {
-            int key = valueEntry.getKey().get();
-
-            if (hisPredId == myId) {
-                if (myId < newNodeId) {
-                    if (key <= newNodeId && key > myId) {
-                        to.put(valueEntry.getKey(), valueEntry.getValue());
-                    }
-                } else {
-                    if (key <= newNodeId || key > myId) {
-                        to.put(valueEntry.getKey(), valueEntry.getValue());
-                    }
-                }
-            } else if (hisPredId < myId) {
-                if (key <= newNodeId) {
-                    to.put(valueEntry.getKey(), valueEntry.getValue());
-                }
-            } else {
-                if (hisPredId > newNodeId) {
-                    if (key <= newNodeId || key > hisPredId) {
-                        to.put(valueEntry.getKey(), valueEntry.getValue());
-                    }
-                } else {
-                    if (key <= newNodeId && key > hisPredId) {
-                        to.put(valueEntry.getKey(), valueEntry.getValue());
-                    }
-                }
-            }
-        }
-
-        for (Key key : to.keySet()) {
-            from.remove(key);
-        }
-
-        Config.CHORD.setChunk(from);
     }
 }
 

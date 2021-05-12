@@ -1,10 +1,12 @@
 package data;
 
-public class Value extends Field<Integer> {
+import file.FileData;
+
+public class Value extends Field<FileData> {
 
     private static final long serialVersionUID = 1L;
 
-    public Value(Integer field) {
+    public Value(FileData field) {
         super(field);
     }
 }

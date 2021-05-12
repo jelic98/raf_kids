@@ -6,8 +6,6 @@ import data.Data;
 import data.Key;
 import data.Value;
 
-import java.util.Map;
-
 public class PullAskMessage extends Message {
 
     private static final long serialVersionUID = 1L;
@@ -15,7 +13,7 @@ public class PullAskMessage extends Message {
     private final Key key;
 
     public PullAskMessage(Key key) {
-        super(null, Config.LOCAL, Config.CHORD.getServent(key));
+        super(null, Config.LOCAL, Config.SYSTEM.getServent(key));
 
         this.key = key;
     }
@@ -35,17 +33,12 @@ public class PullAskMessage extends Message {
     protected void handle() {
         Key key = getKey();
 
-        if (Config.CHORD.containsKey(key)) {
-            Map<Key, Value> chunk = Config.CHORD.getChunk();
-            Value value = null;
-
-            if (chunk.containsKey(key)) {
-                value = chunk.get(key);
-            }
+        if (Config.SYSTEM.containsKey(key)) {
+            Value value = Config.SYSTEM.getValue(key);
 
             App.send(new PullTellMessage(getSender(), new Data(key, value)));
         } else {
-            App.send(redirect(Config.CHORD.getServent(key)));
+            App.send(redirect(Config.SYSTEM.getServent(key)));
         }
     }
 

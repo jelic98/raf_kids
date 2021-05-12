@@ -2,7 +2,7 @@ package message;
 
 import app.App;
 import app.Config;
-import app.Servent;
+import servent.Servent;
 import app.ServentSingle;
 
 public class StopMessage extends Message {

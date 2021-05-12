@@ -2,7 +2,7 @@ package message;
 
 import app.App;
 import app.Config;
-import app.Servent;
+import servent.Servent;
 import data.Data;
 import data.Key;
 import data.Value;
@@ -37,7 +37,7 @@ public class PullTellMessage extends Message {
 
         if (value == null) {
             App.print("Unknown key: " + key);
-        }else {
+        } else {
             App.print("Pulled: " + key + "->" + value);
         }
     }

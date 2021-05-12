@@ -2,7 +2,7 @@ package message;
 
 import app.App;
 import app.Config;
-import app.Servent;
+import servent.Servent;
 import data.Key;
 import data.Value;
 
@@ -33,10 +33,7 @@ public class RegisterTellMessage extends Message {
 
     @Override
     protected void handle() {
-        Config.CHORD.initialize(getSender(), getChunk());
-
         App.send(new PublishMessage());
-        // TODO App.send(new UpdateMessage());
     }
 
     @Override

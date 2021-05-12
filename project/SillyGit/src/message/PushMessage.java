@@ -11,7 +11,7 @@ public class PushMessage extends Message {
     private final Data data;
 
     public PushMessage(Servent receiver, Data data) {
-        super(Type.PUSH, null, Config.LOCAL_SERVENT, receiver);
+        super(null, Config.LOCAL_SERVENT, receiver);
 
         this.data = data;
     }
@@ -34,7 +34,7 @@ public class PushMessage extends Message {
 
     @Override
     public String toString() {
-        return getType() + " with data " + getData();
+        return super.toString() + " with data " + getData();
     }
 
     public Data getData() {

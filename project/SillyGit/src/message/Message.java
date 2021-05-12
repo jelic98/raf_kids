@@ -15,15 +15,13 @@ public abstract class Message implements Serializable {
     private static final AtomicInteger messageCounter = new AtomicInteger(0);
 
     private final int id;
-    private final Type type;
     private final String text;
     private final Servent sender;
     private Servent receiver;
     private final List<Servent> route;
 
-    public Message(int id, Type type, String text, Servent sender, Servent receiver) {
+    public Message(int id, String text, Servent sender, Servent receiver) {
         this.id = id;
-        this.type = type;
         this.text = text;
         this.sender = sender;
         this.receiver = receiver;
@@ -32,33 +30,22 @@ public abstract class Message implements Serializable {
         route.add(sender);
     }
 
-    public Message(Type type, String text, Servent sender, Servent receiver) {
-        this(messageCounter.getAndIncrement(), type, text, sender, receiver);
+    public Message(String text, Servent sender, Servent receiver) {
+        this(messageCounter.getAndIncrement(), text, sender, receiver);
     }
 
-    public Message(Type type, String text) {
-        this(type, text, Config.LOCAL_SERVENT, Config.LOCAL_SERVENT);
+    public Message(String text) {
+        this(text, Config.LOCAL_SERVENT, Config.LOCAL_SERVENT);
     }
 
     public Message(Message m) {
-        this(m.id, m.type, m.text, m.sender, m.receiver);
+        this(m.id, m.text, m.sender, m.receiver);
 
         route.addAll(m.route);
     }
 
-    public Type getType() {
-        return type;
-    }
-
     public Servent getSender() {
         return sender;
-    }
-
-    public Message setSender() {
-        Message message = copy();
-        message.route.add(Config.LOCAL_SERVENT);
-
-        return message;
     }
 
     public Servent getLastSender() {
@@ -73,9 +60,10 @@ public abstract class Message implements Serializable {
         return receiver;
     }
 
-    public Message setReceiver(Servent receiver) {
+    public Message redirect(Servent receiver) {
         Message message = copy();
         message.receiver = receiver;
+        message.route.add(Config.LOCAL_SERVENT);
 
         return message;
     }
@@ -97,25 +85,16 @@ public abstract class Message implements Serializable {
 
     @Override
     public String toString() {
-        return type + " " + text;
+        String type = getClass().getSimpleName().replace("Message", "").replaceAll("([a-z])([A-Z]+)", "$1_$2").toUpperCase();
+
+        if (text == null) {
+            return type;
+        } else {
+            return type + " " + text;
+        }
     }
 
     protected abstract Message copy();
 
     protected abstract void handle(MessageHandler handler);
-
-    public enum Type {
-        BROADCAST,
-        HAIL_ASK,
-        HAIL_TELL,
-        REGISTER_ASK,
-        REGISTER_TELL,
-        SORRY,
-        PUBLISH,
-        UPDATE,
-        PULL_ASK,
-        PULL_TELL,
-        PUSH,
-        STOP
-    }
 }

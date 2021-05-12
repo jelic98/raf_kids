@@ -4,6 +4,8 @@ import app.App;
 import app.Config;
 import app.Servent;
 import data.Data;
+import data.Key;
+import data.Value;
 
 public class PullTellMessage extends Message {
 
@@ -12,7 +14,7 @@ public class PullTellMessage extends Message {
     private final Data data;
 
     public PullTellMessage(Servent receiver, Data data) {
-        super(Type.PULL_TELL, null, Config.LOCAL_SERVENT, receiver);
+        super(null, Config.LOCAL_SERVENT, receiver);
 
         this.data = data;
     }
@@ -30,14 +32,19 @@ public class PullTellMessage extends Message {
 
     @Override
     protected void handle(MessageHandler handler) {
-        if (getData().getValue() != null) {
-            App.print("No such key: " + getData().getKey());
+        Key key = getData().getKey();
+        Value value = getData().getValue();
+
+        if (value == null) {
+            App.print("Unknown key: " + key);
+        }else {
+            App.print("Pulled: " + key + "->" + value);
         }
     }
 
     @Override
     public String toString() {
-        return getType() + " with data " + getData();
+        return super.toString() + " with data " + getData();
     }
 
     public Data getData() {

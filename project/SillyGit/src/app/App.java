@@ -30,7 +30,11 @@ public class App {
         }
 
         if (MESSAGE_UTIL_PRINTING) {
-            print("Got message " + message);
+            if(message == null) {
+                print("Received NULL message");
+            }else {
+                print(String.format("Incoming: %s (%s->%s)", message, message.getSender(), message.getReceiver()));
+            }
         }
 
         return message;
@@ -47,7 +51,7 @@ public class App {
             Servent receiver = message.getReceiver();
 
             if (MESSAGE_UTIL_PRINTING) {
-                print("Sending message " + message);
+                print(String.format("Outgoing: %s (%s->%s)", message, message.getSender(), message.getReceiver()));
             }
 
             try {

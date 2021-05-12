@@ -2,8 +2,12 @@ package command;
 
 import app.App;
 import app.Config;
+import data.Data;
 import data.Key;
 import data.Value;
+import message.MessageHandler;
+import message.PullAskMessage;
+import message.PullTellMessage;
 
 public class PullCommand implements Command {
 
@@ -18,11 +22,9 @@ public class PullCommand implements Command {
         Value value = Config.CHORD.getValue(key);
 
         if (value == null) {
-            App.print("Pulling key: " + key);
-        } else if (value.get() == -1) {
-            App.print("Unknown key: " + key);
-        } else {
-            App.print("Pulled: " + key + "-> " + value);
+            App.send(new PullAskMessage(key));
+        }else {
+            MessageHandler.handle(new PullTellMessage(null, new Data(key, value)));
         }
     }
 }

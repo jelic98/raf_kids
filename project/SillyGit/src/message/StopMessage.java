@@ -1,11 +1,15 @@
 package message;
 
-public class StopMessage extends BroadcastMessage {
+import app.App;
+import app.Config;
+import app.ServentSingle;
+
+public class StopMessage extends Message {
 
     private static final long serialVersionUID = 1L;
 
     public StopMessage() {
-        super(Type.STOP, null);
+        super(null, Config.LOCAL_SERVENT, Config.BOOTSTRAP_SERVER);
     }
 
     public StopMessage(StopMessage m) {
@@ -18,7 +22,12 @@ public class StopMessage extends BroadcastMessage {
     }
 
     @Override
-    public String toString() {
-        return getType() + " with clock " + getClock();
+    protected void handle(MessageHandler handler) {
+        if (Config.LOCAL_SERVENT.equals(Config.BOOTSTRAP_SERVER)) {
+            Config.CHORD.broadcast(this);
+        }
+
+        handler.stop();
+        ServentSingle.stop();
     }
 }

@@ -2,6 +2,7 @@ package message;
 
 import app.App;
 import app.Config;
+import app.ServentSingle;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -23,7 +24,7 @@ public class MessageListener implements Runnable {
             server.setSoTimeout(1000);
         } catch (IOException e) {
             App.error(String.format("Cannot open listener socket on port %s (%s)", port, e.getMessage()));
-            System.exit(0);
+            ServentSingle.stop();
         }
 
         while (working) {

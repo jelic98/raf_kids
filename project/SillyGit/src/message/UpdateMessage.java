@@ -17,7 +17,7 @@ public class UpdateMessage extends Message {
     private final Set<Address> addresses;
 
     public UpdateMessage(Servent receiver, Set<Address> addresses) {
-        super(Type.UPDATE, null, Config.LOCAL_SERVENT, receiver);
+        super(null, Config.LOCAL_SERVENT, receiver);
 
         this.addresses = addresses;
     }
@@ -49,7 +49,7 @@ public class UpdateMessage extends Message {
             servents.add(getSender());
 
             if (addresses.add(Config.LOCAL_SERVENT.getAddress())) {
-                App.send(setReceiver(Config.CHORD.getNextServent()).setSender());
+                App.send(redirect(Config.CHORD.getNextServent()));
             }
         }
 
@@ -58,7 +58,7 @@ public class UpdateMessage extends Message {
 
     @Override
     public String toString() {
-        return getType() + " with addresses " + getAddresses();
+        return super.toString() + " with addresses " + getAddresses();
     }
 
     public Set<Address> getAddresses() {

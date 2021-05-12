@@ -15,8 +15,6 @@ public class ServentMultiple {
 
         Config.load(TEST_DIR + "/app.properties");
 
-        App.print("Starting multiple servents - Type \"stop\" to exit");
-
         for (int i = 0; i <= Config.SERVENT_COUNT; i++) {
             try {
                 String dir = "servent" + i;

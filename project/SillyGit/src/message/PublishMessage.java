@@ -11,7 +11,7 @@ public class PublishMessage extends Message {
     private final Address address;
 
     public PublishMessage() {
-        super(Type.PUBLISH, null, Config.LOCAL_SERVENT, new Servent(Config.BOOTSTRAP_HOST, Config.BOOTSTRAP_PORT));
+        super(null, Config.LOCAL_SERVENT, Config.BOOTSTRAP_SERVER);
 
         this.address = Config.LOCAL_SERVENT.getAddress();
     }
@@ -34,7 +34,7 @@ public class PublishMessage extends Message {
 
     @Override
     public String toString() {
-        return getType() + " with address " + getAddress();
+        return super.toString() + " with address " + getAddress();
     }
 
     public Address getAddress() {

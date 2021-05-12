@@ -1,4 +1,5 @@
 pause 10000
+info
 push 25 3
-pause 4000
+pause 5000
 pull 25

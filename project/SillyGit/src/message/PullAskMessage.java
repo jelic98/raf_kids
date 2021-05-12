@@ -2,7 +2,6 @@ package message;
 
 import app.App;
 import app.Config;
-import app.Servent;
 import data.Data;
 import data.Key;
 import data.Value;
@@ -15,8 +14,8 @@ public class PullAskMessage extends Message {
 
     private final Key key;
 
-    public PullAskMessage(Servent receiver, Key key) {
-        super(Type.PULL_ASK, null, Config.LOCAL_SERVENT, receiver);
+    public PullAskMessage(Key key) {
+        super(null, Config.LOCAL_SERVENT, Config.CHORD.getServent(key));
 
         this.key = key;
     }
@@ -46,13 +45,13 @@ public class PullAskMessage extends Message {
 
             App.send(new PullTellMessage(getSender(), new Data(key, value)));
         } else {
-            App.send(setReceiver(Config.CHORD.getServent(key)));
+            App.send(redirect(Config.CHORD.getServent(key)));
         }
     }
 
     @Override
     public String toString() {
-        return getType() + " with key " + getKey();
+        return super.toString() + " with key " + getKey();
     }
 
     public Key getKey() {

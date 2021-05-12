@@ -15,7 +15,7 @@ public class RegisterTellMessage extends Message {
     private final Map<Key, Value> chunk;
 
     public RegisterTellMessage(Servent receiver, Map<Key, Value> chunk) {
-        super(Type.REGISTER_TELL, null, Config.LOCAL_SERVENT, receiver);
+        super(null, Config.LOCAL_SERVENT, receiver);
 
         this.chunk = chunk;
     }
@@ -41,7 +41,7 @@ public class RegisterTellMessage extends Message {
 
     @Override
     public String toString() {
-        return getType() + " with values " + getChunk();
+        return super.toString() + " with values " + getChunk();
     }
 
     public Map<Key, Value> getChunk() {

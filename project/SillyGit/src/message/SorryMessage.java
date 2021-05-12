@@ -3,13 +3,14 @@ package message;
 import app.App;
 import app.Config;
 import app.Servent;
+import app.ServentSingle;
 
 public class SorryMessage extends Message {
 
     private static final long serialVersionUID = 1L;
 
     public SorryMessage(Servent receiver) {
-        super(Type.SORRY, null, Config.LOCAL_SERVENT, receiver);
+        super(null, Config.LOCAL_SERVENT, receiver);
     }
 
     public SorryMessage(SorryMessage m) {
@@ -24,11 +25,6 @@ public class SorryMessage extends Message {
     @Override
     protected void handle(MessageHandler handler) {
         App.error("Cannot enter system");
-        System.exit(0);
-    }
-
-    @Override
-    public String toString() {
-        return String.valueOf(getType());
+        ServentSingle.stop();
     }
 }

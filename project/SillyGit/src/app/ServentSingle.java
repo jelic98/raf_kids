@@ -9,18 +9,19 @@ public class ServentSingle {
 
     private static MessageListener listener;
     private static CommandParser parser;
+    private static boolean isServent;
 
     public static void main(String[] args) {
         int servent = Integer.parseInt(args[1]);
 
         Config.load(args[0], servent);
 
-        Servent bootstrap = new Servent(Config.BOOTSTRAP_HOST, Config.BOOTSTRAP_PORT);
+        isServent = servent > 0;
 
-        if (servent > 0) {
+        if (isServent) {
             App.print("Starting servent " + Config.LOCAL_SERVENT);
         } else {
-            Config.LOCAL_SERVENT = bootstrap;
+            Config.LOCAL_SERVENT = Config.BOOTSTRAP_SERVER;
 
             App.print("Starting bootstrap server " + Config.LOCAL_SERVENT);
         }
@@ -30,11 +31,11 @@ public class ServentSingle {
         listener = new MessageListener();
         new Thread(listener).start();
 
-        if (servent > 0) {
+        if (isServent) {
             parser = new CommandParser();
             new Thread(parser).start();
 
-            App.send(new HailAskMessage(bootstrap, Config.LOCAL_SERVENT.getAddress()));
+            App.send(new HailAskMessage());
         }
     }
 
@@ -42,6 +43,11 @@ public class ServentSingle {
         App.print("Stopping");
 
         listener.stop();
-        parser.stop();
+
+        if (isServent) {
+            parser.stop();
+        }
+
+        System.exit(0);
     }
 }

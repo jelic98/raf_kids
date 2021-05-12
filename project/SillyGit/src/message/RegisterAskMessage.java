@@ -14,7 +14,7 @@ public class RegisterAskMessage extends Message {
     private static final long serialVersionUID = 1L;
 
     public RegisterAskMessage(Servent receiver) {
-        super(Type.REGISTER_ASK, null, Config.LOCAL_SERVENT, receiver);
+        super(null, Config.LOCAL_SERVENT, receiver);
     }
 
     public RegisterAskMessage(RegisterAskMessage m) {
@@ -42,13 +42,8 @@ public class RegisterAskMessage extends Message {
             transferChunk(Config.CHORD.getChunk(), chunk, sender);
             App.send(new RegisterTellMessage(sender, chunk));
         } else {
-            App.send(setReceiver(Config.CHORD.getServent(serventId)).setSender());
+            App.send(redirect(Config.CHORD.getServent(serventId)));
         }
-    }
-
-    @Override
-    public String toString() {
-        return String.valueOf(getType());
     }
 
     private void transferChunk(Map<Key, Value> from, Map<Key, Value> to, Servent sender) {

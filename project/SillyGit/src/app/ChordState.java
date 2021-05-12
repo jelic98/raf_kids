@@ -3,7 +3,7 @@ package app;
 import data.Data;
 import data.Key;
 import data.Value;
-import message.PullAskMessage;
+import message.Message;
 import message.PushMessage;
 
 import java.util.*;
@@ -152,14 +152,14 @@ public class ChordState {
         updateSuccessors();
     }
 
-    public Value getValue(Key key) {
-        if (containsKey(key)) {
-            return chunk.getOrDefault(key, new Value(-1));
+    public void broadcast(Message message) {
+        for (Servent servent : servents) {
+            App.send(message.redirect(servent));
         }
+    }
 
-        App.send(new PullAskMessage(getServent(key), key));
-
-        return null;
+    public Value getValue(Key key) {
+        return chunk.getOrDefault(key, null);
     }
 
     public void putValue(Key key, Value value) {

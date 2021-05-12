@@ -11,7 +11,7 @@ public class HailTellMessage extends Message {
     private final Servent servent;
 
     public HailTellMessage(Servent receiver, Servent servent) {
-        super(Type.HAIL_TELL, null, Config.LOCAL_SERVENT, receiver);
+        super(null, Config.LOCAL_SERVENT, receiver);
 
         this.servent = servent;
     }
@@ -42,7 +42,7 @@ public class HailTellMessage extends Message {
 
     @Override
     public String toString() {
-        return getType() + " with servent " + getServent();
+        return super.toString() + " with servent " + getServent();
     }
 
     public Servent getServent() {

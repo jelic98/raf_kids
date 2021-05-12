@@ -21,22 +21,27 @@ public class Servent implements Serializable, Comparable<Servent> {
     }
 
     public int getChordId() {
-        return 61 * hashCode() % Config.CHORD_SIZE;
+        return hashCode() % Config.CHORD_SIZE;
     }
 
     @Override
     public boolean equals(Object obj) {
-        return address.equals(obj);
+        if(obj instanceof Servent) {
+            Servent s = (Servent) obj;
+            return getAddress().equals(s.getAddress());
+        }
+
+        return false;
     }
 
     @Override
     public int hashCode() {
-        return address.hashCode();
+        return getAddress().hashCode();
     }
 
     @Override
     public String toString() {
-        return address.toString();
+        return getAddress().toString();
     }
 
     @Override

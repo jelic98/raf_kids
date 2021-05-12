@@ -15,10 +15,10 @@ public class HailAskMessage extends Message {
 
     private final Address address;
 
-    public HailAskMessage(Servent receiver, Address address) {
-        super(Type.HAIL_ASK, null, Config.LOCAL_SERVENT, receiver);
+    public HailAskMessage() {
+        super(null, Config.LOCAL_SERVENT, Config.BOOTSTRAP_SERVER);
 
-        this.address = address;
+        address = Config.LOCAL_SERVENT.getAddress();
     }
 
     public HailAskMessage(HailAskMessage m) {
@@ -49,7 +49,7 @@ public class HailAskMessage extends Message {
 
     @Override
     public String toString() {
-        return getType() + " with address " + getAddress();
+        return super.toString() + " with address " + getAddress();
     }
 
     public Address getAddress() {

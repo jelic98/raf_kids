@@ -11,8 +11,7 @@ public class Config {
 
     public static int SERVENT_COUNT;
     public static int CHORD_SIZE;
-    public static String BOOTSTRAP_HOST;
-    public static int BOOTSTRAP_PORT;
+    public static Servent BOOTSTRAP_SERVER;
     public static Servent LOCAL_SERVENT;
     public static List<Servent> SERVENTS;
     public static List<Servent> BOOTSTRAP_SERVENTS;
@@ -25,13 +24,16 @@ public class Config {
             properties.load(new FileInputStream(new File(path)));
         } catch (IOException e) {
             App.error("Cannot open properties file");
-            System.exit(0);
+            ServentSingle.stop();
         }
 
         SERVENT_COUNT = Integer.parseInt(properties.getProperty("servent_count"));
         CHORD_SIZE = Integer.parseInt(properties.getProperty("chord_size"));
-        BOOTSTRAP_HOST = properties.getProperty("bootstrap.host");
-        BOOTSTRAP_PORT = Integer.parseInt(properties.getProperty("bootstrap.port"));
+
+        String host = properties.getProperty("bootstrap.host");
+        int port = Integer.parseInt(properties.getProperty("bootstrap.port"));
+
+        BOOTSTRAP_SERVER = new Servent(host, port);
 
         return properties;
     }
@@ -52,7 +54,5 @@ public class Config {
         if (servent > 0) {
             LOCAL_SERVENT = SERVENTS.get(servent - 1);
         }
-
-        ServentState.initializeVectorClock();
     }
 }

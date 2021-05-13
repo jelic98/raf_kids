@@ -2,7 +2,6 @@ package command;
 
 import app.App;
 import app.Config;
-import data.Key;
 import file.FileData;
 import file.FileHandler;
 import file.Files;
@@ -19,12 +18,17 @@ public class PushCommand implements Command {
 
     @Override
     public void execute(String args) {
-        File path = new File(Files.path(Config.WORKSPACE_PATH, args));
+        File path = new File(Files.absolute(Config.WORKSPACE_PATH, args));
+
+        if (!path.exists()) {
+            App.error(String.format("Cannot open file or directory on path %s", args));
+            return;
+        }
 
         new FileHandler().forEach(path, new FileHandler.Handler<String>() {
             @Override
             public void handle(String path) {
-                FileData data = new FileData(path);
+                FileData data = new FileData(Files.relative(Config.WORKSPACE_PATH, path));
                 data.load(Config.WORKSPACE_PATH);
 
                 FileData existing = Config.WORKSPACE.get(data.getKey());

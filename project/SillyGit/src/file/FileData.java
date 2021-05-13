@@ -1,18 +1,18 @@
 package file;
 
 import app.App;
-import app.Config;
 import data.Key;
 import data.Value;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.Objects;
 
-public class FileData {
+public class FileData implements Serializable {
 
     private String path;
     private String content;
@@ -29,14 +29,14 @@ public class FileData {
 
     public void load(String location) {
         try {
-            content = new String(java.nio.file.Files.readAllBytes(Paths.get(Files.path(location, path))), StandardCharsets.US_ASCII);
+            content = new String(java.nio.file.Files.readAllBytes(Paths.get(Files.absolute(location, path))), StandardCharsets.US_ASCII);
         } catch (IOException e) {
-            App.error(String.format("Cannot open file on path %s", path));
+            App.error(String.format("Cannot open file on path %s (%s)", path, e.getMessage()));
         }
     }
 
     public void save(String location) {
-        File file = new File(Files.path(location, path));
+        File file = new File(Files.absolute(location, path));
 
         File directory = new File(file.getParentFile().getPath());
         directory.mkdirs();
@@ -44,7 +44,7 @@ public class FileData {
         try (PrintWriter out = new PrintWriter(file)) {
             out.println(content);
         } catch (IOException e) {
-            App.error(String.format("Cannot open file on path %s", path));
+            App.error(String.format("Cannot open file on path %s (%s)", path, e.getMessage()));
         }
     }
 

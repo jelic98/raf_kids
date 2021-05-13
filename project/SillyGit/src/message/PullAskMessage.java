@@ -34,6 +34,7 @@ public class PullAskMessage extends Message {
         FileData data = Config.STORAGE.get(getKey());
 
         if (data != null) {
+            data.load(Config.STORAGE_PATH);
             App.send(new PullTellMessage(getSender(), data));
         }
     }

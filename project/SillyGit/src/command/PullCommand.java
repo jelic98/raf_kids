@@ -19,13 +19,13 @@ public class PullCommand implements Command {
     @Override
     public void execute(String args) {
         String[] tokens = args.split(" ");
-        File path = new File(Files.path(Config.WORKSPACE_PATH, tokens[0]));
+        File path = new File(Files.absolute(Config.WORKSPACE_PATH, tokens[0]));
         int version = tokens.length > 1 ? Integer.parseInt(tokens[1]) : -1;
 
         new FileHandler().forEach(path, new FileHandler.Handler<String>() {
             @Override
             public void handle(String path) {
-                FileData data = new FileData(path, version);
+                FileData data = new FileData(Files.relative(Config.WORKSPACE_PATH, path), version);
                 Servent[] servents = Config.SYSTEM.getServents(data.getKey());
 
                 for (Servent servent : servents) {

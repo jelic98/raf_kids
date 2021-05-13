@@ -18,7 +18,7 @@ public class AddCommand implements Command {
 
     @Override
     public void execute(String args) {
-        File path = new File(Files.path(Config.WORKSPACE_PATH, args));
+        File path = new File(Files.absolute(Config.WORKSPACE_PATH, args));
 
         if (!path.exists()) {
             App.error(String.format("Cannot open file or directory on path %s", args));
@@ -28,7 +28,7 @@ public class AddCommand implements Command {
         new FileHandler().forEach(path, new FileHandler.Handler<String>() {
             @Override
             public void handle(String path) {
-                FileData data = new FileData(path);
+                FileData data = new FileData(Files.relative(Config.WORKSPACE_PATH, path));
                 data.load(Config.WORKSPACE_PATH);
 
                 Config.WORKSPACE.add(data);

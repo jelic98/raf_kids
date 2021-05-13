@@ -32,7 +32,16 @@ public class Files {
         return null;
     }
 
-    public static String path(String directory, String file) {
+    @Override
+    public String toString() {
+        return files.toString();
+    }
+
+    public static String absolute(String directory, String file) {
         return directory.replace("{id}", String.valueOf(Config.LOCAL.getId())) + file;
+    }
+
+    public static String relative(String directory, String file) {
+        return file.replace(directory.replace("{id}", String.valueOf(Config.LOCAL.getId())), "");
     }
 }

@@ -1,9 +1,12 @@
 package app;
 
 import command.CommandParser;
+import file.Files;
 import message.JoinAskMessage;
 import message.MessageHandler;
 import message.MessageListener;
+
+import java.io.File;
 
 public class ServentSingle {
 
@@ -38,6 +41,9 @@ public class ServentSingle {
             new Thread(parser).start();
 
             App.send(new JoinAskMessage());
+
+            new File(Files.absolute(Config.WORKSPACE_PATH, "")).mkdirs();
+            new File(Files.absolute(Config.STORAGE_PATH, "")).mkdirs();
         }
     }
 

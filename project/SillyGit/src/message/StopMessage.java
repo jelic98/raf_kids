@@ -1,8 +1,6 @@
 package message;
 
-import app.App;
 import app.Config;
-import servent.Servent;
 import app.ServentSingle;
 
 public class StopMessage extends Message {
@@ -24,12 +22,7 @@ public class StopMessage extends Message {
 
     @Override
     protected void handle() {
-        if (Config.LOCAL.equals(Config.BOOTSTRAP)) {
-            for (Servent servent : Config.ACTIVE_SERVENTS) {
-                App.send(redirect(servent));
-            }
-        }
-
+        Config.SYSTEM.broadcast(this);
         ServentSingle.stop();
     }
 }

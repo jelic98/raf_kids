@@ -1,7 +1,7 @@
 package app;
 
 import command.CommandParser;
-import message.HailAskMessage;
+import message.JoinAskMessage;
 import message.MessageHandler;
 import message.MessageListener;
 
@@ -37,7 +37,7 @@ public class ServentSingle {
             parser = new CommandParser();
             new Thread(parser).start();
 
-            App.send(new HailAskMessage());
+            App.send(new JoinAskMessage());
         }
     }
 

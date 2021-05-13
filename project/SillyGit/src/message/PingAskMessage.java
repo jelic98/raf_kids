@@ -3,28 +3,29 @@ package message;
 import app.App;
 import app.Config;
 import servent.Servent;
-import app.ServentSingle;
 
-public class SorryMessage extends Message {
+public class PingAskMessage extends Message {
 
     private static final long serialVersionUID = 1L;
 
-    public SorryMessage(Servent receiver) {
+    public PingAskMessage(Servent receiver) {
         super(null, Config.LOCAL, receiver);
     }
 
-    public SorryMessage(SorryMessage m) {
+    public PingAskMessage(PingAskMessage m) {
         super(m);
     }
 
     @Override
     protected Message copy() {
-        return new SorryMessage(this);
+        return new PingAskMessage(this);
     }
 
     @Override
     protected void handle() {
-        App.error("Cannot enter system");
-        ServentSingle.stop();
+        Config.SYSTEM.addServent(getSender());
+
+        App.send(new PingTellMessage(getSender()));
     }
 }
+

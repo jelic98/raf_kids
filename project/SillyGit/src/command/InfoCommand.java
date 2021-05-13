@@ -12,6 +12,6 @@ public class InfoCommand implements Command {
 
     @Override
     public void execute(String args) {
-        App.print("Hash: " + Config.LOCAL.hashCode() + "/" + Config.CHORD_SIZE);
+        App.print("Hash: " + Config.LOCAL.hashCode());
     }
 }

@@ -2,7 +2,7 @@ package servent;
 
 import java.io.Serializable;
 
-public class Servent implements Serializable, Comparable<Servent> {
+public class Servent implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -38,10 +38,5 @@ public class Servent implements Serializable, Comparable<Servent> {
     @Override
     public String toString() {
         return getAddress().toString();
-    }
-
-    @Override
-    public int compareTo(Servent s) {
-        return Integer.compare(hashCode(), s.hashCode());
     }
 }

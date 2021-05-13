@@ -39,7 +39,7 @@ public class ServentMultiple {
                     App.print(String.format("Started servent %d/%d", i, Config.SERVENT_COUNT));
 
                     try {
-                        Thread.sleep(10000);
+                        Thread.sleep(5000);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                     }

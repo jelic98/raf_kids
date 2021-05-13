@@ -1,13 +1,8 @@
 package command;
 
 import app.App;
-import app.Config;
-import data.Data;
 import data.Key;
-import data.Value;
-import message.MessageHandler;
-import message.PullAskMessage;
-import message.PullTellMessage;
+import file.FileData;
 
 public class PullCommand implements Command {
 
@@ -18,13 +13,17 @@ public class PullCommand implements Command {
 
     @Override
     public void execute(String args) {
-        Key key = new Key(Integer.parseInt(args));
-        Value value = Config.SYSTEM.getValue(key);
+        String[] tokens = args.split(" ");
+        String path = tokens[0];
+        int version = -1;
 
-        if (value == null) {
-            App.send(new PullAskMessage(key));
-        } else {
-            MessageHandler.handle(new PullTellMessage(null, new Data(key, value)));
+        if (tokens.length == 2) {
+            version = Integer.parseInt(tokens[1]);
         }
+
+        FileData file = new FileData(path, version);
+        Key key = new Key(file.hashCode());
+
+        // TODO App.send(new PullAskMessage(key));
     }
 }

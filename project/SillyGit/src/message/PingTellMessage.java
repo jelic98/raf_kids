@@ -1,30 +1,27 @@
 package message;
 
-import app.App;
 import app.Config;
 import servent.Servent;
-import app.ServentSingle;
 
-public class SorryMessage extends Message {
+public class PingTellMessage extends Message {
 
     private static final long serialVersionUID = 1L;
 
-    public SorryMessage(Servent receiver) {
+    public PingTellMessage(Servent receiver) {
         super(null, Config.LOCAL, receiver);
     }
 
-    public SorryMessage(SorryMessage m) {
+    public PingTellMessage(PingTellMessage m) {
         super(m);
     }
 
     @Override
     protected Message copy() {
-        return new SorryMessage(this);
+        return new PingTellMessage(this);
     }
 
     @Override
     protected void handle() {
-        App.error("Cannot enter system");
-        ServentSingle.stop();
+        Config.SYSTEM.addServent(getSender());
     }
 }

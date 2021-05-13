@@ -30,7 +30,7 @@ public class Config {
             properties.load(new FileInputStream(new File(path)));
         } catch (IOException e) {
             App.error("Cannot open properties file");
-            java.lang.System.exit(0);
+            java.lang.System.exit(1);
         }
 
         STORAGE_PATH = properties.getProperty("storage_path");

@@ -25,7 +25,7 @@ public class MessageListener implements Runnable {
         } catch (IOException e) {
             App.error(String.format("Cannot open listener socket on port %s (%s)", port, e.getMessage()));
             ServentSingle.stop();
-            System.exit(0);
+            System.exit(1);
         }
 
         while (working) {

@@ -1,6 +1,6 @@
 package app;
 
-import file.FileManager;
+import file.Files;
 import servent.System;
 import servent.Servent;
 
@@ -19,7 +19,8 @@ public class Config {
     public static Servent BOOTSTRAP;
     public static Servent LOCAL;
     public static System SYSTEM;
-    public static FileManager FILES;
+    public static Files WORKSPACE;
+    public static Files STORAGE;
     public static Random RANDOM = new Random(1);
 
     public static Properties load(String path) {
@@ -58,6 +59,7 @@ public class Config {
         }
 
         SYSTEM = new System();
-        FILES = new FileManager();
+        WORKSPACE = new Files();
+        STORAGE = new Files();
     }
 }

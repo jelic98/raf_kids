@@ -1,6 +1,7 @@
 package servent;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class Servent implements Serializable {
 
@@ -32,7 +33,7 @@ public class Servent implements Serializable {
 
     @Override
     public int hashCode() {
-        return getAddress().hashCode();
+        return Objects.hash(getAddress());
     }
 
     @Override

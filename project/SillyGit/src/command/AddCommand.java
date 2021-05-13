@@ -2,8 +2,10 @@ package command;
 
 import app.App;
 import app.Config;
-import file.FileManager;
-
+import file.FileData;
+import file.FileHandler;
+import message.AddMessage;
+import servent.Servent;
 import java.io.File;
 
 public class AddCommand implements Command {
@@ -22,10 +24,19 @@ public class AddCommand implements Command {
             return;
         }
 
-        Config.FILES.forEach(path, new FileManager.Handler<String>() {
+        new FileHandler().forEach(path, new FileHandler.Handler<String>() {
             @Override
             public void handle(String path) {
-                Config.FILES.add(path);
+                FileData data = new FileData(path);
+                data.load(Config.WORKSPACE_PATH);
+
+                Config.WORKSPACE.add(data);
+
+                Servent[] servents = Config.SYSTEM.getServents(data.getKey());
+
+                for (Servent servent : servents) {
+                    App.send(new AddMessage(servent, data));
+                }
             }
         });
     }

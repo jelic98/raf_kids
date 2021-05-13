@@ -1,8 +1,12 @@
 package command;
 
 import app.App;
-import data.Key;
+import app.Config;
 import file.FileData;
+import file.FileHandler;
+import message.PullAskMessage;
+import servent.Servent;
+import java.io.File;
 
 public class PullCommand implements Command {
 
@@ -14,16 +18,19 @@ public class PullCommand implements Command {
     @Override
     public void execute(String args) {
         String[] tokens = args.split(" ");
-        String path = tokens[0];
-        int version = -1;
+        File path = new File(tokens[0]);
+        int version = tokens.length > 1 ? Integer.parseInt(tokens[1]) : -1;
 
-        if (tokens.length == 2) {
-            version = Integer.parseInt(tokens[1]);
-        }
+        new FileHandler().forEach(path, new FileHandler.Handler<String>() {
+            @Override
+            public void handle(String path) {
+                FileData data = new FileData(path, version);
+                Servent[] servents = Config.SYSTEM.getServents(data.getKey());
 
-        FileData file = new FileData(path, version);
-        Key key = new Key(file.hashCode());
-
-        // TODO App.send(new PullAskMessage(key));
+                for (Servent servent : servents) {
+                    App.send(new PullAskMessage(servent, data.getKey()));
+                }
+            }
+        });
     }
 }

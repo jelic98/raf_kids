@@ -1,25 +1,10 @@
 package file;
 
-import app.Config;
-import data.Key;
-import data.Value;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class FileManager {
-
-    public void add(String path) {
-        FileData file = new FileData(path);
-
-        Config.SYSTEM.putValue(new Key(file.hashCode()), new Value(file));
-    }
-
-    public void remove(String path) {
-        FileData file = new FileData(path);
-
-        Config.SYSTEM.putValue(new Key(file.hashCode()), null);
-    }
+public class FileHandler {
 
     public void forEach(File path, Handler<String> handler) {
         if (path.isFile()) {

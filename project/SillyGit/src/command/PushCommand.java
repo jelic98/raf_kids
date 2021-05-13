@@ -5,6 +5,7 @@ import app.Config;
 import data.Key;
 import file.FileData;
 import file.FileHandler;
+import file.Files;
 import message.PushAskMessage;
 import servent.Servent;
 import java.io.File;
@@ -18,7 +19,7 @@ public class PushCommand implements Command {
 
     @Override
     public void execute(String args) {
-        File path = new File(args);
+        File path = new File(Files.path(Config.WORKSPACE_PATH, args));
 
         new FileHandler().forEach(path, new FileHandler.Handler<String>() {
             @Override
@@ -30,7 +31,7 @@ public class PushCommand implements Command {
 
                 if (existing != null) {
                     if (existing.getContent().equals(data.getContent())) {
-                        App.error(String.format("File on path %s is not changed", path));
+                        App.print(String.format("File on path %s is not changed", path));
                         return;
                     }
 

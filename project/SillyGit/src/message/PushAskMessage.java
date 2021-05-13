@@ -40,7 +40,7 @@ public class PushAskMessage extends Message {
                 Config.STORAGE.add(getData());
             }
 
-            App.send(new PushTellMessage(getSender(), conflict));
+            App.send(new PushTellMessage(getSender(), getData(), existing, conflict));
         }
     }
 

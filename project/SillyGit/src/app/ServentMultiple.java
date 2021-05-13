@@ -7,7 +7,7 @@ import java.util.List;
 
 public class ServentMultiple {
 
-    private static final String TEST_DIR = "res/test";
+    private static final String TEST_DIR = "res";
     private static final String OUT_DIR = "out/production/SillyGit";
 
     public static void main(String[] args) {

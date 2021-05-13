@@ -1,0 +1,14 @@
+19:29:48 - Starting servent localhost:1005
+19:29:48 - Hash: 1311888026
+19:29:48 - Pausing for 20000 ms
+19:29:49 - Outgoing: JOIN_ASK (localhost:1005->localhost:1000)
+19:29:50 - Incoming: JOIN_TELL with servents [localhost:1002, localhost:1001, localhost:1004] (localhost:1000->localhost:1005)
+19:29:50 - Outgoing: PING_ASK (localhost:1005->localhost:1002)
+19:29:50 - Outgoing: PING_ASK (localhost:1005->localhost:1001)
+19:29:50 - Outgoing: PING_ASK (localhost:1005->localhost:1004)
+19:29:52 - Incoming: PING_TELL (localhost:1001->localhost:1005)
+19:29:52 - Incoming: PING_TELL (localhost:1004->localhost:1005)
+19:29:52 - Incoming: PING_TELL (localhost:1002->localhost:1005)
+19:30:08 - Outgoing: STOP (localhost:1005->localhost:1000)
+19:30:10 - Incoming: STOP (localhost:1005->localhost:1005)
+19:30:10 - Stopping

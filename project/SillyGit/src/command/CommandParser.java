@@ -2,11 +2,12 @@ package command;
 
 import app.App;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class CommandParser implements Runnable {
+
+    private static final Queue<Prompt> prompts = new ConcurrentLinkedQueue<>();
 
     private final List<Command> commandList;
     private volatile boolean working = true;
@@ -42,6 +43,10 @@ public class CommandParser implements Runnable {
                 args = line.substring(name.length() + 1);
             }
 
+            if (!prompts.isEmpty() && prompts.poll().select(name)) {
+                continue;
+            }
+
             boolean found = false;
 
             for (Command command : commandList) {
@@ -62,5 +67,10 @@ public class CommandParser implements Runnable {
 
     public void stop() {
         working = false;
+    }
+
+    public static void addPrompt(Prompt prompt) {
+        App.print(prompt.toString());
+        prompts.add(prompt);
     }
 }

@@ -4,6 +4,7 @@ import app.App;
 import app.Config;
 import file.FileData;
 import file.FileHandler;
+import file.Files;
 import message.RemoveMessage;
 import servent.Servent;
 
@@ -18,10 +19,10 @@ public class RemoveCommand implements Command {
 
     @Override
     public void execute(String args) {
-        File path = new File(args);
+        File path = new File(Files.path(Config.WORKSPACE_PATH, args));
 
         if (!path.exists()) {
-            App.error(String.format("Cannot open file or directory on path %s", path));
+            App.error(String.format("Cannot open file or directory on path %s", args));
             return;
         }
 

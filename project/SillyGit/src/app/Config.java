@@ -41,7 +41,7 @@ public class Config {
         String bootstrapHost = properties.getProperty("bootstrap.host");
         int bootstrapPort = Integer.parseInt(properties.getProperty("bootstrap.port"));
 
-        BOOTSTRAP = new Servent(bootstrapHost, bootstrapPort);
+        BOOTSTRAP = new Servent(bootstrapHost, bootstrapPort, 0);
 
         return properties;
     }
@@ -55,7 +55,7 @@ public class Config {
             String serventHost = properties.getProperty("servent" + servent + ".host");
             int serventPort = Integer.parseInt(properties.getProperty("servent" + servent + ".port"));
 
-            LOCAL = new Servent(serventHost, serventPort);
+            LOCAL = new Servent(serventHost, serventPort, servent);
         }
 
         SYSTEM = new System();

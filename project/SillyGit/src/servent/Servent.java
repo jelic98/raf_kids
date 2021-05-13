@@ -8,17 +8,20 @@ public class Servent implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private final Address address;
+    private final int id;
 
-    public Servent(Address address) {
-        this.address = address;
-    }
+    public Servent(String host, int port, int id) {
+        this.id = id;
 
-    public Servent(String host, int port) {
-        this(new Address(host, port));
+        address = new Address(host, port);
     }
 
     public Address getAddress() {
         return address;
+    }
+
+    public int getId() {
+        return id;
     }
 
     @Override

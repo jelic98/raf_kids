@@ -1,5 +1,6 @@
 package file;
 
+import app.Config;
 import data.Key;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,5 +30,9 @@ public class Files {
         }
 
         return null;
+    }
+
+    public static String path(String directory, String file) {
+        return directory.replace("{id}", String.valueOf(Config.LOCAL.getId())) + file;
     }
 }

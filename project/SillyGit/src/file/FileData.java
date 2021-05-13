@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
 
@@ -30,14 +29,14 @@ public class FileData {
 
     public void load(String location) {
         try {
-            content = new String(Files.readAllBytes(Paths.get(location + path)), StandardCharsets.US_ASCII);
+            content = new String(java.nio.file.Files.readAllBytes(Paths.get(Files.path(location, path))), StandardCharsets.US_ASCII);
         } catch (IOException e) {
             App.error(String.format("Cannot open file on path %s", path));
         }
     }
 
     public void save(String location) {
-        File file = new File(location + path);
+        File file = new File(Files.path(location, path));
 
         File directory = new File(file.getParentFile().getPath());
         directory.mkdirs();

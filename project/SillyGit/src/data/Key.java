@@ -1,10 +1,12 @@
 package data;
 
-public class Key extends Field<Integer> {
+import java.math.BigInteger;
+
+public class Key extends Field<BigInteger> {
 
     private static final long serialVersionUID = 1L;
 
-    public Key(Integer field) {
-        super(field);
+    public Key(Object field) {
+        super(Hash.get(field));
     }
 }

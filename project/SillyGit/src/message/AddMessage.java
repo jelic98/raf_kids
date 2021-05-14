@@ -30,6 +30,8 @@ public class AddMessage extends Message {
 
     @Override
     protected void handle() {
+        // TODO Handle newest file version (-1)
+        // TODO What is file already exist?
         getData().save(Config.STORAGE_PATH);
         Config.STORAGE.add(getData());
         App.print(String.format("File %s added to storage", getData()));

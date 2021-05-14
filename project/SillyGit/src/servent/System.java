@@ -2,9 +2,12 @@ package servent;
 
 import app.App;
 import app.Config;
+import data.Hash;
 import data.Key;
 import message.Message;
 import message.SorryMessage;
+
+import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -28,10 +31,10 @@ public class System {
         servents.sort(new Comparator<Servent>() {
             @Override
             public int compare(Servent s1, Servent s2) {
-                int d1 = key.get() ^ s1.hashCode();
-                int d2 = key.get() ^ s2.hashCode();
+                BigInteger d1 = key.get().xor(Hash.get(s1));
+                BigInteger d2 = key.get().xor(Hash.get(s2));
 
-                return Math.abs(d1 - d2);
+                return d1.compareTo(d2);
             }
         });
 

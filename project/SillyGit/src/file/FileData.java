@@ -2,8 +2,8 @@ package file;
 
 import app.App;
 import app.Config;
+import data.Hash;
 import data.Key;
-import data.Value;
 
 import java.io.File;
 import java.io.IOException;
@@ -66,11 +66,7 @@ public class FileData implements Serializable {
     }
 
     public Key getKey() {
-        return new Key(hashCode());
-    }
-
-    public Value getValue() {
-        return new Value(this);
+        return new Key(this);
     }
 
     @Override

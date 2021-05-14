@@ -30,6 +30,7 @@ public class RemoveMessage extends Message {
 
     @Override
     protected void handle() {
+        // TODO What is file does not exist?
         Config.STORAGE.remove(getData());
         App.print(String.format("File %s removed from storage", getData()));
     }

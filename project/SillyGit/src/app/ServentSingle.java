@@ -48,13 +48,17 @@ public class ServentSingle {
     }
 
     public static void stop() {
-        App.print("Stopping");
-
         if (isServent) {
             parser.stop();
         }
 
         listener.stop();
         handler.stop();
+
+        if (isServent) {
+            App.print("Servent stopped");
+        } else {
+            App.print("Bootstrap stopped");
+        }
     }
 }

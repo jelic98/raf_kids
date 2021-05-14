@@ -30,9 +30,11 @@ public class PushAskMessage extends Message {
 
     @Override
     protected void handle() {
-        FileData existing = Config.STORAGE.get(getData().getKey());
+        FileData existing = Config.STORAGE.get(getData());
 
-        if (existing != null) {
+        if (existing == null) {
+            App.print(String.format("File %s not found", getData()));
+        } else {
             boolean conflict = existing.getVersion() >= getData().getVersion();
 
             if(!conflict) {

@@ -1,5 +1,6 @@
 package message;
 
+import app.App;
 import app.Config;
 import file.FileData;
 import servent.Servent;
@@ -31,6 +32,7 @@ public class PullTellMessage extends Message {
     protected void handle() {
         getData().save(Config.WORKSPACE_PATH);
         Config.WORKSPACE.add(getData());
+        App.print(String.format("File %s pulled to workspace", getData()));
     }
 
     @Override

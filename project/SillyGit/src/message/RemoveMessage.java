@@ -1,25 +1,26 @@
 package message;
 
+import app.App;
 import app.Config;
-import data.Key;
+import file.FileData;
 import servent.Servent;
 
 public class RemoveMessage extends Message {
 
     private static final long serialVersionUID = 1L;
 
-    private Key key;
+    private FileData data;
 
-    public RemoveMessage(Servent receiver, Key key) {
+    public RemoveMessage(Servent receiver, FileData data) {
         super(null, Config.LOCAL, receiver);
 
-        this.key = key;
+        this.data = data;
     }
 
     public RemoveMessage(RemoveMessage m) {
         super(m);
 
-        key = m.key;
+        data = m.data;
     }
 
     @Override
@@ -29,16 +30,17 @@ public class RemoveMessage extends Message {
 
     @Override
     protected void handle() {
-        Config.STORAGE.remove(getKey());
+        Config.STORAGE.remove(getData());
+        App.print(String.format("File %s removed from storage", getData()));
     }
 
     @Override
     public String toString() {
-        return super.toString() + " with key " + getKey();
+        return super.toString() + " with key " + getData();
     }
 
-    public Key getKey() {
-        return key;
+    public FileData getData() {
+        return data;
     }
 }
 

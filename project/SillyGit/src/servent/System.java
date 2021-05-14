@@ -21,9 +21,10 @@ public class System {
             return null;
         }
 
-        int maxIndex = Math.min(Config.K, activeServents.size());
+        int maxIndex = Math.min(Config.K, activeServents.size() + 1);
 
         List<Servent> servents = new ArrayList<>(activeServents);
+        servents.add(Config.LOCAL);
         servents.sort(new Comparator<Servent>() {
             @Override
             public int compare(Servent s1, Servent s2) {

@@ -28,7 +28,7 @@ public class AddCommand implements Command {
         new FileHandler().forEach(path, new FileHandler.Handler<String>() {
             @Override
             public void handle(String path) {
-                FileData data = new FileData(Files.relative(Config.WORKSPACE_PATH, path));
+                FileData data = new FileData(path);
                 data.load(Config.WORKSPACE_PATH);
 
                 Config.WORKSPACE.add(data);

@@ -1,7 +1,6 @@
 package file;
 
 import app.Config;
-import data.Key;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -18,14 +17,14 @@ public class Files {
         files.add(data);
     }
 
-    public void remove(Key key) {
-        files.removeIf(data -> data.getKey().equals(key));
+    public void remove(FileData data) {
+        files.removeIf(f -> f.equals(data));
     }
 
-    public FileData get(Key key) {
-        for (FileData data : files) {
-            if (data.getKey().equals(key)) {
-                return data;
+    public FileData get(FileData data) {
+        for (FileData f : files) {
+            if (f.equals(data)) {
+                return f;
             }
         }
 

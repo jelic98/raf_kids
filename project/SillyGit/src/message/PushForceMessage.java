@@ -1,5 +1,6 @@
 package message;
 
+import app.App;
 import app.Config;
 import file.FileData;
 import servent.Servent;
@@ -31,6 +32,7 @@ public class PushForceMessage extends Message {
     protected void handle() {
         getData().save(Config.STORAGE_PATH);
         Config.STORAGE.add(getData());
+        App.print(String.format("File %s force pushed to storage", getData()));
     }
 
     @Override

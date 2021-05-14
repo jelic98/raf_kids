@@ -48,7 +48,7 @@ public class PushTellMessage extends Message {
 
     @Override
     public String toString() {
-        return super.toString() + " with local " + getLocal() + " with remote " + getRemote() + " with conflict " + isConflict();
+        return super.toString() + " with local " + getLocal() + " with remote " + getRemote();
     }
 
     public FileData getLocal() {
@@ -78,6 +78,7 @@ public class PushTellMessage extends Message {
                     public void handle() {
                         getRemote().save(Config.WORKSPACE_PATH);
                         Config.WORKSPACE.add(getRemote());
+                        App.print(String.format("File %s pulled to workspace", getRemote()));
                     }
                 }))
                 .add(new Prompt.Option("push", new Prompt.Handler() {

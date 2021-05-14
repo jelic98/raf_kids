@@ -29,14 +29,14 @@ public class RemoveCommand implements Command {
         new FileHandler().forEach(path, new FileHandler.Handler<String>() {
             @Override
             public void handle(String path) {
-                FileData data = new FileData(Files.relative(Config.WORKSPACE_PATH, path));
+                FileData data = new FileData(path);
 
-                Config.WORKSPACE.remove(data.getKey());
+                Config.WORKSPACE.remove(data);
 
                 Servent[] servents = Config.SYSTEM.getServents(data.getKey());
 
                 for (Servent servent : servents) {
-                    App.send(new RemoveMessage(servent, data.getKey()));
+                    App.send(new RemoveMessage(servent, data));
                 }
             }
         });

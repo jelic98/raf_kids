@@ -24,7 +24,7 @@ public class SorryMessage extends Message {
 
     @Override
     protected void handle() {
-        App.error("Cannot enter system");
+        App.error("Cannot join system");
         ServentSingle.stop();
     }
 }

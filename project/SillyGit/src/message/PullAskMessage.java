@@ -2,7 +2,6 @@ package message;
 
 import app.App;
 import app.Config;
-import data.Key;
 import file.FileData;
 import servent.Servent;
 
@@ -10,18 +9,18 @@ public class PullAskMessage extends Message {
 
     private static final long serialVersionUID = 1L;
 
-    private Key key;
+    private FileData data;
 
-    public PullAskMessage(Servent receiver, Key key) {
+    public PullAskMessage(Servent receiver, FileData data) {
         super(null, Config.LOCAL, receiver);
 
-        this.key = key;
+        this.data = data;
     }
 
     public PullAskMessage(PullAskMessage m) {
         super(m);
 
-        key = m.key;
+        data = m.data;
     }
 
     @Override
@@ -31,9 +30,11 @@ public class PullAskMessage extends Message {
 
     @Override
     protected void handle() {
-        FileData data = Config.STORAGE.get(getKey());
+        FileData data = Config.STORAGE.get(getData());
 
-        if (data != null) {
+        if (data == null) {
+            App.print(String.format("File %s not found", getData()));
+        } else {
             data.load(Config.STORAGE_PATH);
             App.send(new PullTellMessage(getSender(), data));
         }
@@ -41,11 +42,11 @@ public class PullAskMessage extends Message {
 
     @Override
     public String toString() {
-        return super.toString() + " with key " + getKey();
+        return super.toString() + " with key " + getData();
     }
 
-    public Key getKey() {
-        return key;
+    public FileData getData() {
+        return data;
     }
 }
 

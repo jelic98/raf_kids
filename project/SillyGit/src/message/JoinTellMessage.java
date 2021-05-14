@@ -33,7 +33,9 @@ public class JoinTellMessage extends Message {
     protected void handle() {
         Servent[] servents = getServents();
 
-        if (servents != null) {
+        if (servents == null) {
+            App.print(String.format("Servent %s joined first", getReceiver()));
+        } else {
             for (Servent servent : servents) {
                 App.send(new PingAskMessage(servent));
             }

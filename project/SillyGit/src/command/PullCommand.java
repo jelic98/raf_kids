@@ -2,6 +2,7 @@ package command;
 
 import app.App;
 import app.Config;
+import data.Key;
 import file.FileData;
 import file.FileHandler;
 import file.Files;
@@ -22,16 +23,23 @@ public class PullCommand implements Command {
         File path = new File(Files.absolute(Config.WORKSPACE_PATH, tokens[0]));
         int version = tokens.length > 1 ? Integer.parseInt(tokens[1]) : -1;
 
-        new FileHandler().forEach(path, new FileHandler.Handler<String>() {
-            @Override
-            public void handle(String path) {
-                FileData data = new FileData(Files.relative(Config.WORKSPACE_PATH, path), version);
-                Servent[] servents = Config.SYSTEM.getServents(data.getKey());
-
-                for (Servent servent : servents) {
-                    App.send(new PullAskMessage(servent, data.getKey()));
+        if (path.exists()) {
+            new FileHandler().forEach(path, new FileHandler.Handler<String>() {
+                @Override
+                public void handle(String path) {
+                    pull(new FileData(path, version));
                 }
-            }
-        });
+            });
+        }else {
+            pull(new FileData(args, version));
+        }
+    }
+
+    private void pull(FileData data) {
+        Servent[] servents = Config.SYSTEM.getServents(data.getKey());
+
+        for (Servent servent : servents) {
+            App.send(new PullAskMessage(servent, data));
+        }
     }
 }

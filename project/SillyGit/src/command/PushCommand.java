@@ -28,14 +28,14 @@ public class PushCommand implements Command {
         new FileHandler().forEach(path, new FileHandler.Handler<String>() {
             @Override
             public void handle(String path) {
-                FileData data = new FileData(Files.relative(Config.WORKSPACE_PATH, path));
+                FileData data = new FileData(path);
                 data.load(Config.WORKSPACE_PATH);
 
-                FileData existing = Config.WORKSPACE.get(data.getKey());
+                FileData existing = Config.WORKSPACE.get(data);
 
                 if (existing != null) {
                     if (existing.getContent().equals(data.getContent())) {
-                        App.print(String.format("File on path %s is not changed", path));
+                        App.print(String.format("File %s not changed", data));
                         return;
                     }
 

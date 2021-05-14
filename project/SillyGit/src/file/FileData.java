@@ -1,6 +1,7 @@
 package file;
 
 import app.App;
+import app.Config;
 import data.Key;
 import data.Value;
 
@@ -19,7 +20,7 @@ public class FileData implements Serializable {
     private int version;
 
     public FileData(String path, int version) {
-        this.path = path;
+        this.path = Files.relative(Config.WORKSPACE_PATH, path);
         this.version = version;
     }
 
@@ -31,7 +32,7 @@ public class FileData implements Serializable {
         try {
             content = new String(java.nio.file.Files.readAllBytes(Paths.get(Files.absolute(location, path))), StandardCharsets.US_ASCII);
         } catch (IOException e) {
-            App.error(String.format("Cannot open file on path %s (%s)", path, e.getMessage()));
+            App.error(String.format("Cannot load file %s (%s)", path, e.getMessage()));
         }
     }
 
@@ -44,7 +45,7 @@ public class FileData implements Serializable {
         try (PrintWriter out = new PrintWriter(file)) {
             out.println(content);
         } catch (IOException e) {
-            App.error(String.format("Cannot open file on path %s (%s)", path, e.getMessage()));
+            App.error(String.format("Cannot save file %s (%s)", path, e.getMessage()));
         }
     }
 

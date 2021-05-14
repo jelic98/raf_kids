@@ -24,7 +24,6 @@ public class PingAskMessage extends Message {
     @Override
     protected void handle() {
         Config.SYSTEM.addServent(getSender());
-
         App.send(new PingTellMessage(getSender()));
     }
 }

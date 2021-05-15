@@ -43,7 +43,7 @@ public class FileData implements Serializable {
         directory.mkdirs();
 
         try (PrintWriter out = new PrintWriter(file)) {
-            out.println(content);
+            out.write(content);
         } catch (IOException e) {
             App.error(String.format("Cannot save file %s (%s)", path, e.getMessage()));
         }

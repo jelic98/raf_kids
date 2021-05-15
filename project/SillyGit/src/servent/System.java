@@ -19,15 +19,19 @@ public class System {
         activeServents = Collections.newSetFromMap(new ConcurrentHashMap<>());
     }
 
-    public Servent[] getServents(Key key) {
+    public Servent[] getServents(Key key, boolean inclusive) {
         if (activeServents.isEmpty()) {
             return null;
         }
 
-        int maxIndex = Math.min(Config.K, activeServents.size() + 1);
+        int maxIndex = Math.min(Config.K, activeServents.size() + (inclusive ? 1 : 0));
 
         List<Servent> servents = new ArrayList<>(activeServents);
-        servents.add(Config.LOCAL);
+
+        if (inclusive) {
+            servents.add(Config.LOCAL);
+        }
+
         servents.sort(new Comparator<Servent>() {
             @Override
             public int compare(Servent s1, Servent s2) {
@@ -42,6 +46,10 @@ public class System {
         servents.subList(0, maxIndex).toArray(result);
 
         return result;
+    }
+
+    public Servent[] getServents(Key key) {
+        return getServents(key, true);
     }
 
     public void addServent(Servent servent) {

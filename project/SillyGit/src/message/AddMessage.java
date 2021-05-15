@@ -30,11 +30,21 @@ public class AddMessage extends Message {
 
     @Override
     protected void handle() {
-        // TODO Handle newest file version (-1)
-        // TODO What is file already exist?
-        getData().save(Config.STORAGE_PATH);
-        Config.STORAGE.add(getData());
-        App.print(String.format("File %s added to storage", getData()));
+        Servent[] servents = Config.SYSTEM.getServents(getData().getKey());
+
+        if (servents[0] == Config.LOCAL) {
+            if (Config.STORAGE.contains(getData())) {
+                App.print(String.format("File %s already exists", getData()));
+            } else {
+                getData().save(Config.STORAGE_PATH);
+                Config.STORAGE.add(getData());
+                App.print(String.format("File %s added to storage", getData()));
+            }
+        } else {
+            if (containsSender(servents[0])) {
+                App.send(redirect(servents[0]));
+            }
+        }
     }
 
     @Override

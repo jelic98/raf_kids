@@ -1,6 +1,7 @@
 #!/bin/bash
 if [ $# -eq 1 ]; then
-	cd 'src' \
+	clear \
+	&& cd 'src' \
 	&& javac -d '../out/production/SillyGit' 'app/ServentSingle.java' \
 	&& cd .. \
 	&& java -cp 'out/production/SillyGit' \

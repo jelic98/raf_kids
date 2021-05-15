@@ -43,10 +43,7 @@ public class PushCommand implements Command {
                 }
 
                 Servent[] servents = Config.SYSTEM.getServents(data.getKey());
-
-                for (Servent servent : servents) {
-                    App.send(new PushAskMessage(servent, data));
-                }
+                App.send(new PushAskMessage(servents[0], data));
             }
         });
     }

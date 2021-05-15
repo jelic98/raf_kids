@@ -30,19 +30,27 @@ public class PushAskMessage extends Message {
 
     @Override
     protected void handle() {
-        FileData existing = Config.STORAGE.get(getData());
+        Servent[] servents = Config.SYSTEM.getServents(getData().getKey());
 
-        if (existing == null) {
-            App.print(String.format("File %s not found", getData()));
-        } else {
-            boolean conflict = existing.getVersion() >= getData().getVersion();
+        if (servents[0] == Config.LOCAL) {
+            if (Config.STORAGE.contains(getData())) {
+                FileData data = Config.STORAGE.get(getData());
 
-            if(!conflict) {
-                getData().save(Config.STORAGE_PATH);
-                Config.STORAGE.add(getData());
+                boolean conflict = data.getVersion() >= getData().getVersion();
+
+                if(!conflict) {
+                    getData().save(Config.STORAGE_PATH);
+                    Config.STORAGE.add(getData());
+                }
+
+                App.send(new PushTellMessage(getSender(), getData(), data, conflict));
+            } else {
+                App.print(String.format("File %s not found", getData()));
             }
-
-            App.send(new PushTellMessage(getSender(), getData(), existing, conflict));
+        } else {
+            if (containsSender(servents[0])) {
+                App.send(redirect(servents[0]));
+            }
         }
     }
 

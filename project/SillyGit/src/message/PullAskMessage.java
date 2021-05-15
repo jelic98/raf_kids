@@ -30,19 +30,27 @@ public class PullAskMessage extends Message {
 
     @Override
     protected void handle() {
-        FileData data = Config.STORAGE.get(getData());
+        Servent[] servents = Config.SYSTEM.getServents(getData().getKey());
 
-        if (data == null) {
-            App.print(String.format("File %s not found", getData()));
+        if (servents[0] == Config.LOCAL) {
+            if (Config.STORAGE.contains(getData())) {
+                FileData data = Config.STORAGE.get(getData());
+
+                data.load(Config.STORAGE_PATH);
+                App.send(new PullTellMessage(getSender(), data));
+            } else {
+                App.print(String.format("File %s not found", getData()));
+            }
         } else {
-            data.load(Config.STORAGE_PATH);
-            App.send(new PullTellMessage(getSender(), data));
+            if (containsSender(servents[0])) {
+                App.send(redirect(servents[0]));
+            }
         }
     }
 
     @Override
     public String toString() {
-        return super.toString() + " with key " + getData();
+        return super.toString() + " with data " + getData();
     }
 
     public FileData getData() {

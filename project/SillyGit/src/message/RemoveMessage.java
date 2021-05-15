@@ -30,14 +30,25 @@ public class RemoveMessage extends Message {
 
     @Override
     protected void handle() {
-        // TODO What is file does not exist?
-        Config.STORAGE.remove(getData());
-        App.print(String.format("File %s removed from storage", getData()));
+        Servent[] servents = Config.SYSTEM.getServents(getData().getKey());
+
+        if (servents[0] == Config.LOCAL) {
+            if (Config.STORAGE.contains(getData())) {
+                Config.STORAGE.remove(getData());
+                App.print(String.format("File %s removed from storage", getData()));
+            } else {
+                App.print(String.format("File %s not found", getData()));
+            }
+        } else {
+            if (containsSender(servents[0])) {
+                App.send(redirect(servents[0]));
+            }
+        }
     }
 
     @Override
     public String toString() {
-        return super.toString() + " with key " + getData();
+        return super.toString() + " with data " + getData();
     }
 
     public FileData getData() {

@@ -22,12 +22,8 @@ public class ServentSingle {
 
         isServent = servent > 0;
 
-        if (isServent) {
-            App.print("Starting servent " + Config.LOCAL);
-        } else {
+        if (!isServent) {
             Config.LOCAL = Config.BOOTSTRAP;
-
-            App.print("Starting bootstrap server " + Config.LOCAL);
         }
 
         handler = new MessageHandler();
@@ -44,6 +40,10 @@ public class ServentSingle {
 
             new File(Files.absolute(Config.WORKSPACE_PATH, "")).mkdirs();
             new File(Files.absolute(Config.STORAGE_PATH, "")).mkdirs();
+
+            App.print("Started servent " + Config.LOCAL);
+        } else {
+            App.print("Started bootstrap server " + Config.LOCAL);
         }
     }
 

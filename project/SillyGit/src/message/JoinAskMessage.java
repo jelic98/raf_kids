@@ -2,8 +2,6 @@ package message;
 
 import app.App;
 import app.Config;
-import data.Hash;
-import data.Key;
 import servent.Servent;
 
 public class JoinAskMessage extends Message {
@@ -25,8 +23,7 @@ public class JoinAskMessage extends Message {
 
     @Override
     protected void handle() {
-        Key key = new Key(getSender());
-        Servent[] servents = Config.SYSTEM.getServents(key);
+        Servent[] servents = Config.SYSTEM.getServents(getSender().getKey(), false);
         Config.SYSTEM.addServent(getSender());
         App.send(new JoinTellMessage(getSender(), servents));
     }

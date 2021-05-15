@@ -31,6 +31,10 @@ public class Files {
         return null;
     }
 
+    public boolean contains(FileData data) {
+        return files.contains(data);
+    }
+
     @Override
     public String toString() {
         return files.toString();

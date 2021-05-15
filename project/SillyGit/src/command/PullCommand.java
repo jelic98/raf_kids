@@ -2,7 +2,6 @@ package command;
 
 import app.App;
 import app.Config;
-import data.Key;
 import file.FileData;
 import file.FileHandler;
 import file.Files;
@@ -37,9 +36,6 @@ public class PullCommand implements Command {
 
     private void pull(FileData data) {
         Servent[] servents = Config.SYSTEM.getServents(data.getKey());
-
-        for (Servent servent : servents) {
-            App.send(new PullAskMessage(servent, data));
-        }
+        App.send(new PullAskMessage(servents[0], data));
     }
 }

@@ -28,16 +28,14 @@ public class AddCommand implements Command {
         new FileHandler().forEach(path, new FileHandler.Handler<String>() {
             @Override
             public void handle(String path) {
+                // TODO Handle newest file version (-1)
                 FileData data = new FileData(path);
                 data.load(Config.WORKSPACE_PATH);
 
                 Config.WORKSPACE.add(data);
 
                 Servent[] servents = Config.SYSTEM.getServents(data.getKey());
-
-                for (Servent servent : servents) {
-                    App.send(new AddMessage(servent, data));
-                }
+                App.send(new AddMessage(servents[0], data));
             }
         });
     }

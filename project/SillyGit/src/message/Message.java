@@ -48,10 +48,6 @@ public abstract class Message implements Serializable {
         return sender;
     }
 
-    public Servent getLastSender() {
-        return route.get(route.size() - 1);
-    }
-
     public boolean containsSender(Servent sender) {
         return route.contains(sender);
     }

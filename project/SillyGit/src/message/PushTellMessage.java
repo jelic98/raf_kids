@@ -86,6 +86,12 @@ public class PushTellMessage extends Message {
                     public void handle() {
                         App.send(new PushForceMessage(getSender(), getLocal()));
                     }
+                }))
+                .add(new Prompt.Option("cancel", new Prompt.Handler() {
+                    @Override
+                    public void handle() {
+                        App.print("Act like nothing happened");
+                    }
                 })));
     }
 }

@@ -24,6 +24,7 @@ public class PingAskMessage extends Message {
     @Override
     protected void handle() {
         Config.SYSTEM.addServent(getSender());
+        // TODO PING messages (after joining system) should be synchronous of asynchronous?
         App.send(new PingTellMessage(getSender()));
     }
 }

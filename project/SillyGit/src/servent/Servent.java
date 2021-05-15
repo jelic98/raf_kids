@@ -1,5 +1,7 @@
 package servent;
 
+import data.Key;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -22,6 +24,10 @@ public class Servent implements Serializable {
 
     public int getId() {
         return id;
+    }
+
+    public Key getKey() {
+        return new Key(this);
     }
 
     @Override

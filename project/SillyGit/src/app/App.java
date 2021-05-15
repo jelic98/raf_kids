@@ -13,8 +13,6 @@ import java.util.Date;
 
 public class App {
 
-    private static final boolean MESSAGE_UTIL_PRINTING = true;
-
     public static Message read(Socket socket) {
         Message message = null;
 
@@ -24,14 +22,11 @@ public class App {
             socket.close();
         } catch (Exception e) {
             error(String.format("Error while reading socket on %s:%d (%s)" + socket.getInetAddress(), socket.getPort(), e.getMessage()));
+            return message;
         }
 
-        if (MESSAGE_UTIL_PRINTING) {
-            if (message == null) {
-                print("Received NULL message");
-            } else {
-                print(String.format("Incoming: %s (%s->%s)", message, message.getSender(), message.getReceiver()));
-            }
+        if (message.shouldPrint()) {
+            print(String.format("Incoming: %s (%s->%s)", message, message.getSender(), message.getReceiver()));
         }
 
         return message;
@@ -42,7 +37,7 @@ public class App {
             try {
                 Servent receiver = message.getReceiver();
 
-                if (MESSAGE_UTIL_PRINTING) {
+                if (message.shouldPrint()) {
                     print(String.format("Outgoing: %s (%s->%s)", message, message.getSender(), message.getReceiver()));
                 }
 
@@ -61,7 +56,9 @@ public class App {
 
                 sendSocket.close();
             } catch (Exception e) {
-                error(String.format("Cannot send message %s (%s)", message, e.getMessage()));
+                if (message.shouldPrint()) {
+                    error(String.format("Cannot send message %s (%s)", message, e.getMessage()));
+                }
             }
         }).start();
     }

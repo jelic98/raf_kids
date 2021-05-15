@@ -22,6 +22,11 @@ public class PingTellMessage extends Message {
     }
 
     @Override
+    public boolean shouldPrint() {
+        return false;
+    }
+
+    @Override
     protected Message copy() {
         return new PingTellMessage(this);
     }

@@ -23,12 +23,18 @@ public class PingAskMessage extends Message {
     }
 
     @Override
+    public boolean shouldPrint() {
+        return false;
+    }
+
+    @Override
     protected Message copy() {
         return new PingAskMessage(this);
     }
 
     @Override
     protected void handle() {
+        Config.SYSTEM.addServent(getSender());
         App.send(new PingTellMessage(getSender(), isCheck()));
     }
 

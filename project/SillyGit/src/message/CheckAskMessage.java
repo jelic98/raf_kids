@@ -23,6 +23,11 @@ public class CheckAskMessage extends Message {
     }
 
     @Override
+    public boolean shouldPrint() {
+        return false;
+    }
+
+    @Override
     protected Message copy() {
         return new CheckAskMessage(this);
     }

@@ -64,6 +64,10 @@ public abstract class Message implements Serializable {
         return message;
     }
 
+    public boolean shouldPrint() {
+        return true;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Message) {

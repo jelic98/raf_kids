@@ -1,6 +1,5 @@
 package command;
 
-import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -34,6 +33,11 @@ public class Prompt {
         return "Options: " + options;
     }
 
+    public interface Handler {
+
+        void handle();
+    }
+
     public static class Option {
 
         private String name;
@@ -56,10 +60,5 @@ public class Prompt {
         public String toString() {
             return getName();
         }
-    }
-
-    public interface Handler {
-
-        void handle();
     }
 }

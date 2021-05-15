@@ -3,7 +3,10 @@ package command;
 import app.App;
 import app.Config;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
+import java.util.Scanner;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class CommandParser implements Runnable {
@@ -16,7 +19,7 @@ public class CommandParser implements Runnable {
     public CommandParser() {
         commandList = new ArrayList<>();
 
-        if(!Config.LOCAL.equals(Config.BOOTSTRAP)) {
+        if (!Config.LOCAL.equals(Config.BOOTSTRAP)) {
             commandList.add(new AddCommand());
             commandList.add(new InfoCommand());
             commandList.add(new PauseCommand());
@@ -26,6 +29,11 @@ public class CommandParser implements Runnable {
         }
 
         commandList.add(new StopCommand());
+    }
+
+    public static void addPrompt(Prompt prompt) {
+        App.print(prompt.toString());
+        prompts.add(prompt);
     }
 
     @Override
@@ -71,10 +79,5 @@ public class CommandParser implements Runnable {
 
     public void stop() {
         working = false;
-    }
-
-    public static void addPrompt(Prompt prompt) {
-        App.print(prompt.toString());
-        prompts.add(prompt);
     }
 }

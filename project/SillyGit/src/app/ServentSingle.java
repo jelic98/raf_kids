@@ -1,11 +1,13 @@
 package app;
 
 import command.CommandParser;
+import file.DataReplicator;
 import file.Files;
 import message.JoinAskMessage;
 import message.MessageHandler;
 import message.MessageListener;
 import servent.ServentPinger;
+
 import java.io.File;
 
 public class ServentSingle {
@@ -14,6 +16,7 @@ public class ServentSingle {
     private static MessageListener listener;
     private static CommandParser parser;
     private static ServentPinger pinger;
+    private static DataReplicator replicator;
     private static boolean isServent;
 
     public static void main(String[] args) {
@@ -40,6 +43,9 @@ public class ServentSingle {
             pinger = new ServentPinger();
             new Thread(pinger).start();
 
+            replicator = new DataReplicator();
+            new Thread(replicator).start();
+
             new File(Files.absolute(Config.WORKSPACE_PATH, "")).mkdirs();
             new File(Files.absolute(Config.STORAGE_PATH, "")).mkdirs();
 
@@ -53,6 +59,7 @@ public class ServentSingle {
 
     public static void stop() {
         if (isServent) {
+            replicator.stop();
             pinger.stop();
         }
 

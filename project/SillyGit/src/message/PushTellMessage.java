@@ -41,7 +41,7 @@ public class PushTellMessage extends Message {
         if (isConflict()) {
             App.print(String.format("Cannot push file %s", getLocal()));
             showPrompt();
-        }else {
+        } else {
             App.print(String.format("File %s pushed successfully", getLocal()));
         }
     }

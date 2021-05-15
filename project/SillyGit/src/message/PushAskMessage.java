@@ -38,7 +38,7 @@ public class PushAskMessage extends Message {
 
                 boolean conflict = data.getVersion() >= getData().getVersion();
 
-                if(!conflict) {
+                if (!conflict) {
                     getData().save(Config.STORAGE_PATH);
                     Config.STORAGE.add(getData());
                 }

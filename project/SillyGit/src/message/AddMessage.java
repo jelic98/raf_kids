@@ -34,11 +34,11 @@ public class AddMessage extends Message {
 
         if (servents[0].equals(Config.LOCAL)) {
             if (Config.STORAGE.contains(getData())) {
-                App.print(String.format("File %s already exists", getData()));
+                App.print(String.format("File %s already exists at %s", getData(), getReceiver()));
             } else {
                 getData().save(Config.STORAGE_PATH);
                 Config.STORAGE.add(getData());
-                App.print(String.format("File %s added to storage", getData()));
+                App.print(String.format("File %s added to storage at %s", getData(), getReceiver()));
             }
         } else {
             if (containsSender(servents[0])) {

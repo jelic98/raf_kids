@@ -1,8 +1,8 @@
 package app;
 
 import file.Files;
-import servent.System;
 import servent.Servent;
+import servent.System;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,6 +18,7 @@ public class Config {
     public static int SERVENT_COUNT;
     public static long FAILURE_SOFT;
     public static long FAILURE_HARD;
+    public static long REPLICATE_INTERVAL;
     public static Servent BOOTSTRAP;
     public static Servent LOCAL;
     public static System SYSTEM;
@@ -41,6 +42,7 @@ public class Config {
         SERVENT_COUNT = Integer.parseInt(properties.getProperty("servent_count"));
         FAILURE_SOFT = Long.parseLong(properties.getProperty("failure_soft"));
         FAILURE_HARD = Long.parseLong(properties.getProperty("failure_hard"));
+        REPLICATE_INTERVAL = Long.parseLong(properties.getProperty("replicate_interval"));
 
         String bootstrapHost = properties.getProperty("bootstrap.host");
         int bootstrapPort = Integer.parseInt(properties.getProperty("bootstrap.port"));

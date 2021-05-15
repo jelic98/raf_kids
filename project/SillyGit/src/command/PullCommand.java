@@ -7,6 +7,7 @@ import file.FileHandler;
 import file.Files;
 import message.PullAskMessage;
 import servent.Servent;
+
 import java.io.File;
 
 public class PullCommand implements Command {
@@ -29,7 +30,7 @@ public class PullCommand implements Command {
                     pull(new FileData(path, version));
                 }
             });
-        }else {
+        } else {
             pull(new FileData(args, version));
         }
     }

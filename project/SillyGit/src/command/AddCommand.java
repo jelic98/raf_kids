@@ -7,6 +7,7 @@ import file.FileHandler;
 import file.Files;
 import message.AddMessage;
 import servent.Servent;
+
 import java.io.File;
 
 public class AddCommand implements Command {
@@ -28,7 +29,6 @@ public class AddCommand implements Command {
         new FileHandler().forEach(path, new FileHandler.Handler<String>() {
             @Override
             public void handle(String path) {
-                // TODO Add unknown servent to list (up to logn servents in a list)
                 // TODO Handle newest file version (-1)
                 FileData data = new FileData(path);
                 data.load(Config.WORKSPACE_PATH);

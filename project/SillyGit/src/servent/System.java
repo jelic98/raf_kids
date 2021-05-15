@@ -25,7 +25,11 @@ public class System {
 
     public Servent[] getServents(Key key, boolean inclusive) {
         if (servents.isEmpty()) {
-            return new Servent[0];
+            if (inclusive) {
+                return new Servent[]{Config.LOCAL};
+            } else {
+                return new Servent[0];
+            }
         }
 
         int maxIndex = Math.min(Config.K, servents.size() + (inclusive ? 1 : 0));

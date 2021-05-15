@@ -17,7 +17,7 @@ public class Key extends Field<BigInteger> {
 
         try {
             return new BigInteger(MessageDigest.getInstance("SHA-1").digest(bytes));
-        }catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e) {
             return BigInteger.valueOf(0);
         }
     }

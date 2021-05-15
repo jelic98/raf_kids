@@ -9,7 +9,7 @@ public class RemoveMessage extends Message {
 
     private static final long serialVersionUID = 1L;
 
-    private FileData data;
+    private final FileData data;
 
     public RemoveMessage(Servent receiver, FileData data) {
         super(null, Config.LOCAL, receiver);

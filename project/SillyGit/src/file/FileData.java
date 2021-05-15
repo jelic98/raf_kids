@@ -13,7 +13,7 @@ import java.util.Objects;
 
 public class FileData implements Serializable {
 
-    private String path;
+    private final String path;
     private String content;
     private int version;
 
@@ -23,7 +23,7 @@ public class FileData implements Serializable {
     }
 
     public FileData(String path) {
-        this(path, 0);
+        this(path, -1);
     }
 
     public void load(String location) {
@@ -41,7 +41,6 @@ public class FileData implements Serializable {
         directory.mkdirs();
 
         try (PrintWriter out = new PrintWriter(file)) {
-            // TODO This is null
             out.write(content);
         } catch (IOException e) {
             App.error(String.format("Cannot save file %s (%s)", path, e.getMessage()));

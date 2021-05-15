@@ -29,8 +29,7 @@ public class AddCommand implements Command {
         new FileHandler().forEach(path, new FileHandler.Handler<String>() {
             @Override
             public void handle(String path) {
-                // TODO Handle newest file version (-1)
-                FileData data = new FileData(path);
+                FileData data = new FileData(path, 0);
                 data.load(Config.WORKSPACE_PATH);
 
                 Config.WORKSPACE.add(data);

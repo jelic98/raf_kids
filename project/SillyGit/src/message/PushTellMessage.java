@@ -11,9 +11,9 @@ public class PushTellMessage extends Message {
 
     private static final long serialVersionUID = 1L;
 
-    private FileData local;
-    private FileData remote;
-    private boolean conflict;
+    private final FileData local;
+    private final FileData remote;
+    private final boolean conflict;
 
     public PushTellMessage(Servent receiver, FileData local, FileData remote, boolean conflict) {
         super(null, Config.LOCAL, receiver);

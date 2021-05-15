@@ -11,9 +11,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Files {
 
-    private Set<FileData> files;
-    private Map<FileData, Servent> cache;
-    private Map<FileData, Set<Servent>> access;
+    private final Set<FileData> files;
+    private final Map<FileData, Servent> cache;
+    private final Map<FileData, Set<Servent>> access;
 
     public Files() {
         files = Collections.newSetFromMap(new ConcurrentHashMap<>());
@@ -21,7 +21,16 @@ public class Files {
         access = new ConcurrentHashMap<>();
     }
 
+    public static String absolute(String directory, String file) {
+        return directory.replace("{id}", String.valueOf(Config.LOCAL.getId())) + file;
+    }
+
+    public static String relative(String directory, String file) {
+        return file.replace(directory.replace("{id}", String.valueOf(Config.LOCAL.getId())), "");
+    }
+
     public FileData get(FileData data, Servent servent) {
+        // TODO Handle multiple versions
         for (FileData f : files) {
             if (f.equals(data)) {
                 if (servent != null) {
@@ -113,13 +122,5 @@ public class Files {
     @Override
     public String toString() {
         return files.toString();
-    }
-
-    public static String absolute(String directory, String file) {
-        return directory.replace("{id}", String.valueOf(Config.LOCAL.getId())) + file;
-    }
-
-    public static String relative(String directory, String file) {
-        return file.replace(directory.replace("{id}", String.valueOf(Config.LOCAL.getId())), "");
     }
 }

@@ -13,9 +13,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Network {
 
-    private Set<Servent> servents;
-    private Set<Servent> pinged;
-    private Set<Servent> checked;
+    private final Set<Servent> servents;
+    private final Set<Servent> pinged;
+    private final Set<Servent> checked;
 
     public Network() {
         servents = Collections.newSetFromMap(new ConcurrentHashMap<>());

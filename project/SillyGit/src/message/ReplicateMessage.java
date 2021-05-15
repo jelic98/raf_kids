@@ -8,8 +8,8 @@ public class ReplicateMessage extends Message {
 
     private static final long serialVersionUID = 1L;
 
-    private FileData data;
-    private boolean background;
+    private final FileData data;
+    private final boolean background;
 
     public ReplicateMessage(Servent receiver, FileData data, boolean background) {
         super(null, Config.LOCAL, receiver);

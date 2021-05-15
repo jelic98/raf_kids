@@ -7,7 +7,7 @@ public class PingTellMessage extends Message {
 
     private static final long serialVersionUID = 1L;
 
-    private boolean check;
+    private final boolean check;
 
     public PingTellMessage(Servent receiver, boolean check) {
         super(null, Config.LOCAL, receiver);

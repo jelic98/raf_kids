@@ -1,8 +1,8 @@
 package app;
 
 import file.Files;
-import servent.Servent;
 import servent.Network;
+import servent.Servent;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,7 +25,7 @@ public class Config {
     public static Network NETWORK;
     public static Files WORKSPACE;
     public static Files STORAGE;
-    public static Random RANDOM = new Random(1);
+    public static final Random RANDOM = new Random(1);
 
     public static Properties load(String path) {
         Properties properties = new Properties();

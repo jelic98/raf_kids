@@ -5,7 +5,6 @@ import app.Config;
 import file.FileData;
 import file.FileHandler;
 import file.Files;
-import message.PullAskMessage;
 import message.PushAskMessage;
 import servent.Servent;
 

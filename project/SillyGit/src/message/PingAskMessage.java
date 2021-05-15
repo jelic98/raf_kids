@@ -8,7 +8,7 @@ public class PingAskMessage extends Message {
 
     private static final long serialVersionUID = 1L;
 
-    private boolean check;
+    private final boolean check;
 
     public PingAskMessage(Servent receiver, boolean check) {
         super(null, Config.LOCAL, receiver);

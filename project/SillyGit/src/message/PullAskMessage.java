@@ -9,7 +9,7 @@ public class PullAskMessage extends Message {
 
     private static final long serialVersionUID = 1L;
 
-    private FileData data;
+    private final FileData data;
 
     public PullAskMessage(Servent receiver, FileData data) {
         super(null, Config.LOCAL, receiver);

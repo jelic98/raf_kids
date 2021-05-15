@@ -8,8 +8,8 @@ public class RedirectMessage extends Message {
 
     private static final long serialVersionUID = 1L;
 
-    private Servent servent;
-    private FileData data;
+    private final Servent servent;
+    private final FileData data;
 
     public RedirectMessage(Servent receiver, Servent servent, FileData data) {
         super(null, Config.LOCAL, receiver);

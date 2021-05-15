@@ -5,7 +5,7 @@ import java.util.Set;
 
 public class Prompt {
 
-    private Set<Option> options;
+    private final Set<Option> options;
 
     public Prompt() {
         options = new LinkedHashSet<>();
@@ -40,8 +40,8 @@ public class Prompt {
 
     public static class Option {
 
-        private String name;
-        private Handler handler;
+        private final String name;
+        private final Handler handler;
 
         public Option(String name, Handler handler) {
             this.name = name;

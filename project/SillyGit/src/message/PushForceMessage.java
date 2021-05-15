@@ -9,7 +9,7 @@ public class PushForceMessage extends Message {
 
     private static final long serialVersionUID = 1L;
 
-    private FileData data;
+    private final FileData data;
 
     public PushForceMessage(Servent receiver, FileData data) {
         super(null, Config.LOCAL, receiver);

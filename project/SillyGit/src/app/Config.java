@@ -2,7 +2,7 @@ package app;
 
 import file.Files;
 import servent.Servent;
-import servent.System;
+import servent.Network;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,12 +16,13 @@ public class Config {
     public static String WORKSPACE_PATH;
     public static int K;
     public static int SERVENT_COUNT;
+    public static int TEAM_LIMIT;
     public static long FAILURE_SOFT;
     public static long FAILURE_HARD;
     public static long REPLICATE_INTERVAL;
     public static Servent BOOTSTRAP;
     public static Servent LOCAL;
-    public static System SYSTEM;
+    public static Network NETWORK;
     public static Files WORKSPACE;
     public static Files STORAGE;
     public static Random RANDOM = new Random(1);
@@ -33,13 +34,14 @@ public class Config {
             properties.load(new FileInputStream(new File(path)));
         } catch (IOException e) {
             App.error("Cannot open properties file");
-            java.lang.System.exit(0);
+            System.exit(0);
         }
 
         STORAGE_PATH = properties.getProperty("storage_path");
         WORKSPACE_PATH = properties.getProperty("workspace_path");
         K = Integer.parseInt(properties.getProperty("k"));
         SERVENT_COUNT = Integer.parseInt(properties.getProperty("servent_count"));
+        TEAM_LIMIT = Integer.parseInt(properties.getProperty("team_limit"));
         FAILURE_SOFT = Long.parseLong(properties.getProperty("failure_soft"));
         FAILURE_HARD = Long.parseLong(properties.getProperty("failure_hard"));
         REPLICATE_INTERVAL = Long.parseLong(properties.getProperty("replicate_interval"));
@@ -47,7 +49,7 @@ public class Config {
         String bootstrapHost = properties.getProperty("bootstrap.host");
         int bootstrapPort = Integer.parseInt(properties.getProperty("bootstrap.port"));
 
-        BOOTSTRAP = new Servent(bootstrapHost, bootstrapPort, 0);
+        BOOTSTRAP = new Servent(bootstrapHost, bootstrapPort, null, 0);
 
         return properties;
     }
@@ -60,11 +62,12 @@ public class Config {
         } else {
             String serventHost = properties.getProperty("servent" + servent + ".host");
             int serventPort = Integer.parseInt(properties.getProperty("servent" + servent + ".port"));
+            String serventTeam = properties.getProperty("servent" + servent + ".team");
 
-            LOCAL = new Servent(serventHost, serventPort, servent);
+            LOCAL = new Servent(serventHost, serventPort, serventTeam, servent);
         }
 
-        SYSTEM = new System();
+        NETWORK = new Network();
         WORKSPACE = new Files();
         STORAGE = new Files();
     }

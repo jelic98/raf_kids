@@ -29,7 +29,7 @@ public class FailMessage extends Message {
 
     @Override
     protected void handle() {
-        if (Config.SYSTEM.removeServent(servent)) {
+        if (Config.NETWORK.removeServent(servent)) {
             App.print(String.format("Servent %s failed", getServent()));
         }
     }

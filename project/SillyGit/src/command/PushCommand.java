@@ -5,6 +5,7 @@ import app.Config;
 import file.FileData;
 import file.FileHandler;
 import file.Files;
+import message.PullAskMessage;
 import message.PushAskMessage;
 import servent.Servent;
 
@@ -43,8 +44,8 @@ public class PushCommand implements Command {
                     data.setVersion(existing.getVersion() + 1);
                 }
 
-                Servent[] servents = Config.SYSTEM.getServents(data.getKey());
-                App.send(new PushAskMessage(servents[0], data));
+                Servent servent = Config.WORKSPACE.getCached(data);
+                App.send(new PushAskMessage(servent, data));
             }
         });
     }

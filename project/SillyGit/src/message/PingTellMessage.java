@@ -34,9 +34,9 @@ public class PingTellMessage extends Message {
     @Override
     protected void handle() {
         if (isCheck()) {
-            Config.SYSTEM.uncheck(getSender());
+            Config.NETWORK.uncheck(getSender());
         } else {
-            Config.SYSTEM.pong(getSender());
+            Config.NETWORK.pong(getSender());
         }
     }
 

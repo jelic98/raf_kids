@@ -37,7 +37,7 @@ public class CheckTellMessage extends Message {
     @Override
     protected void handle() {
         if (isActive()) {
-            Config.SYSTEM.pong(getServent());
+            Config.NETWORK.pong(getServent());
         }
     }
 

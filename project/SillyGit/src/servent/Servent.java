@@ -10,9 +10,11 @@ public class Servent implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private final Address address;
+    private final String team;
     private final int id;
 
-    public Servent(String host, int port, int id) {
+    public Servent(String host, int port, String team, int id) {
+        this.team = team;
         this.id = id;
 
         address = new Address(host, port);
@@ -20,6 +22,10 @@ public class Servent implements Serializable {
 
     public Address getAddress() {
         return address;
+    }
+
+    public String getTeam() {
+        return team;
     }
 
     public int getId() {

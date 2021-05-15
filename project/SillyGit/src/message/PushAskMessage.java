@@ -30,9 +30,9 @@ public class PushAskMessage extends Message {
 
     @Override
     protected void handle() {
-        Servent[] servents = Config.SYSTEM.getServents(getData().getKey());
+        Servent servent = Config.NETWORK.getServent(getData().getKey());
 
-        if (servents[0].equals(Config.LOCAL)) {
+        if (servent.equals(Config.LOCAL)) {
             if (Config.STORAGE.contains(getData())) {
                 FileData data = Config.STORAGE.get(getData());
 
@@ -48,8 +48,8 @@ public class PushAskMessage extends Message {
                 App.print(String.format("File %s not found", getData()));
             }
         } else {
-            if (containsSender(servents[0])) {
-                App.send(redirect(servents[0]));
+            if (containsSender(servent)) {
+                App.send(redirect(servent));
             }
         }
     }

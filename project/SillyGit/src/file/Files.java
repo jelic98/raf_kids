@@ -2,41 +2,49 @@ package file;
 
 import app.App;
 import app.Config;
+import message.RedirectMessage;
 import message.ReplicateMessage;
 import servent.Servent;
 
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Files {
 
     private Set<FileData> files;
+    private Map<FileData, Servent> cache;
+    private Map<FileData, Set<Servent>> access;
 
     public Files() {
         files = Collections.newSetFromMap(new ConcurrentHashMap<>());
+        cache = new ConcurrentHashMap<>();
+        access = new ConcurrentHashMap<>();
     }
 
-    public static String absolute(String directory, String file) {
-        return directory.replace("{id}", String.valueOf(Config.LOCAL.getId())) + file;
-    }
-
-    public static String relative(String directory, String file) {
-        return file.replace(directory.replace("{id}", String.valueOf(Config.LOCAL.getId())), "");
-    }
-
-    public void add(FileData data) {
-        files.remove(data);
-        files.add(data);
-    }
-
-    public void remove(FileData data) {
-        files.removeIf(f -> f.equals(data));
-    }
-
-    public FileData get(FileData data) {
+    public FileData get(FileData data, Servent servent) {
         for (FileData f : files) {
             if (f.equals(data)) {
+                if (servent != null) {
+                    Set<Servent> access = this.access.get(data);
+                    access.add(servent);
+
+                    List<Servent> team = new LinkedList<>();
+
+                    for (Servent s : access) {
+                        if (s.getTeam().equals(servent.getTeam())) {
+                            team.add(s);
+                        }
+                    }
+
+                    if (team.size() > Config.TEAM_LIMIT) {
+                        App.send(new ReplicateMessage(team.get(0), data, false));
+
+                        for (int i = 1; i < team.size(); i++) {
+                            App.send(new RedirectMessage(team.get(i), team.get(0), data));
+                        }
+                    }
+                }
+
                 return f;
             }
         }
@@ -44,17 +52,53 @@ public class Files {
         return null;
     }
 
+    public FileData get(FileData data) {
+        return get(data, null);
+    }
+
+    public void add(FileData data) {
+        files.remove(data);
+        files.add(data);
+
+        if (!access.containsKey(data)) {
+            access.put(data, Collections.newSetFromMap(new ConcurrentHashMap<>()));
+        }
+    }
+
+    public void remove(FileData data) {
+        files.removeIf(f -> f.equals(data));
+    }
+
     public boolean contains(FileData data) {
         return files.contains(data);
     }
 
+    public Servent getCached(FileData data) {
+        if (cache.containsKey(data)) {
+            Servent servent = cache.get(data);
+
+            if (Config.NETWORK.containsServent(servent)) {
+                return cache.get(data);
+            } else {
+                cache.remove(data);
+                return Config.NETWORK.getServent(data.getKey());
+            }
+        } else {
+            return Config.NETWORK.getServent(data.getKey());
+        }
+    }
+
+    public void addCached(FileData data, Servent servent) {
+        cache.put(data, servent);
+    }
+
     public void replicate() {
         for (FileData f : files) {
-            Servent[] servents = Config.SYSTEM.getServents(f.getKey());
+            Servent[] servents = Config.NETWORK.getServents(f.getKey());
 
             if (servents[0].equals(Config.LOCAL)) {
                 for (int i = 1; i < servents.length; i++) {
-                    App.send(new ReplicateMessage(servents[i], f));
+                    App.send(new ReplicateMessage(servents[i], f, true));
                 }
             }
         }
@@ -69,5 +113,13 @@ public class Files {
     @Override
     public String toString() {
         return files.toString();
+    }
+
+    public static String absolute(String directory, String file) {
+        return directory.replace("{id}", String.valueOf(Config.LOCAL.getId())) + file;
+    }
+
+    public static String relative(String directory, String file) {
+        return file.replace(directory.replace("{id}", String.valueOf(Config.LOCAL.getId())), "");
     }
 }

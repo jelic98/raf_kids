@@ -35,7 +35,7 @@ public class PingAskMessage extends Message {
     @Override
     protected void handle() {
         // TODO This operation should keep only K servents in a bucket
-        Config.SYSTEM.addServent(getSender());
+        Config.NETWORK.addServent(getSender());
         App.send(new PingTellMessage(getSender(), isCheck()));
     }
 

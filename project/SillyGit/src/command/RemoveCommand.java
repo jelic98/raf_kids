@@ -33,8 +33,8 @@ public class RemoveCommand implements Command {
 
                 Config.WORKSPACE.remove(data);
 
-                Servent[] servents = Config.SYSTEM.getServents(data.getKey());
-                App.send(new RemoveMessage(servents[0], data));
+                Servent servent = Config.NETWORK.getServent(data.getKey());
+                App.send(new RemoveMessage(servent, data));
             }
         });
     }

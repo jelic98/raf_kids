@@ -30,9 +30,9 @@ public class AddMessage extends Message {
 
     @Override
     protected void handle() {
-        Servent[] servents = Config.SYSTEM.getServents(getData().getKey());
+        Servent servent = Config.NETWORK.getServent(getData().getKey());
 
-        if (servents[0].equals(Config.LOCAL)) {
+        if (servent.equals(Config.LOCAL)) {
             if (Config.STORAGE.contains(getData())) {
                 App.print(String.format("File %s already exists at %s", getData(), getReceiver()));
             } else {
@@ -41,8 +41,8 @@ public class AddMessage extends Message {
                 App.print(String.format("File %s added to storage at %s", getData(), getReceiver()));
             }
         } else {
-            if (containsSender(servents[0])) {
-                App.send(redirect(servents[0]));
+            if (containsSender(servent)) {
+                App.send(redirect(servent));
             }
         }
     }

@@ -39,7 +39,7 @@ public class JoinTellMessage extends Message {
             App.print(String.format("Servent %s joined", getReceiver()));
 
             for (Servent servent : getServents()) {
-                Config.SYSTEM.addServent(servent);
+                Config.NETWORK.addServent(servent);
             }
         } else {
             App.error(String.format("Servent %s cannot join", getReceiver()));

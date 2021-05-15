@@ -34,12 +34,12 @@ public class CheckAskMessage extends Message {
 
     @Override
     protected void handle() {
-        Config.SYSTEM.check(getServent());
+        Config.NETWORK.check(getServent());
 
-        boolean active = Config.SYSTEM.isChecked(getServent());
+        boolean active = Config.NETWORK.isChecked(getServent());
 
         if (!active) {
-            Config.SYSTEM.removeServent(getServent());
+            Config.NETWORK.removeServent(getServent());
         }
 
         App.send(new CheckTellMessage(getServent(), getServent(), active));

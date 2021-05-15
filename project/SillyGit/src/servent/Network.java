@@ -11,13 +11,13 @@ import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class System {
+public class Network {
 
     private Set<Servent> servents;
     private Set<Servent> pinged;
     private Set<Servent> checked;
 
-    public System() {
+    public Network() {
         servents = Collections.newSetFromMap(new ConcurrentHashMap<>());
         pinged = Collections.newSetFromMap(new ConcurrentHashMap<>());
         checked = Collections.newSetFromMap(new ConcurrentHashMap<>());
@@ -60,12 +60,20 @@ public class System {
         return getServents(key, true);
     }
 
+    public Servent getServent(Key key) {
+        return getServents(key)[0];
+    }
+
     public boolean addServent(Servent servent) {
         return servents.add(servent);
     }
 
     public boolean removeServent(Servent servent) {
         return servents.remove(servent);
+    }
+
+    public boolean containsServent(Servent servent) {
+        return servents.contains(servent);
     }
 
     public void ping() {
@@ -99,7 +107,7 @@ public class System {
 
         for (Servent servent : pinged) {
             App.send(new FailMessage(servent));
-            Config.SYSTEM.removeServent(servent);
+            Config.NETWORK.removeServent(servent);
         }
     }
 

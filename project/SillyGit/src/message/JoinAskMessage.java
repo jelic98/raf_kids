@@ -23,8 +23,8 @@ public class JoinAskMessage extends Message {
 
     @Override
     protected void handle() {
-        Servent[] servents = Config.SYSTEM.getServents(getSender().getKey(), false);
-        boolean joined = Config.SYSTEM.addServent(getSender());
+        Servent[] servents = Config.NETWORK.getServents(getSender().getKey(), false);
+        boolean joined = Config.NETWORK.addServent(getSender());
         App.send(new JoinTellMessage(getSender(), servents, joined));
     }
 }

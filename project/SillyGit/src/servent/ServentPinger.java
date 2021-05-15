@@ -9,7 +9,7 @@ public class ServentPinger implements Runnable {
     @Override
     public void run() {
         while (working) {
-            Config.SYSTEM.ping();
+            Config.NETWORK.ping();
         }
     }
 

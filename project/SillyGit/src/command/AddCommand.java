@@ -35,8 +35,8 @@ public class AddCommand implements Command {
 
                 Config.WORKSPACE.add(data);
 
-                Servent[] servents = Config.SYSTEM.getServents(data.getKey());
-                App.send(new AddMessage(servents[0], data));
+                Servent servent = Config.NETWORK.getServent(data.getKey());
+                App.send(new AddMessage(servent, data));
             }
         });
     }

@@ -1,6 +1,5 @@
 package message;
 
-import app.App;
 import app.Config;
 import file.FileData;
 import servent.Servent;
@@ -10,22 +9,25 @@ public class ReplicateMessage extends Message {
     private static final long serialVersionUID = 1L;
 
     private FileData data;
+    private boolean background;
 
-    public ReplicateMessage(Servent receiver, FileData data) {
+    public ReplicateMessage(Servent receiver, FileData data, boolean background) {
         super(null, Config.LOCAL, receiver);
 
         this.data = data;
+        this.background = background;
     }
 
     public ReplicateMessage(ReplicateMessage m) {
         super(m);
 
         data = m.data;
+        background = m.background;
     }
 
     @Override
     public boolean shouldPrint() {
-        return false;
+        return true;
     }
 
     @Override
@@ -46,6 +48,10 @@ public class ReplicateMessage extends Message {
 
     public FileData getData() {
         return data;
+    }
+
+    public boolean isBackground() {
+        return background;
     }
 }
 

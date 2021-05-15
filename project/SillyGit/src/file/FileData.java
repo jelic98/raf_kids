@@ -2,8 +2,6 @@ package file;
 
 import app.App;
 import app.Config;
-import data.Hash;
-import data.Key;
 
 import java.io.File;
 import java.io.IOException;

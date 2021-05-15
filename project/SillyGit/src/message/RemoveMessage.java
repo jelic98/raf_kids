@@ -32,7 +32,7 @@ public class RemoveMessage extends Message {
     protected void handle() {
         Servent[] servents = Config.SYSTEM.getServents(getData().getKey());
 
-        if (servents[0] == Config.LOCAL) {
+        if (servents[0].equals(Config.LOCAL)) {
             if (Config.STORAGE.contains(getData())) {
                 Config.STORAGE.remove(getData());
                 App.print(String.format("File %s removed from storage", getData()));

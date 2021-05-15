@@ -7,12 +7,18 @@ public class PingTellMessage extends Message {
 
     private static final long serialVersionUID = 1L;
 
-    public PingTellMessage(Servent receiver) {
+    private boolean check;
+
+    public PingTellMessage(Servent receiver, boolean check) {
         super(null, Config.LOCAL, receiver);
+
+        this.check = check;
     }
 
     public PingTellMessage(PingTellMessage m) {
         super(m);
+
+        check = m.check;
     }
 
     @Override
@@ -22,6 +28,14 @@ public class PingTellMessage extends Message {
 
     @Override
     protected void handle() {
-        Config.SYSTEM.addServent(getSender());
+        if (isCheck()) {
+            Config.SYSTEM.uncheck(getSender());
+        } else {
+            Config.SYSTEM.pong(getSender());
+        }
+    }
+
+    public boolean isCheck() {
+        return check;
     }
 }

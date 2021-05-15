@@ -32,7 +32,7 @@ public class AddMessage extends Message {
     protected void handle() {
         Servent[] servents = Config.SYSTEM.getServents(getData().getKey());
 
-        if (servents[0] == Config.LOCAL) {
+        if (servents[0].equals(Config.LOCAL)) {
             if (Config.STORAGE.contains(getData())) {
                 App.print(String.format("File %s already exists", getData()));
             } else {

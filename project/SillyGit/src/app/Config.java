@@ -16,6 +16,8 @@ public class Config {
     public static String WORKSPACE_PATH;
     public static int K;
     public static int SERVENT_COUNT;
+    public static long FAILURE_SOFT;
+    public static long FAILURE_HARD;
     public static Servent BOOTSTRAP;
     public static Servent LOCAL;
     public static System SYSTEM;
@@ -30,13 +32,15 @@ public class Config {
             properties.load(new FileInputStream(new File(path)));
         } catch (IOException e) {
             App.error("Cannot open properties file");
-            java.lang.System.exit(1);
+            java.lang.System.exit(0);
         }
 
         STORAGE_PATH = properties.getProperty("storage_path");
         WORKSPACE_PATH = properties.getProperty("workspace_path");
         K = Integer.parseInt(properties.getProperty("k"));
         SERVENT_COUNT = Integer.parseInt(properties.getProperty("servent_count"));
+        FAILURE_SOFT = Long.parseLong(properties.getProperty("failure_soft"));
+        FAILURE_HARD = Long.parseLong(properties.getProperty("failure_hard"));
 
         String bootstrapHost = properties.getProperty("bootstrap.host");
         int bootstrapPort = Integer.parseInt(properties.getProperty("bootstrap.port"));

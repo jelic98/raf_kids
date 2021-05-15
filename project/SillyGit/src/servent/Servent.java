@@ -1,6 +1,6 @@
 package servent;
 
-import data.Key;
+import file.Key;
 
 import java.io.Serializable;
 import java.util.Objects;

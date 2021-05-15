@@ -1,7 +1,6 @@
 package command;
 
-import app.App;
-import message.StopMessage;
+import app.ServentSingle;
 
 public class StopCommand implements Command {
 
@@ -12,6 +11,6 @@ public class StopCommand implements Command {
 
     @Override
     public void execute(String args) {
-        App.send(new StopMessage());
+        ServentSingle.stop();
     }
 }

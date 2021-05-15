@@ -1,12 +1,18 @@
-package data;
+package file;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class Hash {
+public class Key extends Field<BigInteger> {
 
-    public static BigInteger get(Object object) {
+    private static final long serialVersionUID = 1L;
+
+    public Key(Object field) {
+        super(hash(field));
+    }
+
+    private static BigInteger hash(Object object) {
         byte[] bytes = BigInteger.valueOf(object.hashCode()).toByteArray();
 
         try {

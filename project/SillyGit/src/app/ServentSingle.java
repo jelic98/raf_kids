@@ -5,7 +5,7 @@ import file.Files;
 import message.JoinAskMessage;
 import message.MessageHandler;
 import message.MessageListener;
-
+import servent.ServentPinger;
 import java.io.File;
 
 public class ServentSingle {
@@ -13,6 +13,7 @@ public class ServentSingle {
     private static MessageHandler handler;
     private static MessageListener listener;
     private static CommandParser parser;
+    private static ServentPinger pinger;
     private static boolean isServent;
 
     public static void main(String[] args) {
@@ -32,16 +33,19 @@ public class ServentSingle {
         listener = new MessageListener();
         new Thread(listener).start();
 
-        if (isServent) {
-            parser = new CommandParser();
-            new Thread(parser).start();
+        parser = new CommandParser();
+        new Thread(parser).start();
 
-            App.send(new JoinAskMessage());
+        if (isServent) {
+            pinger = new ServentPinger();
+            new Thread(pinger).start();
 
             new File(Files.absolute(Config.WORKSPACE_PATH, "")).mkdirs();
             new File(Files.absolute(Config.STORAGE_PATH, "")).mkdirs();
 
             App.print("Started servent " + Config.LOCAL);
+
+            App.send(new JoinAskMessage());
         } else {
             App.print("Started bootstrap server " + Config.LOCAL);
         }
@@ -49,9 +53,10 @@ public class ServentSingle {
 
     public static void stop() {
         if (isServent) {
-            parser.stop();
+            pinger.stop();
         }
 
+        parser.stop();
         listener.stop();
         handler.stop();
 
@@ -60,5 +65,7 @@ public class ServentSingle {
         } else {
             App.print("Bootstrap stopped");
         }
+
+        System.exit(0);
     }
 }

@@ -1,6 +1,7 @@
 package command;
 
 import app.App;
+import app.Config;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -14,13 +15,16 @@ public class CommandParser implements Runnable {
 
     public CommandParser() {
         commandList = new ArrayList<>();
-        commandList.add(new AddCommand());
-        commandList.add(new ExitCommand());
-        commandList.add(new InfoCommand());
-        commandList.add(new PauseCommand());
-        commandList.add(new PullCommand());
-        commandList.add(new PushCommand());
-        commandList.add(new RemoveCommand());
+
+        if(!Config.LOCAL.equals(Config.BOOTSTRAP)) {
+            commandList.add(new AddCommand());
+            commandList.add(new InfoCommand());
+            commandList.add(new PauseCommand());
+            commandList.add(new PullCommand());
+            commandList.add(new PushCommand());
+            commandList.add(new RemoveCommand());
+        }
+
         commandList.add(new StopCommand());
     }
 

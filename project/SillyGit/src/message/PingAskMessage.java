@@ -8,12 +8,18 @@ public class PingAskMessage extends Message {
 
     private static final long serialVersionUID = 1L;
 
-    public PingAskMessage(Servent receiver) {
+    private boolean check;
+
+    public PingAskMessage(Servent receiver, boolean check) {
         super(null, Config.LOCAL, receiver);
+
+        this.check = check;
     }
 
     public PingAskMessage(PingAskMessage m) {
         super(m);
+
+        check = m.check;
     }
 
     @Override
@@ -23,9 +29,10 @@ public class PingAskMessage extends Message {
 
     @Override
     protected void handle() {
-        Config.SYSTEM.addServent(getSender());
-        // TODO PING messages (after joining system) should be synchronous of asynchronous?
-        App.send(new PingTellMessage(getSender()));
+        App.send(new PingTellMessage(getSender(), isCheck()));
+    }
+
+    public boolean isCheck() {
+        return check;
     }
 }
-

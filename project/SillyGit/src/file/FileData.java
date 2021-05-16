@@ -21,7 +21,7 @@ public class FileData implements Serializable {
     private final String path;
     private String content;
     private int version;
-    private Map<Integer, String> history;
+    private final Map<Integer, String> history;
 
     public FileData(String path, int version) {
         this.path = Files.relative(Config.WORKSPACE_PATH, path);

@@ -12,6 +12,7 @@ import java.util.Random;
 
 public class Config {
 
+    public static final Random RANDOM = new Random(1);
     public static String STORAGE_PATH;
     public static String WORKSPACE_PATH;
     public static int K;
@@ -25,7 +26,6 @@ public class Config {
     public static Network NETWORK;
     public static Files WORKSPACE;
     public static Files STORAGE;
-    public static final Random RANDOM = new Random(1);
 
     public static Properties load(String path) {
         Properties properties = new Properties();

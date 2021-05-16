@@ -27,7 +27,7 @@ public class ReplicateMessage extends Message {
 
     @Override
     public boolean shouldPrint() {
-        return true;
+        return !isBackground();
     }
 
     @Override

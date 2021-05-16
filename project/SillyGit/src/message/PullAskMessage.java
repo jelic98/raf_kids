@@ -36,8 +36,11 @@ public class PullAskMessage extends Message {
             if (Config.STORAGE.contains(getData())) {
                 FileData data = Config.STORAGE.get(getData(), getSender());
 
-                data.load(Config.STORAGE_PATH);
-                App.send(new PullTellMessage(getSender(), data));
+                if (data.load(getData().getVersion())) {
+                    App.send(new PullTellMessage(getSender(), data));
+                } else {
+                    App.print(String.format("Version %d of file %s not found", getData().getVersion(), getData()));
+                }
             } else {
                 App.print(String.format("File %s not found", getData()));
             }

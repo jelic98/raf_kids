@@ -42,6 +42,9 @@ public class PushTellMessage extends Message {
             App.print(String.format("Cannot push file %s", getLocal()));
             showPrompt();
         } else {
+            FileData existing = Config.WORKSPACE.get(getLocal());
+            existing.setVersion(getLocal().getVersion());
+
             App.print(String.format("File %s pushed successfully", getLocal()));
         }
     }
@@ -84,6 +87,9 @@ public class PushTellMessage extends Message {
                 .add(new Prompt.Option("push", new Prompt.Handler() {
                     @Override
                     public void handle() {
+                        FileData existing = Config.WORKSPACE.get(getLocal());
+                        existing.setVersion(getLocal().getVersion());
+
                         App.send(new PushForceMessage(getSender(), getLocal()));
                     }
                 }))

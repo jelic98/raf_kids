@@ -36,7 +36,7 @@ public class PushCommand implements Command {
 
                 if (existing != null) {
                     if (existing.getContent().equals(data.getContent())) {
-                        App.print(String.format("File %s not changed", data));
+                        App.print(String.format("File %s not changed", existing));
                         return;
                     }
 

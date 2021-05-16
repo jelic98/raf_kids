@@ -30,7 +30,6 @@ public class Files {
     }
 
     public FileData get(FileData data, Servent servent) {
-        // TODO Handle multiple versions
         for (FileData f : files) {
             if (f.equals(data)) {
                 if (servent != null) {
@@ -66,6 +65,13 @@ public class Files {
     }
 
     public void add(FileData data) {
+        for (FileData existing : files) {
+            if (existing.equals(data)) {
+                data.transferHistory(existing);
+                break;
+            }
+        }
+
         files.remove(data);
         files.add(data);
 

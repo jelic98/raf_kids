@@ -9,21 +9,29 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FileData implements Serializable {
+
+    public static final int VERSION_LATEST = -1;
 
     private final String path;
     private String content;
     private int version;
+    private Map<Integer, String> history;
 
     public FileData(String path, int version) {
         this.path = Files.relative(Config.WORKSPACE_PATH, path);
         this.version = version;
+
+        history = new ConcurrentHashMap<>();
     }
 
     public FileData(String path) {
-        this(path, -1);
+        this(path, VERSION_LATEST);
     }
 
     public void load(String location) {
@@ -32,6 +40,26 @@ public class FileData implements Serializable {
         } catch (IOException e) {
             App.error(String.format("Cannot load file %s (%s)", path, e.getMessage()));
         }
+    }
+
+    public boolean load(int version) {
+        if (version == VERSION_LATEST) {
+            if (history.isEmpty()) {
+                return true;
+            } else {
+                int[] versions = history.keySet().stream().mapToInt(i -> i).toArray();
+                Arrays.sort(versions);
+                version = versions[versions.length - 1];
+            }
+        }
+
+        if (history.containsKey(version)) {
+            content = history.get(version);
+            setVersion(version);
+            return true;
+        }
+
+        return false;
     }
 
     public void save(String location) {
@@ -45,6 +73,12 @@ public class FileData implements Serializable {
         } catch (IOException e) {
             App.error(String.format("Cannot save file %s (%s)", path, e.getMessage()));
         }
+
+        history.put(version, content);
+    }
+
+    public void transferHistory(FileData data) {
+        history.putAll(data.history);
     }
 
     public String getPath() {

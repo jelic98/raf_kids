@@ -19,10 +19,10 @@ public class FileData implements Serializable {
     public static final int VERSION_LATEST = -1;
 
     private final String path;
+    private final Map<Integer, String> history;
     private String content;
     private int version;
     private boolean replica;
-    private final Map<Integer, String> history;
 
     public FileData(String path, int version) {
         this.path = Files.relative(Config.WORKSPACE_PATH, path);
@@ -51,17 +51,16 @@ public class FileData implements Serializable {
         }
     }
 
+    // TODO Keep only log n nodes in servent list
+    // TODO 1002 become active after adding a.txt to 1001
+
     public boolean load(int version) {
         if (version == VERSION_LATEST) {
             if (history.isEmpty()) {
                 return true;
             } else {
-                // TODO Force push not overwriting remote file
-                // interference with replication?
-                // versions not properly sorted?
                 int[] versions = history.keySet().stream().mapToInt(i -> i).toArray();
                 Arrays.sort(versions);
-                App.print(Arrays.asList(versions).toString());
                 version = versions[versions.length - 1];
             }
         }
@@ -92,6 +91,7 @@ public class FileData implements Serializable {
 
     public void transferHistory(FileData data) {
         history.putAll(data.history);
+        history.put(getVersion(), getContent());
     }
 
     public String getPath() {

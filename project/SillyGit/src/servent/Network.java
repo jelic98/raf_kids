@@ -2,12 +2,10 @@ package servent;
 
 import app.App;
 import app.Config;
-import file.FileData;
 import file.Key;
 import message.CheckAskMessage;
 import message.FailMessage;
 import message.PingAskMessage;
-import message.ReplicateMessage;
 
 import java.math.BigInteger;
 import java.util.*;

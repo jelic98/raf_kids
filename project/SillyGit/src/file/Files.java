@@ -112,7 +112,7 @@ public class Files {
             Servent[] servents = Config.NETWORK.getServents(f.getKey());
 
             if (f.isReplica()) {
-                if(!servents[0].equals(Config.LOCAL)) {
+                if (!servents[0].equals(Config.LOCAL)) {
                     f.setReplica(false);
                     App.print(String.format("Servent %s holds file %s", Config.LOCAL, f));
                 }

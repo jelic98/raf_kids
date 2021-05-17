@@ -111,9 +111,16 @@ public class Files {
         for (FileData f : files) {
             Servent[] servents = Config.NETWORK.getServents(f.getKey());
 
-            if (servents[0].equals(Config.LOCAL)) {
-                for (int i = 1; i < servents.length; i++) {
-                    App.send(new ReplicateMessage(servents[i], f, true));
+            if (f.isReplica()) {
+                if(!servents[0].equals(Config.LOCAL)) {
+                    f.setReplica(false);
+                    App.print(String.format("Servent %s holds file %s", Config.LOCAL, f));
+                }
+            } else {
+                for (Servent servent : servents) {
+                    if (!servent.equals(Config.LOCAL)) {
+                        App.send(new ReplicateMessage(servent, f, true));
+                    }
                 }
             }
         }

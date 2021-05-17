@@ -32,7 +32,7 @@ public class PushForceMessage extends Message {
     protected void handle() {
         getData().save(Config.STORAGE_PATH);
         Config.STORAGE.add(getData());
-        App.print(String.format("File %s force pushed to storage", getData()));
+        App.print(String.format("File %s force pushed successfully", getData()));
     }
 
     @Override

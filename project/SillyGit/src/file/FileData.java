@@ -21,6 +21,7 @@ public class FileData implements Serializable {
     private final String path;
     private String content;
     private int version;
+    private boolean replica;
     private final Map<Integer, String> history;
 
     public FileData(String path, int version) {
@@ -34,11 +35,19 @@ public class FileData implements Serializable {
         this(path, VERSION_LATEST);
     }
 
+    public FileData(FileData data) {
+        this(data.getPath(), data.getVersion());
+
+        setContent(data.getContent());
+        setReplica(true);
+        transferHistory(data);
+    }
+
     public void load(String location) {
         try {
-            content = new String(java.nio.file.Files.readAllBytes(Paths.get(Files.absolute(location, path))), StandardCharsets.US_ASCII);
+            setContent(new String(java.nio.file.Files.readAllBytes(Paths.get(Files.absolute(location, getPath()))), StandardCharsets.US_ASCII).trim());
         } catch (IOException e) {
-            App.error(String.format("Cannot load file %s (%s)", path, e.getMessage()));
+            App.error(String.format("Cannot load file %s (%s)", getPath(), e.getMessage()));
         }
     }
 
@@ -47,14 +56,18 @@ public class FileData implements Serializable {
             if (history.isEmpty()) {
                 return true;
             } else {
+                // TODO Force push not overwriting remote file
+                // interference with replication?
+                // versions not properly sorted?
                 int[] versions = history.keySet().stream().mapToInt(i -> i).toArray();
                 Arrays.sort(versions);
+                App.print(Arrays.asList(versions).toString());
                 version = versions[versions.length - 1];
             }
         }
 
         if (history.containsKey(version)) {
-            content = history.get(version);
+            setContent(history.get(version));
             setVersion(version);
             return true;
         }
@@ -63,18 +76,18 @@ public class FileData implements Serializable {
     }
 
     public void save(String location) {
-        File file = new File(Files.absolute(location, path));
+        File file = new File(Files.absolute(location, getPath()));
 
         File directory = new File(file.getParentFile().getPath());
         directory.mkdirs();
 
         try (PrintWriter out = new PrintWriter(file)) {
-            out.write(content);
+            out.write(getContent());
         } catch (IOException e) {
-            App.error(String.format("Cannot save file %s (%s)", path, e.getMessage()));
+            App.error(String.format("Cannot save file %s (%s)", getPath(), e.getMessage()));
         }
 
-        history.put(version, content);
+        history.put(getVersion(), getContent());
     }
 
     public void transferHistory(FileData data) {
@@ -89,12 +102,24 @@ public class FileData implements Serializable {
         return content;
     }
 
+    private void setContent(String content) {
+        this.content = content;
+    }
+
     public int getVersion() {
         return version;
     }
 
     public void setVersion(int version) {
         this.version = version;
+    }
+
+    public boolean isReplica() {
+        return replica;
+    }
+
+    public void setReplica(boolean replica) {
+        this.replica = replica;
     }
 
     public Key getKey() {
@@ -118,6 +143,6 @@ public class FileData implements Serializable {
 
     @Override
     public String toString() {
-        return getPath() + "[" + getVersion() + "]";
+        return getPath() + "[" + getVersion() + "] \"" + getContent() + "\"";
     }
 }

@@ -1,5 +1,6 @@
 package message;
 
+import app.App;
 import app.Config;
 import file.FileData;
 import servent.Servent;
@@ -14,7 +15,7 @@ public class ReplicateMessage extends Message {
     public ReplicateMessage(Servent receiver, FileData data, boolean background) {
         super(null, Config.LOCAL, receiver);
 
-        this.data = data;
+        this.data = new FileData(data);
         this.background = background;
     }
 
@@ -37,8 +38,16 @@ public class ReplicateMessage extends Message {
 
     @Override
     protected void handle() {
-        getData().save(Config.STORAGE_PATH);
-        Config.STORAGE.add(getData());
+        Servent servent = Config.NETWORK.getServent(getData().getKey());
+
+        if (servent.equals(Config.LOCAL)) {
+            getData().save(Config.STORAGE_PATH);
+            Config.STORAGE.add(getData());
+        } else {
+            if (containsSender(servent)) {
+                App.send(redirect(servent));
+            }
+        }
     }
 
     @Override

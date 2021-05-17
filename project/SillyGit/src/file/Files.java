@@ -36,7 +36,7 @@ public class Files {
                     Set<Servent> access = this.access.get(data);
                     access.add(servent);
 
-                    List<Servent> team = new LinkedList<>();
+                    List<Servent> team = new ArrayList<>();
 
                     for (Servent s : access) {
                         if (s.getTeam().equals(servent.getTeam())) {

@@ -51,8 +51,6 @@ public class FileData implements Serializable {
         }
     }
 
-    // TODO Keep only log n nodes in servent list
-
     public boolean load(int version) {
         if (version == VERSION_LATEST) {
             if (history.isEmpty()) {

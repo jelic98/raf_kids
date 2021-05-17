@@ -3,12 +3,15 @@ package servent;
 import app.App;
 import app.Config;
 import file.Key;
+import file.KeyComparator;
 import message.CheckAskMessage;
 import message.FailMessage;
 import message.PingAskMessage;
 
-import java.math.BigInteger;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Network {
@@ -34,21 +37,13 @@ public class Network {
 
         int maxIndex = Math.min(Config.K, servents.size() + (inclusive ? 1 : 0));
 
-        List<Servent> servents = new ArrayList<>(this.servents);
+        List<Servent> servents = new LinkedList<>(this.servents);
 
         if (inclusive) {
             servents.add(Config.LOCAL);
         }
 
-        servents.sort(new Comparator<Servent>() {
-            @Override
-            public int compare(Servent s1, Servent s2) {
-                BigInteger d1 = key.get().xor(s1.getKey().get());
-                BigInteger d2 = key.get().xor(s2.getKey().get());
-
-                return d1.compareTo(d2);
-            }
-        });
+        servents.sort(new KeyComparator(key));
 
         Servent[] result = new Servent[maxIndex];
         servents.subList(0, maxIndex).toArray(result);
@@ -90,12 +85,13 @@ public class Network {
             Thread.currentThread().interrupt();
         }
 
-        Set<Servent> active = new HashSet<>(servents);
+        List<Servent> active = new LinkedList<>(servents);
         active.removeAll(pinged);
 
-        for (Servent servent : active) {
+        if (!active.isEmpty()) {
             for (Servent pinged : pinged) {
-                App.send(new CheckAskMessage(servent, pinged));
+                active.sort(new KeyComparator(pinged.getKey()));
+                App.send(new CheckAskMessage(active.get(0), pinged));
             }
         }
 

@@ -52,7 +52,6 @@ public class FileData implements Serializable {
     }
 
     // TODO Keep only log n nodes in servent list
-    // TODO 1002 become active after adding a.txt to 1001
 
     public boolean load(int version) {
         if (version == VERSION_LATEST) {

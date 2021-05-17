@@ -40,7 +40,7 @@ public class RemoveMessage extends Message {
                 App.print(String.format("File %s not found", getData()));
             }
         } else {
-            if (containsSender(servent)) {
+            if (!containsSender(servent)) {
                 App.send(redirect(servent));
             }
         }

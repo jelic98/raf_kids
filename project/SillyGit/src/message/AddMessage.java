@@ -41,7 +41,7 @@ public class AddMessage extends Message {
                 App.print(String.format("File %s added to storage at %s", getData(), getReceiver()));
             }
         } else {
-            if (containsSender(servent)) {
+            if (!containsSender(servent)) {
                 App.send(redirect(servent));
             }
         }

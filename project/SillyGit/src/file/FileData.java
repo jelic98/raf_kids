@@ -88,7 +88,10 @@ public class FileData implements Serializable {
 
     public void transferHistory(FileData data) {
         history.putAll(data.history);
-        history.put(getVersion(), getContent());
+
+        if (getContent() != null) {
+            history.put(getVersion(), getContent());
+        }
     }
 
     public String getPath() {

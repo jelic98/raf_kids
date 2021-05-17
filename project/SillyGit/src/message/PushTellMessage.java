@@ -71,8 +71,8 @@ public class PushTellMessage extends Message {
                 .add(new Prompt.Option("view", new Prompt.Handler() {
                     @Override
                     public void handle() {
-                        App.print(String.format("Local %s:\n%s", getLocal(), getLocal().getContent()));
-                        App.print(String.format("Remote %s:\n%s", getRemote(), getRemote().getContent()));
+                        App.print(String.format("Local: %s", getLocal()));
+                        App.print(String.format("Remote: %s", getRemote()));
                         showPrompt();
                     }
                 }))

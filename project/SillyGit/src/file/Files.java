@@ -33,7 +33,7 @@ public class Files {
         for (FileData f : files) {
             if (f.equals(data)) {
                 if (servent != null) {
-                    Set<Servent> access = this.access.get(data);
+                    Set<Servent> access = this.access.get(f);
                     access.add(servent);
 
                     List<Servent> team = new ArrayList<>();
@@ -45,10 +45,10 @@ public class Files {
                     }
 
                     if (team.size() > Config.TEAM_LIMIT) {
-                        App.send(new ReplicateMessage(team.get(0), data, false));
+                        App.send(new ReplicateMessage(team.get(0), f, false));
 
                         for (int i = 1; i < team.size(); i++) {
-                            App.send(new RedirectMessage(team.get(i), team.get(0), data));
+                            App.send(new RedirectMessage(team.get(i), team.get(0), f));
                         }
                     }
                 }
